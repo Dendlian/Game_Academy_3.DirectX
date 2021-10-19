@@ -9,13 +9,12 @@
    - 렌더링 픽셀 하나하나에 대한 연산이 필요하므로 대량의 연산을 요구
  
  // DirectX : GPU 기능을 사용할 수 있는 API
-*/
 
-/*
-cdcel
-__stdcall (WINAPI)
-__fastcall
-__thiscall
+ //
+ cdcel
+ __stdcall (WINAPI)
+ __fastcall
+ __thiscall
 */
 
 #pragma endregion
@@ -52,25 +51,64 @@ int APIENTRY WinMain
 	}
 
 	{
-		CREATESTRUCT Window = CREATESTRUCT();
+		CREATESTRUCT window = CREATESTRUCT();
 
-		Window.lpszClass = "Window";
-		Window.lpszName = "Game";
-		Window.style = WS_CAPTION | WS_SYSMENU;
-		Window.cx = 500;
-		Window.cy = 500;
-		Window.hInstance = hInstance;
+		window.lpszClass = "Window";
+		window.lpszName = "Game";
+		window.style = WS_CAPTION | WS_SYSMENU;
+		window.cx = 500;
+		window.cy = 500;
+		window.hInstance = hInstance;
 		
-		hWindow CreateWindowEx
+		{
+			RECT rect = RECT();
+			rect.right = window.cx;
+			rect.bottom = window.cy;
+
+			AdjustWindowRectEx(&rect, window.style, static_cast<bool>(window.hMenu), window.dwExStyle);
+
+			window.cx = rect.right - rect.left;
+			window.cy = rect.bottom - rect.top;
+
+			window.x = (GetSystemMetrics(SM_CXSCREEN) - window.cx) / 2;
+			window.y = (GetSystemMetrics(SM_CYSCREEN) - window.cy) / 2;
+		}
+
+		hWindow = CreateWindowEx
 		(
-			Window.dwExstyle,
-			Window.lpszClass,
-			Wincow.lpszName,
-			Window.style,
-			Window.x,
-			Window.y,
-			Window.cx,
-			Window.cy
+			window.dwExStyle,
+			window.lpszClass,
+			window.lpszName,
+			window.style,
+			window.x,
+			window.y,
+			window.cx,
+			window.cy,
+			window.hwndParent,
+			window.hMenu,
+			window.hInstance,
+			window.lpCreateParams
 		);
+
+		ShowWindow(hWindow, SW_RESTORE);
+	}
+
+	{
+		MSG msg = MSG();
+
+		while (true) 
+		{
+			if (PeekMessage(&msg, HWND(), WM_NULL, WM_NULL, PM_REMOVE))
+			{
+				if (msg.message == WM_QUIT)
+					return static_cast<int>(msg.wParam);
+			
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				SendMessage(hWindow, WM_APP, 0, 0);
+			}
+		}
 	}
 }
