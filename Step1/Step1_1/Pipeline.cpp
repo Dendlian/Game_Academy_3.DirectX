@@ -33,7 +33,7 @@
 
  Local Space    
  World Space    
- View Space	    
+ View Space	     
  Viewport Space 
  
  Projection : 3D를 2D 화면에 투영하기 위한 작업
