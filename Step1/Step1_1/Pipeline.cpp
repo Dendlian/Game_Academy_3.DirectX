@@ -1,4 +1,4 @@
-/* 
+/*  
 ==NOTE==
  // cominterface : 컴퓨터가 자동적으로 만드는 데이터 (I)
    - release : 삭제 신청서
