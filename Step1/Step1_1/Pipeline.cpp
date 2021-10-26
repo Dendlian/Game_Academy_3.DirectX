@@ -80,6 +80,7 @@ namespace Pipeline
 		namespace Buffer
 		{
 			ID3D11Buffer* Vertex;	// 정점을 입력할 버퍼
+			ID3D11Buffer* Index;
 		}
 	}
 	
@@ -122,6 +123,7 @@ namespace Pipeline
 					assert(SUCCEEDED(hr));			// 프로그램이 잘 만들어졌는지 확인
 				}
 
+				// Vertex Buffer
 				{ // CPU에서 작업중..
 					struct Vertex
 					{
@@ -157,6 +159,42 @@ namespace Pipeline
 
 					DeviceContext->IASetVertexBuffers(0, 1, &Buffer::Vertex, &Stride, &Offset);
 				}
+
+				// PrimitiveTopology
+				{
+					// 꼭지점 데이터를 삼각형 목록으로 해석하도록 설정
+					DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+				}
+
+				// Index Buffer
+				{
+					typedef USHORT Index[3];
+					Index const Indices[2]
+					{
+						{0, 1, 2},
+						{3, 2, 1}
+					};
+
+					D3D11_BUFFER_DESC Descriptor = D3D11_BUFFER_DESC();
+
+					Descriptor.ByteWidth			= sizeof(Indices);
+					Descriptor.Usage				= D3D11_USAGE_IMMUTABLE;
+					Descriptor.BindFlags			= D3D11_BIND_INDEX_BUFFER;
+					Descriptor.CPUAccessFlags		= 0;
+					Descriptor.MiscFlags			= 0;
+					Descriptor.StructureByteStride	= 0;
+				
+					D3D11_SUBRESOURCE_DATA SubResource = D3D11_SUBRESOURCE_DATA();
+					SubResource.pSysMem = Indices;
+					SubResource.SysMemPitch = 0;
+					SubResource.SysMemSlicePitch = 0;
+
+					MUST(Device->CreateBuffer(&Descriptor, &SubResource, &Buffer::Index));
+
+					DeviceContext->IASetIndexBuffer(Buffer::Index, DXGI_FORMAT_R16_UINT, 0);
+
+				}
+
 				return 0;
 			}
 			case WM_APP: 
@@ -179,6 +217,8 @@ namespace Pipeline
 			case WM_DESTROY:
 			{
 				RenderTargetView->Release();
+				Buffer::Vertex->Release();
+				Buffer::Index->Release();
 				SwapChain->Release();
 				Device->Release();
 				DeviceContext->Release();
