@@ -123,6 +123,32 @@ namespace Pipeline
 					assert(SUCCEEDED(hr));			// 프로그램이 잘 만들어졌는지 확인
 				}
 
+				{
+					{
+						D3D11_INPUT_ELEMENT_DESC Descriptor[] =
+						{
+							D3D11_INPUT_ELEMENT_DESC(),
+							D3D11_INPUT_ELEMENT_DESC()
+						};
+						Descriptor[0].SemanticName			= "POSITION";
+						Descriptor[0].SemanticIndex			= 0;
+						Descriptor[0].Format				= DXGI_FORMAT_R32G32B32A32_FLOAT;
+						Descriptor[0].InputSlot				= 0; // IA단계에서 식별하는 정수값을 설정하는 부분
+						Descriptor[0].AlignedByteOffset 	= 0; // POSITION을 읽을 시작 지점 설정
+						Descriptor[0].InputSlotClass		= D3D11_INPUT_PER_VERTEX_DATA; // 읽을 데이터의 종류 설정
+						Descriptor[0].InstanceDataStepRate	= 0; // 버퍼에서 그릴 인스턴스의 수를 설정 (정점 데이터라면 무조건 0)
+					
+						Descriptor[1].SemanticName			= "COLOR";
+						Descriptor[1].SemanticIndex			= 0;
+						Descriptor[1].Format				= DXGI_FORMAT_R32G32B32A32_FLOAT;
+						Descriptor[1].InputSlot				= 0; 
+						Descriptor[1].AlignedByteOffset		= 16; 
+						Descriptor[1].InputSlotClass		= D3D11_INPUT_PER_VERTEX_DATA; 
+						Descriptor[1].InstanceDataStepRate	= 0; 
+					}
+				}
+
+
 				// Vertex Buffer
 				{ // CPU에서 작업중..
 					struct Vertex
