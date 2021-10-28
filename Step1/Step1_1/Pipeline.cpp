@@ -76,6 +76,7 @@ namespace Pipeline
 		IDXGISwapChain				* SwapChain;			// 나눠진 작업을 교대하며 실행
 															// 위 두 구조체의 디스크립션을 포함
 		ID3D11RenderTargetView		* RenderTargetView;		// 자원을 그리는 장소
+		ID3D11InputLayout			* InputLayout;
 		
 		namespace Buffer
 		{
@@ -124,6 +125,7 @@ namespace Pipeline
 				}
 
 				{
+					#include "Vertex.h"
 					{
 						D3D11_INPUT_ELEMENT_DESC Descriptor[] =
 						{
@@ -145,6 +147,9 @@ namespace Pipeline
 						Descriptor[1].AlignedByteOffset		= 16; 
 						Descriptor[1].InputSlotClass		= D3D11_INPUT_PER_VERTEX_DATA; 
 						Descriptor[1].InstanceDataStepRate	= 0; 
+
+						// GPU에서 CPU로 다시 정보를 넘겨주는 과정이며 CPU에서 읽을 수 있는 2진코드로 변환
+						Device->CreateInputLayout(Descriptor, 2, Bytecode, sizeof(Bytecode), &InputLayout);
 					}
 				}
 
