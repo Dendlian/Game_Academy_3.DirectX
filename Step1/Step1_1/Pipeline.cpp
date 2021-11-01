@@ -125,7 +125,7 @@ namespace Pipeline
 				}
 
 				{
-					#include "Vertex.h"
+					#include "Shader/Bytecode/Vertex.h"
 					{
 						D3D11_INPUT_ELEMENT_DESC Descriptor[] =
 						{
@@ -149,10 +149,21 @@ namespace Pipeline
 						Descriptor[1].InstanceDataStepRate	= 0; 
 
 						// GPU에서 CPU로 다시 정보를 넘겨주는 과정이며 CPU에서 읽을 수 있는 2진코드로 변환
-						Device->CreateInputLayout(Descriptor, 2, Bytecode, sizeof(Bytecode), &InputLayout);
+						MUST(Device->CreateInputLayout(Descriptor, 2, Bytecode, sizeof(Bytecode), &InputLayout));
+
+						DeviceContext->IASetInputLayout(InputLayout);
+					}
+
+					{
+						ID3D11VertexShader* VertexShader = nullptr;
+
+						MUST(Device->CreateVertexShader(Bytecode, sizeof(Bytecode), nullptr, &VertexShader));
+
+						DeviceContext->VSSetShader(VertexShader, nullptr, 0);
 					}
 				}
 
+				
 
 				// Vertex Buffer
 				{ // CPU에서 작업중..
@@ -248,12 +259,18 @@ namespace Pipeline
 			case WM_DESTROY:
 			{
 				RenderTargetView->Release();
+			
+				InputLayout->Release();
+
 				Buffer::Vertex->Release();
 				Buffer::Index->Release();
+				
 				SwapChain->Release();
 				Device->Release();
 				DeviceContext->Release();
+				
 				PostQuitMessage(0);
+				
 				return 0;
 			}
 			case WM_SIZE:
