@@ -163,7 +163,19 @@ namespace Pipeline
 					}
 				}
 
+				{
+					#inlcude "Shader/Bytecode/Pixel.h"
+					{
+						ID3D11PixelShader* PixelShader = nullptr;
+
+						MUST(Device->CreatePixelShader(Bytecode, sizeof(Bytecode), nullptr, &PixelShader));
+
+						DeviceContext->PSSetShader(PixelShader, nullptr, 0);
+
+						PixelShader->Release();
+					}
 				
+				}
 
 				// Vertex Buffer
 				{ // CPU에서 작업중..
@@ -243,9 +255,16 @@ namespace Pipeline
 			{
 				static float element = 0.0000f;
 				static float delta = 0.001f;
-				float const Color[4] = { element, element, 1.0f, 1.0f };
+				
+				float const Color[4] = { element, element, element, 1.0f };
+				
 				DeviceContext->ClearRenderTargetView(RenderTargetView, Color); // 작업할 렌더 영역(스크린 전체)의 초기화 (색 입히기)
+				
+				DeviceContext->DrawIndexed(6, 0, 0);
+				// Draw : Vertex에 대한 정보를 받는 메서드
+
 				MUST(SwapChain->Present(1, 0));
+				// flag : 이미지 넘겨줄 때 추가 옵션의 사용 여부
 
 				element += delta;
 
@@ -276,6 +295,15 @@ namespace Pipeline
 			case WM_SIZE:
 			{
 				{
+					{
+						D3D11_VIEWPORT Viewport = D3D11_VIEWPORT();
+
+						Viewport.Width = LOWORD(lParameter);
+						Viewport.Height = HIWORD(lParameter);
+					
+						DeviceContext->RSSetViewports(1, &Viewport);
+					}
+
 					if (RenderTargetView)
 					{
 						RenderTargetView->Release();
