@@ -164,7 +164,7 @@ namespace Pipeline
 				}
 
 				{
-					#inlcude "Shader/Bytecode/Pixel.h"
+					#include "Shader/Bytecode/Pixel.h"
 					{
 						ID3D11PixelShader* PixelShader = nullptr;
 
@@ -185,34 +185,70 @@ namespace Pipeline
 						float Color[4];
 					};
 				
-					Vertex const Vertices[4]
+					// Vertex const Vertices[4]
+					// {
+					// 	{{ -0.5f, +0.5f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+					// 	{{ +0.5f, +0.5f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+					// 	{{ -0.5f, -0.5f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+					// 	{{ +0.5f, -0.5f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
+					// };
+					// 
+					// D3D11_BUFFER_DESC Descriptor = D3D11_BUFFER_DESC();		// CPU에서 사용하는 코드를 GPU에서 사용 가능하도록 변환 (버퍼의 기능)
+					// Descriptor.ByteWidth = sizeof(Vertices);					// 버퍼의 전체 크기를 설정
+					// Descriptor.Usage = D3D11_USAGE_IMMUTABLE;				// GPU에서 읽을 수 있도록 사용 설정
+					// Descriptor.BindFlags = 0;								// CPU에서의 접근 권한의 정도를 설정 (다이나믹에서 CPU의 접근 허용을 안 하기 때문에 0으로 설정)
+					// Descriptor.CPUAccessFlags = 0;
+					// Descriptor.MiscFlags = 0;
+					// Descriptor.StructureByteStride = 0;
+
+					float const Coordinates[4][4]
 					{
-						{{ -0.5f, +0.5f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-						{{ +0.5f, +0.5f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-						{{ -0.5f, -0.5f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-						{{ +0.5f, -0.5f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
+						{ -0.5f, +0.5f, 0.0f, 1.0f},
+						{ +0.5f, +0.5f, 0.0f, 1.0f},
+						{ -0.5f, -0.5f, 0.0f, 1.0f},
+						{ +0.5f, -0.5f, 0.0f, 1.0f}
 					};
-			
-					D3D11_BUFFER_DESC Descriptor = D3D11_BUFFER_DESC();		// CPU에서 사용하는 코드를 GPU에서 사용 가능하도록 변환 (버퍼의 기능)
-					Descriptor.ByteWidth = sizeof(Vertices);				// 버퍼의 전체 크기를 설정
-					Descriptor.Usage = D3D11_USAGE_IMMUTABLE;				// GPU에서 읽을 수 있도록 사용 설정
-					Descriptor.BindFlags = 0;								// CPU에서의 접근 권한의 정도를 설정 (다이나믹에서 CPU의 접근 허용을 안 하기 때문에 0으로 설정)
-					Descriptor.CPUAccessFlags = 0;
-					Descriptor.MiscFlags = 0;
-					Descriptor.StructureByteStride = 0;
 
-					D3D11_SUBRESOURCE_DATA SubResource = D3D11_SUBRESOURCE_DATA();
-					SubResource.pSysMem = Vertices;
-					SubResource.SysMemPitch = 0;
-					SubResource.SysMemSlicePitch = 0;
+					D3D11_BUFFER_DESC Descriptor
+					{
+						sizeof(Coordinates),
+						D3D11_USAGE_IMMUTABLE,
+						D3D11_BIND_VERTEX_BUFFER,
+						0
+					};
 
-					MUST(Device->CreateBuffer(&Descriptor, &SubResource, &Buffer::Vertex));
 
-					UINT const Stride = sizeof(Vertex);
+					D3D11_SUBRESOURCE_DATA const SubResource = { Coordinates };
+	
+					ID3D11Buffer* Buffer = nullptr;
+
+					MUST(Device->CreateBuffer(&Descriptor, &SubResource, &Buffer));
+
+					UINT const Stride = sizeof(*Coordinates);
 					UINT const Offset = 0;
 
-					DeviceContext->IASetVertexBuffers(0, 1, &Buffer::Vertex, &Stride, &Offset);
+					DeviceContext->IASetVertexBuffers(0, 1, &Buffer, &Stride, &Offset);
+
+					Buffer->Release();
 				}
+
+				{
+					D3D11_BUFFER_DESC const Descriptor
+					{
+						sizeof(float[4][4]),
+						D3D11_USAGE_DYNAMIC,
+						D3D11_BIND_VERTEX_BUFFER,
+						D3D11_CPU_ACCESS_WRITE
+					};
+
+					MUST(Device->CreateBuffer(&Descriptor, nullptr, &Buffer::Vertex));
+
+					UINT const Stride = sizeof(float[4]);
+					UINT const Offset = 0;
+
+					DeviceContext->IASetVertexBuffers(1, 1, &Buffer::Vertex, &Stride, &Offset);
+				}
+
 
 				// PrimitiveTopology
 				{
@@ -253,25 +289,39 @@ namespace Pipeline
 			}
 			case WM_APP: 
 			{
-				static float element = 0.0000f;
-				static float delta = 0.001f;
+				D3D11_MAPPED_SUBRESOURCE Subresource = D3D11_MAPPED_SUBRESOURCE();
+				MUST(DeviceContext->Map(Buffer::Vertex, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource));
+				{
+					static float element = 0.0000f;
+					static float delta = 0.001f;
+
+					float const Colors[4][4]
+					{
+						{element,	0.0f,		0.0f,		1.0f},
+						{0.0f,		element,	0.0f,		1.0f},
+						{0.0f,		0.0f,		element,	1.0f},
+						{element,	element,	element,	1.0f},
+					};
+
+					element += delta;
+
+					if (element < 0.0f || 1.0f <= element)
+						delta *= -1;
+
+					memcpy_s(Subresource.pData, Subresource.RowPitch, Colors, sizeof(Colors));
+				}
+				DeviceContext->Unmap(Buffer::Vertex, 0);
+				float const Color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 				
-				float const Color[4] = { element, element, element, 1.0f };
+				DeviceContext->ClearRenderTargetView(RenderTargetView, Color); 
+				// 작업할 렌더 영역(스크린 전체)의 초기화 (색 입히기)
 				
-				DeviceContext->ClearRenderTargetView(RenderTargetView, Color); // 작업할 렌더 영역(스크린 전체)의 초기화 (색 입히기)
-				
-				DeviceContext->DrawIndexed(6, 0, 0);
+				DeviceContext->DrawIndexed(6,0,0);
 				// Draw : Vertex에 대한 정보를 받는 메서드
-				 
+
 				MUST(SwapChain->Present(1, 0));
 				// flag : 이미지 넘겨줄 때 추가 옵션의 사용 여부
 
-				element += delta;
-
-				cout << element << endl;
-
-				if (element < 0.0f || 1.0f <= element)
-					delta *= -1;
 
 				return 0;
 			}
@@ -281,7 +331,7 @@ namespace Pipeline
 			
 				InputLayout->Release();
 
-				Buffer::Vertex->Release();
+				//Buffer::Vertex->Release();
 				Buffer::Index->Release();
 				
 				SwapChain->Release();
