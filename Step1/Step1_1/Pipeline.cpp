@@ -262,7 +262,7 @@ namespace Pipeline
 				
 				DeviceContext->DrawIndexed(6, 0, 0);
 				// Draw : Vertex에 대한 정보를 받는 메서드
-
+				 
 				MUST(SwapChain->Present(1, 0));
 				// flag : 이미지 넘겨줄 때 추가 옵션의 사용 여부
 
