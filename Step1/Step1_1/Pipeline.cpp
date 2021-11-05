@@ -16,7 +16,7 @@
    - Layout을 설정
 
  // VS (Vertex Shader Stage)
-   - Shader : GPU 연산을 할 수 있는 함수의 집합체
+   - Shader : GPU 연산을 할 수 있는 함수의 집합체 
    - IA에게 받은 데이터들을 통하여 쉐이더 연산을 처리
 
  // RS (Rasterizer Stage) <- GPU 
