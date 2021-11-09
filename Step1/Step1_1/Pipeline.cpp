@@ -15,15 +15,22 @@
  // IA (Input Assembler Stage)
    - 정점에 대한 정보를 입력하는 단계 (Vertex Buffer, Index Buffer)
    - (Input)Layout을 설정
+   - 레이아웃은 몇 바이트를 기준(주기)으로 읽을지 설정
+   - PrimitiveTopology 설정
 
  // VS (Vertex Shader Stage)
    - Shader : GPU 연산을 할 수 있는 함수의 집합체
    - IA에게 받은 데이터들을 통하여 쉐이더 연산을 처리
 
- // RS (Rasterizer Stage) <- GPU 
+ // RS (Rasterizer Stage) <- GPU (but not only GPU)
    - 정점 정보를 화면에 출력하기 위해 버텍스를 변환하여 폴리곤(레스터화 이미지) 생성
    - 정점을 바탕으로 폴리곤을 픽셀로 변환하는 단계(레스터라이즈)
    - viewport 설정
+
+   - 백컬링, 클리핑이 자동으로 설정
+   - 정점 정보를 화면에 출력하기 위해 레스터화 이미지로 변환하는 단계
+   - 위 단계까지는 픽셀 단위가 아님
+   - 받은 정보를 이용하여 픽셀화를 진행하는 단계
 
  // PS (Pixel Shader) <- GPU
    - 랜더링 대상 픽셀들의 색을 계산하는 단계
@@ -60,8 +67,11 @@ using namespace std;
 #pragma region GPU
 /*
 // GPU에서 다룰 수 있는 도구
- // Texture
- // Buffer : 그림을 그릴 때 기본적으로 점, 선, 삼각형만을 사용
+ // Texture : 이미 완성된 이미지를 읽기, 쓰기, 깊이를 통해 설정 
+ // -> 완성된 이미지를 읽기 때문에 많은 연산과정이 필요
+ // -> 따라서 기능들(읽기, 쓰기, 깊이)만 구현되어 있는 인터페이스를 넘기는 작업을 포함
+
+ // Buffer : 그림을 그릴 때 기본적으로 점, 선, 삼각형만을 사용 (숫자를 이미지로 변환)
   // 도형을 그릴 때 정점의 좌표값을 시계방향으로 지정
    
     - vertex : 정점에 대한 좌표 (gpu에서 읽을 수 없어서 버퍼를 통해 정점에 대한 좌표(어디에 그릴지)를 넘겨줌)
@@ -136,6 +146,7 @@ namespace Pipeline
 					{
 						D3D11_INPUT_ELEMENT_DESC Descriptor[] =
 						{
+							// 정점을 상황에 따라 바꿔서 삼각형을 만들고 싶을때 인덱스를 설정
 							{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0},
 							{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1}
 							/// D3D11_INPUT_ELEMENT_DESC(),
@@ -157,7 +168,6 @@ namespace Pipeline
 						/// Descriptor[1].InputSlotClass		= D3D11_INPUT_PER_VERTEX_DATA; 
 						/// Descriptor[1].InstanceDataStepRate	= 0; 
 
-						
 						// GPU에서 CPU로 다시 정보를 넘겨주는 과정이며 CPU에서 읽을 수 있는 2진코드로 변환
 						// VS단계에서 Inputlayout을 넘기기 시작
 						MUST(Device->CreateInputLayout(Descriptor, 2, Bytecode, sizeof(Bytecode), &InputLayout));
@@ -234,6 +244,7 @@ namespace Pipeline
 
 
 					D3D11_SUBRESOURCE_DATA const SubResource = { Coordinates };
+					// 서브리소스 : 버퍼 공간에 대해 값을 초기화하기 위해 서브리소스에 값을 담고 버퍼에 찍어내는 역할을 수행
 	
 					ID3D11Buffer* Buffer = nullptr;
 
@@ -311,6 +322,7 @@ namespace Pipeline
 			{
 				D3D11_MAPPED_SUBRESOURCE Subresource = D3D11_MAPPED_SUBRESOURCE();
 				MUST(DeviceContext->Map(Buffer::Vertex, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource)); // discard : 가져온 값을 저장하지 않고 삭제
+				// 배열로 넘겨주고 싶을 때 배열의 몇번째 부터 넘겨줄것인지 Map을 통해 설정
 				{
 					static float element = 0.0000f;
 					static float delta = 0.001f;
@@ -393,7 +405,9 @@ namespace Pipeline
 					}
 					{
 						ID3D11Texture2D* texture2D = nullptr;
-						MUST(SwapChain->GetBuffer(0,IID_PPV_ARGS(&texture2D))); // HRESULT를 define으로 묶어서 설정하는 방법
+						MUST(SwapChain->GetBuffer(0,IID_PPV_ARGS(&texture2D))); 
+						// HRESULT를 define으로 묶어서 설정하는 방법
+						// 버퍼에서 설정된 이미지를 가져와서 텍스쳐에 저장
 
 						HRESULT hr = Device->CreateRenderTargetView(texture2D, nullptr, &RenderTargetView); // GPU에서 그리기 때문에 CPU에서 GPU로 텍스처를 반환
 						assert(SUCCEEDED(hr));
@@ -434,7 +448,9 @@ namespace Pipeline
 4. 객체 지향 프로그래밍의 특성
 커플링 현상
 
-
 랜더링 파이프 라인 (그래픽스 프로그래밍)
+
+행렬 : 덧셈, 뺄셈, 곱셈 (교환법칙 O)
+
 
 */
