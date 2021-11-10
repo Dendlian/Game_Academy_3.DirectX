@@ -6,7 +6,7 @@
    - description : 생성 요청서
 
    // CPU에 대해서 연산하는 코드 cpp
-   // GPU를 동작하는 코드 hlsl
+   // GPU를 동작하는 코드 hlsl 
    
  // Rendering PipeLine : 랜더링을 하기 위한 단계
    - IA -> VS -> RS -> PS -> OM (DeviceContext에서 적용)
