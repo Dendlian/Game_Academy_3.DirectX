@@ -32,7 +32,7 @@ int APIENTRY WinMain
 	_In_		int		  const nShowCmd
 )
 {
-	HWND hWindow = nullptr;
+	HWND hWindow = nullptr; 
 
 
 	{
