@@ -1,62 +1,20 @@
-/*  
-==NOTE==
- // cominterface : 컴퓨터가 자동적으로 만드는 데이터
-   // '포인터'로 생성 (필수)
-   - release : 삭제 신청서
-   - description : 생성 요청서
-
-   // CPU에 대해서 연산하는 코드 cpp
-   // GPU를 동작하는 코드 hlsl 
-   
- // Rendering PipeLine : 랜더링을 하기 위한 단계
-   - IA -> VS -> RS -> PS -> OM (DeviceContext에서 적용)
-   - IA -> VS -> HS -> TS -> DS -> GS -> SO -> RS -> PS -> OM
-   
- // IA (Input Assembler Stage)
-   - 정점에 대한 정보를 입력하는 단계 (Vertex Buffer, Index Buffer)
-   - (Input)Layout을 설정
-   - 레이아웃은 몇 바이트를 기준(주기)으로 읽을지 설정
-   - PrimitiveTopology 설정
-
- // VS (Vertex Shader Stage)
-   - Shader : GPU 연산을 할 수 있는 함수의 집합체
-   - IA에게 받은 데이터들을 통하여 쉐이더 연산을 처리
-
- // RS (Rasterizer Stage) <- GPU (but not only GPU)
-   - 정점 정보를 화면에 출력하기 위해 버텍스를 변환하여 폴리곤(레스터화 이미지) 생성
-   - 정점을 바탕으로 폴리곤을 픽셀로 변환하는 단계(레스터라이즈)
-   - viewport 설정
-
-   - 백컬링, 클리핑이 자동으로 설정
-   - 정점 정보를 화면에 출력하기 위해 레스터화 이미지로 변환하는 단계
-   - 위 단계까지는 픽셀 단위가 아님
-   - 받은 정보를 이용하여 픽셀화를 진행하는 단계
-
- // PS (Pixel Shader) <- GPU
-   - 랜더링 대상 픽셀들의 색을 계산하는 단계
- 
- // OM (Output Merge) 
-   - RenderTargets 설정
-   - 최종적으로 출력하기 위해 랜더링하는 단계
-
-RS -> PS -> OM
- Local Space    
- World Space    
- View Space	     
- Viewport Space 
- 
- Projection : 3D를 2D 화면에 투영하기 위한 작업
- Back Space Culling : 앞 화면에 가려 보이지 않는 뒤 화면에 대한 연산을 진행하지 않고 삭제
- Cleeping : View Soace 밖의 화면에 대한 연산을 진행하지 않고 삭제
- ViewPort : 3D인 View Space를 윈도우 상(2D)에 옮기기 위해 변환하는 작업
- */
-
 #include <d3d11.h>
+#pragma region cassert ***
+/*
+cassert 
+ - 빌드를 할 때 프로그램 실행 여부를 설정하는 헤더파일
+ - 컴파일 과정에 문제가 없어 컴파일이 완료되더라도 예상치 못한 오류를 검사
+ - 모든 comInterface는 잘 만들었는지의 여부(HRESULT : Long type)를 반환
+ - assert 메크로 함수를 통해 HRESULT를 검사
+*/
+#pragma endregion
 #include <cassert>
-#include <iostream>
+#include "FreeImage.h"
 using namespace std;
 
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#pragma region Console
+// #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#pragma endregion
 
 #ifndef _DEBUG
 #define MUST(Expression)(	   (	     (Expression)))
@@ -64,39 +22,23 @@ using namespace std;
 #define MUST(Expression)(assert(SUCCEEDED(Expression)))
 #endif
 
-#pragma region GPU
-/*
-// GPU에서 다룰 수 있는 도구
- // Texture : 이미 완성된 이미지를 읽기, 쓰기, 깊이를 통해 설정 
- // -> 완성된 이미지를 읽기 때문에 많은 연산과정이 필요
- // -> 따라서 기능들(읽기, 쓰기, 깊이)만 구현되어 있는 인터페이스를 넘기는 작업을 포함
-
- // Buffer : 그림을 그릴 때 기본적으로 점, 선, 삼각형만을 사용 (숫자를 이미지로 변환)
-  // 도형을 그릴 때 정점의 좌표값을 시계방향으로 지정
-   
-    - vertex : 정점에 대한 좌표 (gpu에서 읽을 수 없어서 버퍼를 통해 정점에 대한 좌표(어디에 그릴지)를 넘겨줌)
-	- index : 정점을 어떻게 사용할지에 대한 정보
-    - constant
-	DRAW :한 번 사용한 정점은 다시 사용 불가
-	DRAWINDEX : 정점에 순서를 매겨 정점을 재사용 가능
-*/
-#pragma endregion
-
-namespace Pipeline
+// namespace : static 기능 / 선언한 공간 안에서 생성된 값들은 외부에서 사용 불가
+// Pipeline  : Rendering을 위한 단계
+namespace Pipeline 
 {
+	// DXGI : 그래픽 인터페이스
 	namespace
 	{	
-		ID3D11Device				* Device;				// 자원을 만드는 장소
-		ID3D11DeviceContext			* DeviceContext;		// 만든 자원을 랜더링 파이프라인에 결합하기 위한 자원
-		IDXGISwapChain				* SwapChain;			// 나눠진 작업을 교대하며 실행 / 위 두 구조체의 디스크립션을 포함
-															// DXGI : 그래픽 인터페이스
-		ID3D11RenderTargetView		* RenderTargetView;		// 자원을 그리는 장소
+		ID3D11Device				* Device;				// 버퍼 및 자원의 생성을 담당
+		ID3D11DeviceContext			* DeviceContext;		// 만든 자원을 랜더링 파이프라인에 결합
+		IDXGISwapChain				* SwapChain;			// (Back Buffer) 나눠진 작업을 교대하며 실행 (연산 + Scene)
+		ID3D11RenderTargetView		* RenderTargetView;		// 자원을 그리는 장소 설정
 		ID3D11InputLayout			* InputLayout;
 		
 		namespace Buffer
 		{
-			ID3D11Buffer* Vertex;	// 정점을 입력할 버퍼
-			ID3D11Buffer* Index;
+			ID3D11Buffer* Vertex;
+		    //ID3D11Buffer* Index;
 		}
 	}
 	
@@ -104,25 +46,87 @@ namespace Pipeline
 	{
 		switch (uMessage)
 		{
+			// 창이 생성될 때 발생하는 메세지
 			case WM_CREATE:
 			{
-				{
-					DXGI_SWAP_CHAIN_DESC Descriptor = DXGI_SWAP_CHAIN_DESC();
-					Descriptor.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-					// 4바이트의 FLOAT 형태의 색상을 설정 / UNORM : 1로 정규화
-					Descriptor.SampleDesc.Count = 1;
-					// 픽셀의 단점(계단식 이미지)을 개선 : 안티앨리어싱
-					Descriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-					// 렌더링 타겟을 출력하는 용도로 사용
-					Descriptor.BufferCount = 1;
-					// 버퍼의 사용개수
-					// 0 : 버퍼 사용 X
-					// 1 : 버퍼 2개 사용
-					Descriptor.OutputWindow = hWindow;
-					// 어느 창에 띄어줄지 설정
-					Descriptor.Windowed = true;
-					// 창모드 사용여부
+#pragma region Create SwapChain
 
+#pragma region DXGI_SWAP_CHAIN_DESC 객체 정보 ***
+/*
+DXGI_SWAP_CHAIN_DESC
+ - DXGI_MODE_DESC SampleDesc;
+	{
+	UINT Width;									// 가로
+    UINT Height;								// 세로
+    DXGI_RATIONAL RefreshRate;					// 화면의 갱신률
+		{
+			프레임을 맞추는 데이터 : 60 프레임
+			0/0 : 컴퓨터가 1로 해석하며 자동 프레임으로 설정
+			UINT Numerator;		// 60/1 중 60
+			UINT Denominator;	// 60/1 중 1
+		}
+    DXGI_FORMAT Format;							// 색상정보 (Buffer는 색상만 전달하면 완료)
+    DXGI_MODE_SCANLINE_ORDER ScanlineOrdering;	// 이미지를 표현하는 순서
+		{
+			DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED        = 0,	// 기본값 : 값 지정 X
+			DXGI_MODE_SCANLINE_ORDER_PROGRESSIVE        = 1,	// 이미지를 한꺼번에 생성
+			DXGI_MODE_SCANLINE_ORDER_UPPER_FIELD_FIRST  = 2,	// 상단 이미지부터 먼저 생성
+			DXGI_MODE_SCANLINE_ORDER_LOWER_FIELD_FIRST  = 3		// 하단 이미지부터 먼저 생성
+		}
+    DXGI_MODE_SCALING Scaling;					// 창을 확대할 때 적용 방식 설정
+		{
+		DXGI_MODE_SCALING_UNSPECIFIED   = 0,	// 기본값 : 값 지정 X
+		DXGI_MODE_SCALING_CENTERED      = 1,	// 배율 지정 X : 창을 확대하면 숨어있던 이미지 출력
+		DXGI_MODE_SCALING_STRETCHED     = 2		// 배울 지정 : 창을 확대하면 기존 이미지가 확대
+		}
+	}
+ - DXGI_SAMPLE_DESC SampleDesc;
+	// 안티얼리어싱
+	// 수퍼 샘플링 : 모든 각 픽셀을 나눠서 다시 계산 후 반환
+	// 멀티 샘플링 : 테두리만 계산 후 반환
+	{
+	UINT Count;		// 멀티 샘플링을 할 때 1개의 Pixel을 몇 개로 나눌지 설정
+					// (Pixel 당 멀티 샘플링 수)
+	UINT Quality;	// 
+	}
+ - DXGI_USAGE BufferUsage;
+ - UINT BufferCount;
+ - HWND OutputWindow;
+ - BOOL Windowed;
+ - DXGI_SWAP_EFECT SwapEffect; 
+	// Buffer에서 넘긴 데이터를 계속 가지고 있을지의 여부를 설정
+ - UINT Flags;
+*/
+#pragma endregion				
+				{
+					// SwapChain의 Description 생성
+					DXGI_SWAP_CHAIN_DESC Descriptor = DXGI_SWAP_CHAIN_DESC();
+					
+					// 4바이트의 FLOAT 형태의 색상을 설정
+					// Format : 색상을 넘기는 방식
+					// UNORM  : 1로 정규화
+					Descriptor.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+					
+					// 픽셀의 단점(계단식 이미지)을 개선 : 안티앨리어싱
+					// SampleDesc : 안티 에일리어싱의 방식
+					// Count : 픽셀당 멀티 샘플링으로 검사하는 횟수
+					Descriptor.SampleDesc.Count = 1;
+					
+					// 그린 물체를 넘겨주는 방식을 설정
+					// 렌더링 타겟을 출력하는 용도로 사용
+					Descriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; 
+					
+					// 버퍼의 사용 개수
+					// 0 : 버퍼 0개 사용
+					// 1 : 버퍼 2개 사용
+					Descriptor.BufferCount = 1;
+					
+					// 어느 창에 띄어줄지 설정
+					Descriptor.OutputWindow = hWindow;
+					
+					// 창모드 사용여부
+					Descriptor.Windowed = true;
+					
 					HRESULT hr = D3D11CreateDeviceAndSwapChain
 					(
 						nullptr,					// 어뎁터 미사용
@@ -140,15 +144,17 @@ namespace Pipeline
 					);
 					assert(SUCCEEDED(hr));			// 프로그램이 잘 만들어졌는지 확인
 				}
+#pragma endregion
 
+#pragma region Vertex Shader Setting
 				{
 					#include "Shader/Bytecode/Vertex.h"
 					{
 						D3D11_INPUT_ELEMENT_DESC Descriptor[] =
 						{
 							// 정점을 상황에 따라 바꿔서 삼각형을 만들고 싶을때 인덱스를 설정
-							{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0},
-							{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1}
+							{"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0},
+							{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 1}
 							/// D3D11_INPUT_ELEMENT_DESC(),
 							/// D3D11_INPUT_ELEMENT_DESC()
 						};
@@ -170,6 +176,7 @@ namespace Pipeline
 
 						// GPU에서 CPU로 다시 정보를 넘겨주는 과정이며 CPU에서 읽을 수 있는 2진코드로 변환
 						// VS단계에서 Inputlayout을 넘기기 시작
+						// VertexBuffer는 최대 15까지 즉 , 0 ~ 15 까지 16개가 가능하다
 						MUST(Device->CreateInputLayout(Descriptor, 2, Bytecode, sizeof(Bytecode), &InputLayout));
 
 						DeviceContext->IASetInputLayout(InputLayout);
@@ -180,11 +187,16 @@ namespace Pipeline
 						ID3D11VertexShader* VertexShader = nullptr;
 
 						MUST(Device->CreateVertexShader(Bytecode, sizeof(Bytecode), nullptr, &VertexShader));
+						// Bytecode : vertexshader 를 만들기 위해 필요하다
 
 						DeviceContext->VSSetShader(VertexShader, nullptr, 0);
+
+						VertexShader->Release();
 					}
 				}
+#pragma endregion
 
+#pragma region Pixel Shdaer Setting
 				{
 					#include "Shader/Bytecode/Pixel.h"
 					{
@@ -196,17 +208,16 @@ namespace Pipeline
 
 						PixelShader->Release();
 					}
-				
 				}
-
-				// Vertex Buffer
-				{ // CPU에서 작업중..
-					struct Vertex
-					{
-						float position[4];
-						float Color[4];
-					};
-#pragma region Vertex 선언
+#pragma endregion
+				
+#pragma region Vertex 선언 ***			
+					// struct Vertex
+					// {
+					// 	float position[4];
+					// 	float Color[4];
+					// };
+					
 					// Vertex const Vertices[4]
 					// {
 					// 	{{ -0.5f, +0.5f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
@@ -222,16 +233,17 @@ namespace Pipeline
 					// Descriptor.CPUAccessFlags = 0;
 					// Descriptor.MiscFlags = 0;
 					// Descriptor.StructureByteStride = 0;						// input layout에서 설정하고 있기 떄문에 따로 설정 X
-																				// 넘겨준 데이터를 어느 지점에서 나눠서 구별할지 설정
-																		
+																				// 넘겨준 데이터를 어느 지점에서 나눠서 구별할지 설정																		
 #pragma endregion
-				
-					float const Coordinates[4][4]
+
+#pragma region Vertex Buffer Setting
+				{
+					float const Coordinates[4][2]
 					{
-						{ -0.5f, +0.5f, 0.0f, 1.0f},
-						{ +0.5f, +0.5f, 0.0f, 1.0f},
-						{ -0.5f, -0.5f, 0.0f, 1.0f},
-						{ +0.5f, -0.5f, 0.0f, 1.0f}
+						{ -0.5f, +0.5f},
+						{ +0.5f, +0.5f},
+						{ -0.5f, -0.5f},
+						{ +0.5f, -0.5f}
 					};
 
 					D3D11_BUFFER_DESC Descriptor
@@ -263,7 +275,7 @@ namespace Pipeline
 				{
 					D3D11_BUFFER_DESC const Descriptor
 					{
-						sizeof(float[4][4]),
+						sizeof(float[4][2]),
 						D3D11_USAGE_DYNAMIC,
 						D3D11_BIND_VERTEX_BUFFER,
 						D3D11_CPU_ACCESS_WRITE
@@ -271,7 +283,8 @@ namespace Pipeline
 
 					MUST(Device->CreateBuffer(&Descriptor, nullptr, &Buffer::Vertex));
 
-					UINT const Stride = sizeof(float[4]);
+					UINT const Stride = sizeof(float[2]);
+
 					UINT const Offset = 0;
 
 					DeviceContext->IASetVertexBuffers(1, 1, &Buffer::Vertex, &Stride, &Offset);
@@ -284,8 +297,9 @@ namespace Pipeline
 					DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 					// list -> strip : 기존에 도형을 삼각형으로 생각하지 않고 연결된 삼각형으로 설정
 				}
+#pragma endregion
 
-#pragma region Index Buffer
+#pragma region Index Buffer**
 				// Index Buffer
 				//{
 				//	typedef USHORT Index[3];
@@ -316,35 +330,135 @@ namespace Pipeline
 				//
 				//}
 #pragma endregion
+
+#pragma region Create ShaderResourceView
+				{
+					char const* const File = "Run.png";
+					FreeImage_Initialise();
+					{
+						FIBITMAP* Bitmap = FreeImage_Load(
+							FreeImage_GetFileType(File),
+							File);
+						{
+							// 뒷면으로 로드되는 이미지를 다시 뒤집기
+							FreeImage_FlipVertical(Bitmap);
+
+							// Buffer가 아닌 Texture로 전달
+							// 따라서 텍스처에 대한 디스크립션 작성
+							D3D11_TEXTURE2D_DESC Descriptor = D3D11_TEXTURE2D_DESC();
+
+							Descriptor.Width = FreeImage_GetWidth(Bitmap);
+							Descriptor.Height = FreeImage_GetHeight(Bitmap);
+							// MipLevels : 픽셀이 너무 많은 이미지를 띄우기 위해 텍스처를 축소하는 레벨
+										// -> 데이터를 축소하므로서 렌더링 속도 증가
+							Descriptor.MipLevels = 1;
+
+							Descriptor.ArraySize = 1;
+							Descriptor.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+
+							// 안티얼리어싱
+							Descriptor.SampleDesc.Count = 1;
+							Descriptor.SampleDesc.Quality = 0;
+
+							Descriptor.Usage = D3D11_USAGE_IMMUTABLE;
+
+							// 용도 : 셰이더를 읽음
+							Descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+							Descriptor.CPUAccessFlags = 0;
+							Descriptor.MiscFlags = 0;
+
+							/// 버퍼랑 차이점 : 위드, 헤이트, 안티얼리어싱 등
+
+							D3D11_SUBRESOURCE_DATA SubResource = D3D11_SUBRESOURCE_DATA();
+
+							// 서브리소스
+							// 비트맵 : 읽지 못하는 영어 데이터값을 해석할 수 있는 데이터 시트(?)
+							SubResource.pSysMem = FreeImage_GetBits(Bitmap);
+
+							// 넘길 이미지를 창의 크기에 딱 맞게 설정
+							SubResource.SysMemPitch = FreeImage_GetPitch(Bitmap);
+							// 넘길 이미지의 띄울 깊이를 설정
+							SubResource.SysMemSlicePitch = 0;
+
+							ID3D11Texture2D* Texture2D = nullptr;
+							MUST(Device->CreateTexture2D(&Descriptor, &SubResource, &Texture2D));
+							{
+								ID3D11ShaderResourceView* ShaderResourceView = nullptr;
+								MUST(Device->CreateShaderResourceView(Texture2D, nullptr, &ShaderResourceView));
+								{
+									// 만든 후 렌더링 파이프라인(PS)에 결합 / PS에서 받아거 렌더타겟으로 배송 
+									DeviceContext->PSSetShaderResources(0, 1, &ShaderResourceView);
+									// 몇번째 슬롯에 넘길지, 몇개를 넘길지, 무엇을 넘길지
+								}
+								ShaderResourceView->Release();
+							}
+							Texture2D->Release();
+						}
+						FreeImage_Unload(Bitmap);
+					}
+					FreeImage_DeInitialise();
+				}
+#pragma endregion
 				return 0;
 			}
+			// (PeekMessage에서 메세지를 받고 있지 않을 때)사용자가 정의하는 메세지
 			case WM_APP: 
 			{
-				D3D11_MAPPED_SUBRESOURCE Subresource = D3D11_MAPPED_SUBRESOURCE();
-				MUST(DeviceContext->Map(Buffer::Vertex, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource)); // discard : 가져온 값을 저장하지 않고 삭제
-				// 배열로 넘겨주고 싶을 때 배열의 몇번째 부터 넘겨줄것인지 Map을 통해 설정
+#pragma region CPU Access
 				{
-					static float element = 0.0000f;
-					static float delta = 0.001f;
-
-					float const Colors[4][4]
+					D3D11_MAPPED_SUBRESOURCE Subresource = D3D11_MAPPED_SUBRESOURCE();
+					MUST(DeviceContext->Map(Buffer::Vertex, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource)); // discard : 가져온 값을 저장하지 않고 삭제
+					// 배열로 넘겨주고 싶을 때 배열의 몇번째 부터 넘겨줄것인지 Map을 통해 설정
 					{
-						{element,	0.0f,		0.0f,		1.0f},
-						{0.0f,		element,	0.0f,		1.0f},
-						{0.0f,		0.0f,		element,	1.0f},
-						{element,	element,	element,	1.0f},
-					};
+						static struct
+						{
+							float const Width = 115;
+							float const Height = 147;
+						}
+						Frame;
 
-					element += delta;
+						// static을 통해 지역 밖에서도 값을 유지
+						// (= unsigned int)
+						static unsigned Count	= 0;
+						static unsigned Motion	= 8;
+						static unsigned FPM		= 2048;
+						static unsigned Row		= 0;
 
-					if (element < 0.0f || 1.0f <= element)
-						delta *= -1;
+						// static float element = 0.0000f;
+						//float const Colors[4][4]
+						//{
+						//	{element,	0.0f,		0.0f,		1.0f},
+						//	{0.0f,		element,	0.0f,		1.0f},
+						//	{0.0f,		0.0f,		element,	1.0f},
+						//	{element,	element,	element,	1.0f},
+						//};
 
-					memcpy_s(Subresource.pData, Subresource.RowPitch, Colors, sizeof(Colors));
+						float const Colors[4][2]
+						{
+							{Frame.Width * (Count / FPM + 0),	Frame.Height * (Row + 0)},
+							{Frame.Width * (Count / FPM + 1),	Frame.Height * (Row + 0)},
+							{Frame.Width * (Count / FPM + 0),	Frame.Height * (Row + 1)},
+							{Frame.Width * (Count / FPM + 1),	Frame.Height * (Row + 1)}
+						};
+
+						Count+=1;
+						if (FPM * Motion - 1 < Count)
+						{
+							Row+= 1;
+							Count = 0;
+						}
+						if (Row >= 2)
+						{
+							Row = 0;
+						}
+						memcpy_s(Subresource.pData, Subresource.RowPitch, Colors, sizeof(Colors));
+					}
+					DeviceContext->Unmap(Buffer::Vertex, 0);
 				}
-				DeviceContext->Unmap(Buffer::Vertex, 0);
-			
+#pragma endregion
 
+#pragma region SwapChain Event
 				{
 					float const Color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
@@ -354,33 +468,37 @@ namespace Pipeline
 					DeviceContext->Draw(4, 0);
 					// Draw : Vertex에 대한 정보를 받는 메서드
 					// Draw와 DrawIndex의 차이
+					// DRAW :한 번 사용한 정점은 다시 사용 불가
+					// DRAWINDEX: 정점에 순서를 매겨 정점을 재사용 가능
 
-					MUST(SwapChain->Present(1, 0));
+					MUST(SwapChain->Present(0, 0));
 					// flag : 이미지 넘겨줄 때 추가 옵션의 사용 여부
 				}
-
+#pragma endregion
 				return 0;
 			}
+			// 창이 없어질 때 발생하는 메세지
+			// WM_QUIT : 종료 메세지(운용 프로그램) / WM_DESTROY : 소멸 메세지(Only 창)
 			case WM_DESTROY:
 			{
+#pragma region Release
 				RenderTargetView->Release();
-			
 				InputLayout->Release();
-
-				//Buffer::Vertex->Release();
+				Buffer::Vertex->Release();
 				//Buffer::Index->Release();
-				
 				SwapChain->Release();
 				Device->Release();
 				DeviceContext->Release();
-				
+#pragma endregion		
+				// WM_QUIT을 호출하는 함수 : 프로그램 종료
 				PostQuitMessage(0);
-				
 				return 0;
 			}
+#			// 창의 사이즈가 변경될 때 발생하는 메세지
 			case WM_SIZE:
 			{
 				{
+#pragma region Viewport Setting
 					{
 						D3D11_VIEWPORT Viewport = D3D11_VIEWPORT();
 
@@ -389,20 +507,25 @@ namespace Pipeline
 					
 						DeviceContext->RSSetViewports(1, &Viewport);
 					}
+#pragma endregion
 
+#pragma region Swap Chain Setting
 					if (RenderTargetView)
 					{
 						RenderTargetView->Release();
 
-						SwapChain->ResizeBuffers
+						MUST(SwapChain->ResizeBuffers
 						(
 							1,								// 버퍼의 개수
 							LOWORD(lParameter),				// 윈도우 창의 WIDTH
 							HIWORD(lParameter),				// 윈도우 창의 HEIGHT
 							DXGI_FORMAT_B8G8R8A8_UNORM,
 							0
-						);
+						));
 					}
+#pragma endregion
+
+#pragma region Create RenderTargetView
 					{
 						ID3D11Texture2D* texture2D = nullptr;
 						MUST(SwapChain->GetBuffer(0,IID_PPV_ARGS(&texture2D))); 
@@ -415,42 +538,27 @@ namespace Pipeline
 
 						DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr); // 작업할 영역 = 1
 					}
+#pragma endregion
 				}
 
 				return 0;
 			}
+			// 메세지는 들어오는데 case가 지정되지 않은 메세지
 			default:
 			{
+				// 처리가 필요하기 때문에 그 메세지를 default 처리하는 함수
 				return DefWindowProc(hWindow, uMessage, wParameter, lParameter);
 			}
 		}
 		return 0;
 	}
 }
+#pragma region 속성 설정 ***
 
 // 속성 -> 링커 -> 시스템 -> 하위 시스템 -> '창'으로 변경
-// 속성 -> 링커 -> 모든 속성 -> 추가 종속성 -> 편집 -> d3d11.lib 추가    
+
 // 속성 -> 구성 속성 -> 고급 -> 문자 집합 -> '멀티바이트 문자 집합 사용'으로 변경
 
+// 속성 -> 링커 -> 모든 속성 -> 추가 종속성 -> 편집 -> d3d11.lib 추가    
 
-/*
-// c, c++
-// 알고리즘
-// 쓰레드
-// 다이렉트 x : 그래픽 랜더링
-
-지역, 전역, 동적 할당된 변수
-1. 할당되는 매모리 구조
-2. 라이프사이클
-3. 지역변수는 스택 동적은 힙 : 동적은 먼저 생성된 값이 제일 높은 주소값을 가짐 11111 -> 11110 -> 11100
-런타임, 컴파일타임
-지역변수는 스택, 동적은 힙으로 메모리가 할당되는 이유?
-4. 객체 지향 프로그래밍의 특성
-커플링 현상
-
-랜더링 파이프 라인 (그래픽스 프로그래밍)
-
-행렬 : 덧셈, 뺄셈, 곱셈 (교환법칙 O)
-
-
-*/
+#pragma endregion
