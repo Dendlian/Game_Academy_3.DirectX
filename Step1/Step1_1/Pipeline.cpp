@@ -333,7 +333,7 @@ DXGI_SWAP_CHAIN_DESC
 
 #pragma region Create ShaderResourceView
 				{
-					char const* const File = "Run.png";
+					char const* const File = "Horse.png";
 					FreeImage_Initialise();
 					{
 						FIBITMAP* Bitmap = FreeImage_Load(
@@ -413,16 +413,16 @@ DXGI_SWAP_CHAIN_DESC
 					{
 						static struct
 						{
-							float const Width = 115;
-							float const Height = 147;
+							float const Width = 128;
+							float const Height = 128;
 						}
 						Frame;
 
 						// static을 통해 지역 밖에서도 값을 유지
 						// (= unsigned int)
 						static unsigned Count	= 0;
-						static unsigned Motion	= 8;
-						static unsigned FPM		= 2048;
+						static unsigned FPM		= 512;
+						static unsigned Motion	= 4;
 						static unsigned Row		= 0;
 
 						// static float element = 0.0000f;
@@ -445,10 +445,13 @@ DXGI_SWAP_CHAIN_DESC
 						Count+=1;
 						if (FPM * Motion - 1 < Count)
 						{
+							Motion = 4;
 							Row+= 1;
+							if (Row == 2)
+								Motion = 3;
 							Count = 0;
 						}
-						if (Row >= 2)
+						if (Row >= 3)
 						{
 							Row = 0;
 						}
