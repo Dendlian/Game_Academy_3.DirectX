@@ -1,4 +1,5 @@
 #include <d3d11.h>
+#include <iostream>
 #pragma region cassert ***
 /*
 cassert 
@@ -39,6 +40,20 @@ namespace Pipeline
 		{
 			ID3D11Buffer* Vertex;
 		    //ID3D11Buffer* Index;
+			ID3D11Buffer* Constant[3];
+
+			template<typename Data>
+			void Update(ID3D11Buffer* const buffer, Data const& data)
+			// Data 를 buffer에 저장 / buffer의 내용을 data로 초기화
+			{
+				D3D11_MAPPED_SUBRESOURCE Subresource = D3D11_MAPPED_SUBRESOURCE();
+				MUST(DeviceContext->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource));
+				// Subresource를 변경하면 buffer도 함께 자동으로 변경
+				{
+					memcpy_s(Subresource.pData, Subresource.RowPitch, data, sizeof(data));
+				}
+				DeviceContext->Unmap(buffer, 0);
+			}
 		}
 	}
 	
@@ -80,6 +95,7 @@ DXGI_SWAP_CHAIN_DESC
 		DXGI_MODE_SCALING_STRETCHED     = 2		// 배울 지정 : 창을 확대하면 기존 이미지가 확대
 		}
 	}
+
  - DXGI_SAMPLE_DESC SampleDesc;
 	// 안티얼리어싱
 	// 수퍼 샘플링 : 모든 각 픽셀을 나눠서 다시 계산 후 반환
@@ -87,15 +103,39 @@ DXGI_SWAP_CHAIN_DESC
 	{
 	UINT Count;		// 멀티 샘플링을 할 때 1개의 Pixel을 몇 개로 나눌지 설정
 					// (Pixel 당 멀티 샘플링 수)
-	UINT Quality;	// 
+	UINT Quality;	// 기본값 = 0 : 이미지의 품질로 최소한의 품질 개선만 실행
 	}
+
  - DXGI_USAGE BufferUsage;
+	// 그린 물체를 넘겨주는 방식을 설정
+	// 렌더링 타겟을 출력하는 용도로 사용
+	// => DXGI_USAGE_RENDER_TARGET_OUTPUT
+
  - UINT BufferCount;
+	// 버퍼의 사용 개수
+	// 0 : 버퍼 0개 사용
+	// 1 : 버퍼 2개 사용
+
  - HWND OutputWindow;
+	// 어느 창에 띄어줄지 설정
+
  - BOOL Windowed;
+	// 창모드 사용여부
+
  - DXGI_SWAP_EFECT SwapEffect; 
 	// Buffer에서 넘긴 데이터를 계속 가지고 있을지의 여부를 설정
+	// 기본값 0 = DISCARD : 데이터를 소지하지 않고 폐기
+	// ex) back buffer에서 연산을 한 데이터를 front buffer로 넘긴 후 삭제
+	{
+	DXGI_SWAP_EFFECT_DISCARD			= 0,	// 데이터 삭제
+    DXGI_SWAP_EFFECT_SEQUENTIAL			= 1,	// 데이터 소지
+    DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL	= 3, 
+    DXGI_SWAP_EFFECT_FLIP_DISCARD		= 4	
+	}
+
  - UINT Flags;
+	// 추가 옵션
+	// 기본값 0 : Flag 사용 X
 */
 #pragma endregion				
 				{
@@ -126,10 +166,11 @@ DXGI_SWAP_CHAIN_DESC
 					
 					// 창모드 사용여부
 					Descriptor.Windowed = true;
-					
+				
+
 					HRESULT hr = D3D11CreateDeviceAndSwapChain
 					(
-						nullptr,					// 어뎁터 미사용
+						nullptr,					// 어뎁터(Display에 대한 서브 시스템) 미사용
 						D3D_DRIVER_TYPE_HARDWARE,	// 드라이브 타입으로 하드웨어를 설정 (하드웨어의 도움을 받아 랜더링하도록 설정)
 						nullptr,					// 추가적인 소프트웨어 타입 기능 미사용
 						0,							// 플래그 미사용
@@ -331,9 +372,26 @@ DXGI_SWAP_CHAIN_DESC
 				//}
 #pragma endregion
 
+#pragma region Constant Buffer Setting
+				{
+					D3D11_BUFFER_DESC const Descriptor
+					{
+						sizeof(float[4][4]),
+						D3D11_USAGE_DYNAMIC,
+						D3D11_BIND_CONSTANT_BUFFER,
+						D3D11_CPU_ACCESS_WRITE
+					};
+					
+					for (UINT u = 0; u < 3; u++) 
+						MUST(Device->CreateBuffer(&Descriptor, nullptr, &Buffer::Constant[u]));
+					
+					DeviceContext->VSSetConstantBuffers(0, 3, Buffer::Constant);
+				}
+#pragma endregion
+
 #pragma region Create ShaderResourceView
 				{
-					char const* const File = "Horse.png";
+					char const* const File = "Walk.png";
 					FreeImage_Initialise();
 					{
 						FIBITMAP* Bitmap = FreeImage_Load(
@@ -407,57 +465,109 @@ DXGI_SWAP_CHAIN_DESC
 			{
 #pragma region CPU Access
 				{
-					D3D11_MAPPED_SUBRESOURCE Subresource = D3D11_MAPPED_SUBRESOURCE();
-					MUST(DeviceContext->Map(Buffer::Vertex, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource)); // discard : 가져온 값을 저장하지 않고 삭제
+
+#pragma region 픽셀화된 이미지 그리기
+/*	
+				static float element = 0.0000f;
+				static float delte = 0.0001f;
+
+				float const Colors[4][4]
+				{
+					{element,	0.0f,		0.0f,		1.0f},
+					{0.0f,		element,	0.0f,		1.0f},
+					{0.0f,		0.0f,		element,	1.0f},
+					{element,	element,	element,	1.0f},
+				};	
+
+				// ClearRenderTargetView : 작업할 영역(스크린 전체)을 초기화
+				DeviceContext->ClearRenderTargetView(RenderTargetView, Color);
+
+				// 연산하는 버퍼에서 출력하는 버퍼로 넘기는 작업
+				MSUT(SwapChain->Present(1,0));
+
+				element += delta;
+
+				std::cout << element << std::endl;
+
+				if(element < 0.0f || 1.0f <= element)
+					delta *= -1;
+
+				실행결과 : 검정색 화면에서 조금씩 흰색으로 전환되는 창 생성
+*/
+#pragma endregion
+					// D3D11_MAPPED_SUBRESOURCE Subresource = D3D11_MAPPED_SUBRESOURCE();
+					// MUST(DeviceContext->Map(Buffer::Vertex, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource)); // discard : 가져온 값을 저장하지 않고 삭제
 					// 배열로 넘겨주고 싶을 때 배열의 몇번째 부터 넘겨줄것인지 Map을 통해 설정
 					{
 						static struct
 						{
-							float const Width = 128;
-							float const Height = 128;
+							float const Width = 156;
+							float const Height = 160;
 						}
 						Frame;
 
 						// static을 통해 지역 밖에서도 값을 유지
 						// (= unsigned int)
 						static unsigned Count	= 0;
-						static unsigned FPM		= 512;
-						static unsigned Motion	= 4;
+						static unsigned FPM		= 256;
+						static unsigned Motion	= 9;
 						static unsigned Row		= 0;
 
-						// static float element = 0.0000f;
-						//float const Colors[4][4]
-						//{
-						//	{element,	0.0f,		0.0f,		1.0f},
-						//	{0.0f,		element,	0.0f,		1.0f},
-						//	{0.0f,		0.0f,		element,	1.0f},
-						//	{element,	element,	element,	1.0f},
-						//};
-
-						float const Colors[4][2]
+						float const Coordinates[4][2]
 						{
-							{Frame.Width * (Count / FPM + 0),	Frame.Height * (Row + 0)},
-							{Frame.Width * (Count / FPM + 1),	Frame.Height * (Row + 0)},
-							{Frame.Width * (Count / FPM + 0),	Frame.Height * (Row + 1)},
-							{Frame.Width * (Count / FPM + 1),	Frame.Height * (Row + 1)}
+							{Frame.Width * (Count / FPM + 0),	Frame.Height * 0},
+							{Frame.Width * (Count / FPM + 1),	Frame.Height * 0},
+							{Frame.Width * (Count / FPM + 0),	Frame.Height * 1},
+							{Frame.Width * (Count / FPM + 1),	Frame.Height * 1}
 						};
 
 						Count+=1;
 						if (FPM * Motion - 1 < Count)
-						{
-							Motion = 4;
-							Row+= 1;
-							if (Row == 2)
-								Motion = 3;
 							Count = 0;
-						}
-						if (Row >= 3)
-						{
-							Row = 0;
-						}
-						memcpy_s(Subresource.pData, Subresource.RowPitch, Colors, sizeof(Colors));
+						
+						Buffer::Update(Buffer::Vertex, Coordinates);
+						// memcpy_s(Subresource.pData, Subresource.RowPitch, Colors, sizeof(Colors));
 					}
-					DeviceContext->Unmap(Buffer::Vertex, 0);
+					// DeviceContext->Unmap(Buffer::Vertex, 0);
+					{
+						float const W = 156;
+						float const H = 160;
+
+						float const X = 0; 
+						float const Y = 0;
+
+						float const Transform[4][4]
+						{
+							W, 0, 0, X,
+							0, H, 0, Y,
+							0, 0, 1, 0,
+							0, 0, 0, 1
+						};
+						Buffer::Update(Buffer::Constant[0], Transform);
+					}
+					{
+						float const Transform[4][4]
+						{
+							1, 0, 0, 0,
+							0, 1, 0, 0,
+							0, 0, 1, 0,
+							0, 0, 0, 1
+						};
+						Buffer::Update(Buffer::Constant[1], Transform);
+					}
+					{
+						float const X = 2.0f / 500.0f;
+						float const Y = 2.0f / 500.0f;
+
+						float const Transform[4][4]
+						{
+							X, 0, 0, 0,
+							0, Y, 0, 0,
+							0, 0, 1, 0,
+							0, 0, 0, 1
+						};
+						Buffer::Update(Buffer::Constant[2], Transform);
+					}
 				}
 #pragma endregion
 
@@ -497,7 +607,7 @@ DXGI_SWAP_CHAIN_DESC
 				PostQuitMessage(0);
 				return 0;
 			}
-#			// 창의 사이즈가 변경될 때 발생하는 메세지
+			// 창의 사이즈가 변경될 때 발생하는 메세지
 			case WM_SIZE:
 			{
 				{
@@ -522,7 +632,7 @@ DXGI_SWAP_CHAIN_DESC
 							1,								// 버퍼의 개수
 							LOWORD(lParameter),				// 윈도우 창의 WIDTH
 							HIWORD(lParameter),				// 윈도우 창의 HEIGHT
-							DXGI_FORMAT_B8G8R8A8_UNORM,
+							DXGI_FORMAT_B8G8R8A8_UNORM,		// 1로 정규화
 							0
 						));
 					}
