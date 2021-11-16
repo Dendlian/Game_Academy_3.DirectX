@@ -456,7 +456,7 @@ DXGI_SWAP_CHAIN_DESC
 						FreeImage_Unload(Bitmap);
 					}
 					FreeImage_DeInitialise();
-				}
+				} 
 #pragma endregion
 				return 0;
 			}
