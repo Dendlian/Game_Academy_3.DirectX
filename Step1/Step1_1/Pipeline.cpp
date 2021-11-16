@@ -449,7 +449,7 @@ DXGI_SWAP_CHAIN_DESC
 									DeviceContext->PSSetShaderResources(0, 1, &ShaderResourceView);
 									// 몇번째 슬롯에 넘길지, 몇개를 넘길지, 무엇을 넘길지
 								}
-								ShaderResourceView->Release();
+								ShaderResourceView->Release(); 
 							}
 							Texture2D->Release();
 						}
