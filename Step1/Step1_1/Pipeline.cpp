@@ -453,7 +453,7 @@ DXGI_SWAP_CHAIN_DESC
 							}
 							Texture2D->Release();
 						}
-						FreeImage_Unload(Bitmap);
+						FreeImage_Unload(Bitmap);  
 					}
 					FreeImage_DeInitialise();
 				} 
