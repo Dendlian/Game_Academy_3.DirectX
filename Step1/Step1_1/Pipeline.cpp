@@ -727,7 +727,7 @@ void IASetIndexBuffer
 				//Buffer::Index->Release();
 				SwapChain->Release();
 				Device->Release();
-				DeviceContext->Release();
+				DeviceContext->Release(); 
 #pragma endregion		
 				// WM_QUIT을 호출하는 함수 : 프로그램 종료
 				PostQuitMessage(0);
