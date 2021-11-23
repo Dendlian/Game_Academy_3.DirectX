@@ -733,7 +733,7 @@ void IASetIndexBuffer
 				PostQuitMessage(0);
 				return 0;
 			}
-			// 창의 사이즈가 변경될 때 발생하는 메세지 
+			// 창의 사이즈가 변경될 때 발생하는 메세지
 			case WM_SIZE:
 			{
 				{
