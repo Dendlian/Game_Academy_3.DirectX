@@ -747,7 +747,7 @@ void IASetIndexBuffer
 						DeviceContext->RSSetViewports(1, &Viewport);
 					}
 #pragma endregion
-
+ 
 #pragma region Swap Chain Setting
 					if (RenderTargetView)
 					{
