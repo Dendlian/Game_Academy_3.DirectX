@@ -736,7 +736,7 @@ void IASetIndexBuffer
 			// 창의 사이즈가 변경될 때 발생하는 메세지
 			case WM_SIZE:
 			{ 
-				{
+				{ 
 #pragma region Viewport Setting
 					{
 						D3D11_VIEWPORT Viewport = D3D11_VIEWPORT();
