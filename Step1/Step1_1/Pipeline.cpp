@@ -806,7 +806,7 @@ void IASetIndexBuffer
 						DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr); 
 					}
 #pragma endregion
-				}
+				} 
 
 				return 0;
 			}
