@@ -795,7 +795,7 @@ void IASetIndexBuffer
 								DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
 							}
 					*/
-#pragma endregion
+#pragma endregion 
 
 #pragma region Create RenderTargetView
 					{
