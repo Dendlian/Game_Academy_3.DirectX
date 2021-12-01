@@ -795,8 +795,8 @@ void IASetIndexBuffer
 								DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
 							}
 					*/
-#pragma endregion 
-
+#pragma endregion
+					 
 #pragma region Create RenderTargetView
 					{
 						ID3D11Texture2D* texture2D = nullptr;	
