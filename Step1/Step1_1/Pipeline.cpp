@@ -469,7 +469,6 @@ void IASetIndexBuffer
 					MUST(Device->CreateBuffer(&Descriptor, nullptr, &Buffer::Vertex));
 
 					UINT const Stride = sizeof(float[2]);
-
 					UINT const Offset = 0;
 
 					DeviceContext->IASetVertexBuffers(1, 1, &Buffer::Vertex, &Stride, &Offset);
@@ -537,16 +536,17 @@ void IASetIndexBuffer
 							Descriptor.CPUAccessFlags = 0;
 							Descriptor.MiscFlags = 0;
 
-							/// 버퍼랑 차이점 : 위드, 헤이트, 안티얼리어싱 등
+							/// 버퍼랑 차이점 : Width, Height, Anti-Aliasing 등
 
 							D3D11_SUBRESOURCE_DATA SubResource = D3D11_SUBRESOURCE_DATA();
 
 							// 서브리소스
-							// 비트맵 : 읽지 못하는 영어 데이터값을 해석할 수 있는 데이터 시트(?)
+							// 비트맵 : 읽지 못하는 영어 데이터값을 해석할 수 있는 데이터 시트
 							SubResource.pSysMem = FreeImage_GetBits(Bitmap);
 
-							// 넘길 이미지를 창의 크기에 딱 맞게 설정
+							// 넘길 이미지를 창의 크기에 딱 맞게 설정(가로)
 							SubResource.SysMemPitch = FreeImage_GetPitch(Bitmap);
+							
 							// 넘길 이미지의 띄울 깊이를 설정
 							SubResource.SysMemSlicePitch = 0;
 
@@ -556,7 +556,7 @@ void IASetIndexBuffer
 								ID3D11ShaderResourceView* ShaderResourceView = nullptr;
 								MUST(Device->CreateShaderResourceView(Texture2D, nullptr, &ShaderResourceView));
 								{
-									// 만든 후 렌더링 파이프라인(PS)에 결합 / PS에서 받아거 렌더타겟으로 배송 
+									// 만든 후 렌더링 파이프라인(PS)에 결합 / PS에서 받아서 렌더타겟으로 배송 
 									DeviceContext->PSSetShaderResources(0, 1, &ShaderResourceView);
 									// 몇번째 슬롯에 넘길지, 몇개를 넘길지, 무엇을 넘길지
 								}
@@ -727,7 +727,7 @@ void IASetIndexBuffer
 				//Buffer::Index->Release();
 				SwapChain->Release();
 				Device->Release();
-				DeviceContext->Release(); 
+				DeviceContext->Release();
 #pragma endregion		
 				// WM_QUIT을 호출하는 함수 : 프로그램 종료
 				PostQuitMessage(0);
@@ -735,8 +735,8 @@ void IASetIndexBuffer
 			}
 			// 창의 사이즈가 변경될 때 발생하는 메세지
 			case WM_SIZE:
-			{ 
-				{ 
+			{
+				{
 #pragma region Viewport Setting
 					{
 						D3D11_VIEWPORT Viewport = D3D11_VIEWPORT();
@@ -747,8 +747,8 @@ void IASetIndexBuffer
 						DeviceContext->RSSetViewports(1, &Viewport);
 					}
 #pragma endregion
-  
-#pragma region Swap Chain Setting
+
+#pragma region SwapChain Setting
 					if (RenderTargetView)
 					{
 						RenderTargetView->Release();
@@ -796,17 +796,18 @@ void IASetIndexBuffer
 							}
 					*/
 #pragma endregion
-					 
+
 #pragma region Create RenderTargetView
 					{
 						ID3D11Texture2D* texture2D = nullptr;	
 						MUST(SwapChain->GetBuffer(0,IID_PPV_ARGS(&texture2D))); 
 						MUST(Device->CreateRenderTargetView(texture2D, nullptr, &RenderTargetView)); 
-						texture2D->Release(); 
-						DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
+						texture2D->Release();
+						DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr); 
 					}
 #pragma endregion
-				}  
+
+				}
 
 				return 0;
 			}

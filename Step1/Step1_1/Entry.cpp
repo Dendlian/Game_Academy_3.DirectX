@@ -1,6 +1,8 @@
 #include <Windows.h>
 namespace Pipeline
 {
+	// WPARAM : 키보드의 특정 키가 눌리거나 마우스의 어느 키가 눌렸는지 확인하는 인자
+	// LPARAM : 사용량이 많고 필요로 하는 값인 X, Y의 좌표값을 저장하는 인자
 	LRESULT CALLBACK Procedure(HWND const, UINT const, WPARAM const, LPARAM const);
 }
 
@@ -87,7 +89,7 @@ int APIENTRY WinMain
 
 		// 만든 창을 출력
 		// SW_RESTORE : 화면을 최대(소)화 했다가 다시 되돌리면 창이 원래의 크기를 유지
-		ShowWindow(hWindow, SW_RESTORE);
+		ShowWindow(hWindow, SW_RESTORE); 
 	}
 
 	// Pipeline : Window Procedure를 통해 메세지 처리를 받는 함수를 생성
