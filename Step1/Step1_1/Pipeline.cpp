@@ -802,8 +802,8 @@ void IASetIndexBuffer
 						ID3D11Texture2D* texture2D = nullptr;	
 						MUST(SwapChain->GetBuffer(0,IID_PPV_ARGS(&texture2D))); 
 						MUST(Device->CreateRenderTargetView(texture2D, nullptr, &RenderTargetView)); 
-						texture2D->Release();
-						DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr); 
+						texture2D->Release(); 
+						DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
 					}
 #pragma endregion
 				}  
