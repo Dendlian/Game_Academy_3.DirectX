@@ -816,7 +816,7 @@ void IASetIndexBuffer
 			{
 				// 처리가 필요하기 때문에 그 메세지를 default 처리하는 함수
 				// case가 지정되지 않은 메세지들을 삭제 처리
-				return DefWindowProc(hWindow, uMessage, wParameter, lParameter);
+				return DefWindowProc(hWindow, uMessage, wParameter, lParameter); 
 			}
 		}
 		return 0;
