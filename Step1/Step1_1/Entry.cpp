@@ -66,7 +66,7 @@ int APIENTRY WinMain
 			window.cy = rect.bottom - rect.top;
 
 			// Window창을 모니터의 정 중앙에 배치
-			window.x = (GetSystemMetrics(SM_CXSCREEN) - window.cx) / 2;
+			window.x = (GetSystemMetrics(SM_CXSCREEN) - window.cx) / 2; 
 			window.y = (GetSystemMetrics(SM_CYSCREEN) - window.cy) / 2;
 		}
 
