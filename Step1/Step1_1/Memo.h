@@ -1,3 +1,19 @@
+#pragma region ETC Concept
+/*
+// 코딩 문자 색
+노란색 : 함수
+보라색 : 메크로 상수, 메크로 함수 (Symbol)
+파랑색 : 키워드 (자료형, true, sizeof)
+ - 키워드 : C, C++에서 제공하는 기본 형식으로 자료형으로 사용하는 것이 불가
+녹  색 : struct, class, typedef
+하늘색 : 지역변수
+흰  색 : 전역변수
+연두색 : 상수
+자주색 : 프로그램 흐름을 조정하는 키워드 (return, break, continue)
+*/
+#pragma endregion
+
+
 // Entry.cpp
 #pragma region Basic Concept
 /*
@@ -60,6 +76,7 @@
 			[3] constant : 행렬을 저장할 수 있는 상수 버퍼 (위치, 크기, 회전)
 */
 #pragma endregion 
+
 
 // Pipeline.cpp
 #pragma region Basic Concept
@@ -177,21 +194,6 @@ Projection
 */
 #pragma endregion
 
-#pragma region ETC Concept
-/*
-// 코딩 문자 색
-노란색 : 함수 
-보라색 : 메크로 상수, 메크로 함수 (Symbol)
-파랑색 : 키워드 (자료형, true, sizeof) 
- - 키워드 : C, C++에서 제공하는 기본 형식으로 자료형으로 사용하는 것이 불가
-녹  색 : struct, class, typedef
-하늘색 : 지역변수
-흰  색 : 전역변수
-연두색 : 상수
-자주색 : 프로그램 흐름을 조정하는 키워드 (return, break, continue)
-*/
-#pragma endregion
-
 #pragma region Matrix
 /*
 	{
@@ -210,3 +212,29 @@ Projection
 */
 #pragma endregion
 
+
+
+#pragma region Rendering Pipeline Review
+/*
+IA :
+ - InputLayout : Descriptor, Bytecode등을 담아 GPU가 번역 할 수 있도록 가이드라인 제시
+			   : GPU에 Vertex 구조의 레이아웃을 설명하는 오브젝트
+VS :
+
+RS :
+
+PS :
+
+OM :
+
+ - Subresource : buffer등의 전달체에 position, Color등의 값을 저장하기 위해 쓰는 요소
+
+*/
+#pragma endregion
+
+#pragma region Direct X Step1_1
+/*
+
+
+*/
+#pragma endregion
