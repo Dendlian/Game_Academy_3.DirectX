@@ -11,7 +11,7 @@ cassert
 */
 #pragma endregion
 #include <cassert>
-#include "FreeImage.h"
+#include "FreeImage.h" 
 using namespace std;
 
 #pragma region Console
