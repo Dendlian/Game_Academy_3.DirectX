@@ -29,7 +29,7 @@ using namespace std;
 // Pipeline  : Rendering을 위한 단계
 namespace Pipeline 
 {
-	// DXGI : 그래픽 인터페이스
+	// DXGI : 그래픽 인터페이스 s
 	namespace
 	{	
 		ID3D11Device				* Device;				// 버퍼 및 자원의 생성을 담당
