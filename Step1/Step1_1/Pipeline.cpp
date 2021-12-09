@@ -18,7 +18,7 @@ using namespace std;
 // 프로그램 실행시 Window창과 Console창이 함께 생성
 // #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 #pragma endregion
-
+ 
 #ifndef _DEBUG
 #define MUST(Expression)(	   (	     (Expression)))
 #else // DEBUG 모드일 때 MUST 매크로 함수를 활성화
