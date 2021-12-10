@@ -5,7 +5,7 @@ namespace Pipeline
 	// LPARAM : 사용량이 많고 필요로 하는 값인 X, Y의 좌표값을 저장하는 인자
 	LRESULT CALLBACK Procedure(HWND const, UINT const, WPARAM const, LPARAM const);
 }
-
+ 
 int APIENTRY WinMain
 (
 	_In_		HINSTANCE const hInstance,
