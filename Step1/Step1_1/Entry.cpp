@@ -114,7 +114,7 @@ int APIENTRY WinMain
 				DispatchMessage(&msg);
 			}
 			else
-			{
+			{ 
 				// 메세지가 없을 때 Pipeline의 WM_APP로 전송 / WM_APP : 사용자 정의 메세지
 				SendMessage(hWindow, WM_APP, 0, 0);
 			}
