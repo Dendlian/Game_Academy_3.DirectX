@@ -9,7 +9,7 @@ cassert
  - assert 메크로 함수를 통해 HRESULT를 검사
  - 잘 만들어져있지 않다면 프로그램을 폭파시켜 강제로 종료
 */
-#pragma endregion
+#pragma endregion 
 #include <cassert>
 #include "FreeImage.h" 
 using namespace std;
