@@ -23,7 +23,7 @@ using namespace std;
 #define MUST(Expression)(	   (	     (Expression)))
 #else // DEBUG 모드일 때 MUST 매크로 함수를 활성화
 #define MUST(Expression)(assert(SUCCEEDED(Expression))) 
-#endif
+#endif 
 
 // namespace : static 기능 / 선언한 공간 안에서 생성된 값들은 외부에서 사용 불가
 // Pipeline  : Rendering을 위한 단계
