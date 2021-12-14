@@ -11,7 +11,7 @@ int APIENTRY WinMain
 	_In_		HINSTANCE const hInstance,
 	_In_opt_	HINSTANCE const hPrevInstance,
 	_In_		LPSTR	  const lpCmdLine,
-	_In_		int		  const nShowCmd
+	_In_		int		  const nShowCmd 
 )
 {
 	HWND hWindow = nullptr;
@@ -21,7 +21,7 @@ int APIENTRY WinMain
 
 		Class.cbSize = sizeof(WNDCLASSEX);
 		Class.lpfnWndProc = Pipeline::Procedure;
-		Class.hInstance = hInstance;
+		Class.hInstance = hInstance; 
 		Class.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 		Class.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		Class.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
