@@ -8,28 +8,31 @@ cassert
  - 모든 comInterface는 잘 만들었는지의 여부(HRESULT : Long type)를 반환
  - assert 메크로 함수를 통해 HRESULT를 검사
  - 잘 만들어져있지 않다면 프로그램을 폭파시켜 강제로 종료
+
+ static_assert		: 런타임 빌드 단계에서 오류를 검사
+ assert				: 컴파일러 단계에서 오류를 검사
 */
-#pragma endregion 
+#pragma endregion
 #include <cassert>
-#include "FreeImage.h" 
+#include "FreeImage.h"
 using namespace std;
 
 #pragma region Console
 // 프로그램 실행시 Window창과 Console창이 함께 생성
 // #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 #pragma endregion
- 
+
 #ifndef _DEBUG
 #define MUST(Expression)(	   (	     (Expression)))
 #else // DEBUG 모드일 때 MUST 매크로 함수를 활성화
-#define MUST(Expression)(assert(SUCCEEDED(Expression))) 
-#endif 
+#define MUST(Expression)(assert(SUCCEEDED(Expression)))
+#endif
 
 // namespace : static 기능 / 선언한 공간 안에서 생성된 값들은 외부에서 사용 불가
 // Pipeline  : Rendering을 위한 단계
 namespace Pipeline 
 {
-	// DXGI : 그래픽 인터페이스 s
+	// DXGI : 그래픽 인터페이스
 	namespace
 	{	
 		ID3D11Device				* Device;				// 버퍼 및 자원의 생성을 담당
@@ -417,6 +420,7 @@ void IASetIndexBuffer
 
 #pragma region Vertex Buffer Setting
 				{
+					// Coordinate : CPU에서 사용할 수 있는 정점에 대한 정보
 					float const Coordinates[4][2]
 					{
 						{ -0.5f, +0.5f},
@@ -816,7 +820,7 @@ void IASetIndexBuffer
 			{
 				// 처리가 필요하기 때문에 그 메세지를 default 처리하는 함수
 				// case가 지정되지 않은 메세지들을 삭제 처리
-				return DefWindowProc(hWindow, uMessage, wParameter, lParameter); 
+				return DefWindowProc(hWindow, uMessage, wParameter, lParameter);
 			}
 		}
 		return 0;

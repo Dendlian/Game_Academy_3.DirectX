@@ -5,27 +5,31 @@ namespace Pipeline
 	// LPARAM : 사용량이 많고 필요로 하는 값인 X, Y의 좌표값을 저장하는 인자
 	LRESULT CALLBACK Procedure(HWND const, UINT const, WPARAM const, LPARAM const);
 }
- 
+
 int APIENTRY WinMain
 (
 	_In_		HINSTANCE const hInstance,
 	_In_opt_	HINSTANCE const hPrevInstance,
 	_In_		LPSTR	  const lpCmdLine,
-	_In_		int		  const nShowCmd 
+	_In_		int		  const nShowCmd
 )
 {
 	HWND hWindow = nullptr;
 
-	{ 
+	{
 		WNDCLASSEX Class = WNDCLASSEX();
 
 		Class.cbSize = sizeof(WNDCLASSEX);
 		Class.lpfnWndProc = Pipeline::Procedure;
-		Class.hInstance = hInstance; 
+		Class.hInstance = hInstance;
+
+		// 밑 창에 뜨는 아이콘
 		Class.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 		Class.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		Class.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
 		Class.lpszClassName = "Window";
+		
+		// 타이틀 바에 뜨는 아이콘
 		Class.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
 
 		RegisterClassEx(&Class);
@@ -66,7 +70,7 @@ int APIENTRY WinMain
 			window.cy = rect.bottom - rect.top;
 
 			// Window창을 모니터의 정 중앙에 배치
-			window.x = (GetSystemMetrics(SM_CXSCREEN) - window.cx) / 2; 
+			window.x = (GetSystemMetrics(SM_CXSCREEN) - window.cx) / 2;
 			window.y = (GetSystemMetrics(SM_CYSCREEN) - window.cy) / 2;
 		}
 
@@ -114,7 +118,7 @@ int APIENTRY WinMain
 				DispatchMessage(&msg);
 			}
 			else
-			{ 
+			{
 				// 메세지가 없을 때 Pipeline의 WM_APP로 전송 / WM_APP : 사용자 정의 메세지
 				SendMessage(hWindow, WM_APP, 0, 0);
 			}
