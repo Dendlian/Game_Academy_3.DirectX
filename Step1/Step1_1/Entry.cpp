@@ -16,7 +16,7 @@ int APIENTRY WinMain
 {
 	HWND hWindow = nullptr;
 
-	{
+	{ 
 		WNDCLASSEX Class = WNDCLASSEX();
 
 		Class.cbSize = sizeof(WNDCLASSEX);
