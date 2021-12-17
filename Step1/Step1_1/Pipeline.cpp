@@ -90,7 +90,7 @@ DXGI_SWAP_CHAIN_DESC
     DXGI_MODE_SCANLINE_ORDER ScanlineOrdering;	// 이미지를 표현하는 순서
 		{
 			DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED        = 0,	// 기본값 : 값 지정 X
-			DXGI_MODE_SCANLINE_ORDER_PROGRESSIVE        = 1,	// 이미지를 한꺼번에 생성
+			DXGI_MODE_SCANLINE_ORDER_PROGRESSIVE        = 1,	// 이미지를 한꺼번에 생성 / 전부 연산한 후에 표시
 			DXGI_MODE_SCANLINE_ORDER_UPPER_FIELD_FIRST  = 2,	// 상단 이미지부터 먼저 생성
 			DXGI_MODE_SCANLINE_ORDER_LOWER_FIELD_FIRST  = 3		// 하단 이미지부터 먼저 생성
 		}
@@ -135,8 +135,8 @@ DXGI_SWAP_CHAIN_DESC
 	{
 	DXGI_SWAP_EFFECT_DISCARD			= 0,	// 데이터 삭제
     DXGI_SWAP_EFFECT_SEQUENTIAL			= 1,	// 데이터 소지
-    DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL	= 3, 
-    DXGI_SWAP_EFFECT_FLIP_DISCARD		= 4	
+    DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL	= 3,	// 프레젠테이션 모델을 만들고 이미지만 소지
+    DXGI_SWAP_EFFECT_FLIP_DISCARD		= 4		// 프레젠테이션 모델을 만들고 이미지만 삭제
 	}
 
  - UINT Flags;
@@ -187,13 +187,24 @@ D3D_FEATURE_LEVEL featurelevels[6] =
 */
 #pragma endregion
 
+#pragma region D3D_DRIVER_TYPE ***
+/*
+		D3D_DRIVER_TYPE_UNKNOWN		// 초기값
+		D3D_DRIVER_TYPE_HARDWARE	// Hardware 기능 사용 : 속도 Good
+		D3D_DRIVER_TYPE_REFERENCE	// Reference 기능 사용 : 정확도 Good
+		D3D_DRIVER_TYPE_NULL	    // Rendering을 사용하지 않고 값만 사용
+		D3D_DRIVER_TYPE_SOFTWARE	// Software 기능 사용
+		D3D_DRIVER_TYPE_WARP		// 고성능 소프트웨어 드라이브 사용
+*/
+#pragma endregion
+
 					HRESULT hr = D3D11CreateDeviceAndSwapChain
 					(
 						nullptr,						// 어뎁터(Display에 대한 서브 시스템) 미사용
 						D3D_DRIVER_TYPE_HARDWARE,		// 드라이브 타입으로 하드웨어를 설정 (하드웨어의 도움을 받아 랜더링하도록 설정)
 						nullptr,						// 추가적인 소프트웨어 타입 기능 미사용
 						0,								// 플래그 미사용
-						nullptr,						// Direct X의 버전 호환성을 기본으로 설정 (기본으로 설정시 11_0 ~ 6_0) 
+						nullptr,						// Direct X의 버전 호환성을 기본으로 설정 (기본으로 설정시 9 ~ 11.0) 
 						0,								// 설정된 버전 호환성을 모두 사용
 						D3D11_SDK_VERSION,				// 컴퓨터에게 어떤 실행 버전을 사용할지 통보
 						&Descriptor,					// 설명서의 주소
@@ -210,7 +221,7 @@ D3D_FEATURE_LEVEL featurelevels[6] =
 /*
 void IASetVertexBuffers
 (
-	UINT StartSlot,							// 몇 번째 인덱스부터 넘길 것인지 설정
+	UINT StartSlot,							// 파이프라인 슬롯 중 어디부터 꽂을지 설정
 	UINT NumBuffers,						// 넘길 Buffer의 갯수를 설정
 	ID3D11Buffer *const *ppVertexBuffers,	// 넘길 Buffer
 	const UINT *pStride,					// Buffer의 요소를 한 번 읽을 때 몇 크기로 나눠 읽을 것인지 설정
