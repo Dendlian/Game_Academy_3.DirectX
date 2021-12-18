@@ -46,7 +46,7 @@ namespace Pipeline
 			// 공간을 만드는 용도의 Buffer가 아닌 전달 요소를 생성하는 Buffer
 			ID3D11Buffer* Vertex;
 		    // ID3D11Buffer* Index;
-			ID3D11Buffer* Constant[3];
+			ID3D11Buffer* Constant[3]; 
 
 			template<typename Data>
 			void Update(ID3D11Buffer* const buffer, Data const& data)
