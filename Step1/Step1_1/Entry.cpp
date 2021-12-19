@@ -13,7 +13,7 @@ int APIENTRY WinMain
 	_In_		LPSTR	  const lpCmdLine,
 	_In_		int		  const nShowCmd
 )
-{
+{ 
 	HWND hWindow = nullptr;
 
 	{
