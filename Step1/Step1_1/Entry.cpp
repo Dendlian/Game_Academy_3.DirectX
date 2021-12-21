@@ -6,7 +6,7 @@ namespace Pipeline
 	LRESULT CALLBACK Procedure(HWND const, UINT const, WPARAM const, LPARAM const);
 }
 
-int APIENTRY WinMain
+int APIENTRY WinMain 
 (
 	_In_		HINSTANCE const hInstance,
 	_In_opt_	HINSTANCE const hPrevInstance,
