@@ -19,7 +19,7 @@ int APIENTRY WinMain
 	{
 		WNDCLASSEX Class = WNDCLASSEX();
 
-		Class.cbSize = sizeof(WNDCLASSEX);
+		Class.cbSize = sizeof(WNDCLASSEX); 
 		Class.lpfnWndProc = Pipeline::Procedure;
 		Class.hInstance = hInstance;
 
