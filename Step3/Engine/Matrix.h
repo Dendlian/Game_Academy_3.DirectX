@@ -129,12 +129,11 @@ inline Matrix<m, n> const transpose(Matrix<m, n> const& other)
     }
     else
     {
-        reinterpret_cast<Matrix<n, m> result;
+        <Matrix<n, m> result = Matrix<n, m>();
         for (UINT i = 1; i <= m, i++)
-        {
             for (UINT j = 1; j <= n, j++)
                 result[j][i] = other[i][j];
-        }
+
         return result;
     }
 }

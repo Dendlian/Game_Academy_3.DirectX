@@ -69,6 +69,38 @@ namespace Rendering
         Transform::Update<Transform::Type::Latter>(reinterpret_cast<Transform::Matrix const&>(latter));
     }
 
+    namespace Text
+    {
+        void Import(std::string const& file)
+        {
+            AddFontResourceEx(file.data(), FR_PRIVATE | FR_NOT_ENUM, nullptr);
+        }
+
+        void Component::Draw()
+        {
+            LOGFONT descriptor = LOGFONT();
+
+            descriptor.lfHeight     = Font.Size;
+            descriptor.lfWeight     = Font.Bold ? FW_BOLD : FW_NORMAL;
+            descriptor.lfItalic     = Font.Italic;
+            descriptor.lfUnderline  = Font.Underlined;
+            descriptor.lfStrikeOut  = Font.StrikeThrough;
+            descriptor.lfCharSet    = DEFAULT_CHARSET;
+
+            strcpy_s(descriptor.lfFaceName, LF_FACESIZE, Font.Name);
+
+            HFONT const font = CreateFontIndirect(&descriptor);
+
+            SIZE const area = { static_cast<LONG>(Length[0]), static_cast<LONG>(Length[1]) };
+            POINT const center = { static_cast<LONG>(Location[0]), static_cast<LONG>(Location[1]) };
+
+            Pipeline::String::Render(font, Content, RGB(Color.Red, Color.Green, Color.Blue), );
+
+            DeleteObject(font);
+        }
+    }
+    
+
     namespace Image
     {
         // Resource Shader에 해당 이미지의 정보를 저장
@@ -148,6 +180,19 @@ namespace Rendering
                 Descriptor const& image = Storage.at(Content);
 
                 Texture::Render(image.Handle, { 0, 0, image.Size.cx, image.Size.cy });
+            }
+        }
+    }
+
+    namespace Animation
+    {
+        void Component::Draw()
+        {
+            using namespace Pipeline;
+            {
+                Matrix<4, 4> const world = Translation(Location) * Rotation(Angle) * Scale(Length);
+
+                Transform::Update<Transform::Type::Former>(reinterpret_cast<Transform::Matrix const&>)(world);
             }
         }
     }

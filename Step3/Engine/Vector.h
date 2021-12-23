@@ -10,14 +10,14 @@ using Vector = Matrix<1, n>;
 template<size_t n>
 inline float Dot(Vector<n> const & one, Vector<n> const & other)
 {
-    return one * reinterpret_cast<Matrix<n, 1> const &>(other);
+    return one * transpose(other);
 }
 
 template<size_t n>
 inline float Length(Vector<n> const & one)
 {
     // Root 연산을 수행 후 float 형태로 변환
-    return sqrtf(Dot(one, one));
+    return sqrt(Dot(one, one));
 }
 
 template<size_t n>

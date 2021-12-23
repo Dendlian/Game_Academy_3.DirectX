@@ -352,6 +352,9 @@ namespace Rendering::Pipeline
 			case WM_DESTROY :
 			{
 #pragma region Release
+
+				DeviceContext->ClearState();
+
 				RenderTargetView->Release();
 
 				Buffer::Vertex->Release();
