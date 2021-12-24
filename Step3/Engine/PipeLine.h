@@ -27,7 +27,6 @@ namespace Rendering::Pipeline
         };
     
         using Matrix = float[4][4];
-        
         template<Type type>
         void Update(Matrix const& matrix);
     }

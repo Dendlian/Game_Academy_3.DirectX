@@ -22,16 +22,17 @@ namespace Rendering
             void Draw();
 
         public:
+            // Content : 경로
             char const* Content = nullptr;
 
             struct
             {
                 char const* Name            = nullptr;
                 unsigned    Size            = 0;
-                bool        Bold            = false;
-                bool        Italic          = false;
-                bool        Underlined      = false;
-                bool        StrikeThrough   = false;
+                bool        Bold            = false;    // 굵기
+                bool        Italic          = false;    // 기울기
+                bool        Underlined      = false;   
+                bool        StrikeThrough   = false;    // 삭제선
             }Font;
 
             struct

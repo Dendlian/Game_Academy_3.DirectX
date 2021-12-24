@@ -61,8 +61,8 @@ namespace Rendering
     void Camera::Set() const
     {
         using namespace Pipeline;
-
-        Matrix<4, 4> const projection = Scale(Vector<2>(2 / Length[0], 2 / Length[1])); // ?
+      
+        Matrix<4, 4> const projection = Scale(Vector<2>(2 / Length[0], 2 / Length[1])); 
         Matrix<4, 4> const view = Rotation(-Angle) * Translation(-Location);
         Matrix<4, 4> const latter = projection * view;
 
@@ -73,6 +73,7 @@ namespace Rendering
     {
         void Import(std::string const& file)
         {
+            // API(GDI) 함수 사용
             AddFontResourceEx(file.data(), FR_PRIVATE | FR_NOT_ENUM, nullptr);
         }
 
@@ -85,16 +86,23 @@ namespace Rendering
             descriptor.lfItalic     = Font.Italic;
             descriptor.lfUnderline  = Font.Underlined;
             descriptor.lfStrikeOut  = Font.StrikeThrough;
+
+            // 폰트 구조체를 사용할 때 적용 가능한 언어 설정
+            // DEFAULT_CHARSET : 기본적인 영어, 한국어 글꼴 제공
             descriptor.lfCharSet    = DEFAULT_CHARSET;
 
+            // LF_FACESIZE : 서체에 할당되어 있는 공간 크기 설정 (FaceName은 최대 32Byte)
+            // lfFaceName에 Font.Name에 담긴 문자열을 복사하여 저장
+            // Font.Name : 바탕글 등의 서체 이름
             strcpy_s(descriptor.lfFaceName, LF_FACESIZE, Font.Name);
 
+            // descriptor를 바탕으로 font 생성
             HFONT const font = CreateFontIndirect(&descriptor);
 
-            SIZE const area = { static_cast<LONG>(Length[0]), static_cast<LONG>(Length[1]) };
+            SIZE const area    = { static_cast<LONG>(  Length[0]), static_cast<LONG>(  Length[1]) };
             POINT const center = { static_cast<LONG>(Location[0]), static_cast<LONG>(Location[1]) };
 
-            Pipeline::String::Render(font, Content, RGB(Color.Red, Color.Green, Color.Blue), );
+            Pipeline::String::Render(font, Content, RGB(Color.Red, Color.Green, Color.Blue), area, center);
 
             DeleteObject(font);
         }
@@ -115,7 +123,7 @@ namespace Rendering
 
         std::map<std::string, Descriptor> Storage;
 
-#pragma region Function Import ***
+#pragma region Image::Import ***
 /*
 1. if문
     - Bitmap으로 들어온 데이터가 32bit가 아니라면 다시 32bit로 전환
@@ -190,6 +198,7 @@ namespace Rendering
         {
             using namespace Pipeline;
             {
+                // Animation 같은 경우 이동, 회전을 할 수 있기 때문에 먼저 그에 대한 계산을 실행 
                 Matrix<4, 4> const world = Translation(Location) * Rotation(Angle) * Scale(Length);
 
                 Transform::Update<Transform::Type::Former>(reinterpret_cast<Transform::Matrix const&>)(world);
