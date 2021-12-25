@@ -129,9 +129,9 @@ inline Matrix<m, n> const transpose(Matrix<m, n> const& other)
     }
     else
     {
-        <Matrix<n, m> result = Matrix<n, m>();
-        for (UINT i = 1; i <= m, i++)
-            for (UINT j = 1; j <= n, j++)
+        Matrix<n, m> result = Matrix<n, m>();
+        for (int i = 1; i <= m; i++)
+            for (int j = 1; j <= n; j++)
                 result[j][i] = other[i][j];
 
         return result;

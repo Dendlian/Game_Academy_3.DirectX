@@ -51,8 +51,8 @@ namespace Collision
     {
         if (LHS.Angle == 0 && RHS.Angle == 0)
         {
-            Vector<2> L_min = LHS.Location - RHS.Length / 2;
-            Vector<2> L_max = LHS.Location + RHS.Length / 2;
+            Vector<2> L_min = LHS.Location - LHS.Length / 2;
+            Vector<2> L_max = LHS.Location + LHS.Length / 2;
 
             Vector<2> R_min = RHS.Location - RHS.Length / 2;
             Vector<2> R_max = RHS.Location + RHS.Length / 2;
@@ -85,39 +85,37 @@ namespace Collision
         }
         else
         {
-            Vector<2> const distance = LHS.Location - RHS, Location;
-
+            Vector<2> const distance = LHS.Location - RHS.Location;
             if ((Length(LHS.Length) + Length(RHS.Length)) / 2 < Length(distance)) return false;
 
-            // 각 사각형 원점의 x, y 좌표
-            Vector<2> const axes[4]
-            {
-                Vector<2>(1, 0) * Rotation(LHS.Angle),
+            // 각 변의 기울기를 갖는 단위벡터 생성 (기준 축 생성)
+            Vector<2> const axis[4]
+            {   
+                Vector<2>(1, 0) * Rotation(LHS.Angle), 
                 Vector<2>(0, 1) * Rotation(LHS.Angle),
                 Vector<2>(1, 0) * Rotation(RHS.Angle),
                 Vector<2>(0, 1) * Rotation(RHS.Angle),
             };
 
+            // 각 기울기를 갖는 단위벡터에 변의 길이를 곱하여 사각형의 모든 변을 벡터화
             Vector<2> const vector[4]
             {
-                axes[0] * (LHS.Length[0]) / 2,
-                axes[1] * (LHS.Length[1]) / 2,
-                axes[2] * (RHS.Length[0]) / 2,
-                axes[3] * (RHS.Length[1]) / 2
+                axis[0] * (LHS.Length[0]) / 2,
+                axis[1] * (LHS.Length[1]) / 2,
+                axis[2] * (RHS.Length[0]) / 2,
+                axis[3] * (RHS.Length[1]) / 2
             };
 
             for (unsigned i = 0; i < 4; i++)
             {
                 float sum = 0;
 
-                // Dot : 내적을 구하는 함수 (x1x2 + y1y2)
                 for (unsigned j = 0; j < 4; j++)
-                    sum += abs(Dot(axes[i], vector[j]));
-
-                if (sum < abs(Dot(axes[i], distance)))
+                    sum += abs(Dot(axis[i], vector[j]));
+                if (sum < abs(Dot(axis[i], distance)))
                     return false;
             }
-
+           
             return true;
         }
 }
