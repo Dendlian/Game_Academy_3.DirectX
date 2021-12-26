@@ -9,7 +9,7 @@ namespace Collision
     };
 
     struct Circle final
-    {
+    { 
         float Diameter;
         Vector<2> Location;
     };
