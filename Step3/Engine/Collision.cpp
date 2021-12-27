@@ -109,7 +109,6 @@ namespace Collision
             for (unsigned i = 0; i < 4; i++)
             {
                 float sum = 0;
-
                 for (unsigned j = 0; j < 4; j++)
                     sum += abs(Dot(axis[i], vector[j]));
                 if (sum < abs(Dot(axis[i], distance)))
