@@ -194,14 +194,91 @@ namespace Rendering
 
     namespace Animation
     {
+        struct Descriptor final
+        {
+        public:
+            Pipeline::Texture::Handle* Handle = nullptr;
+
+        public:
+            UINT Motion = UINT();
+            SIZE Frame  = SIZE();
+        };
+
+        std::map<std::string, Descriptor> Storage;
+
+        void Import(std::string const& file)
+        {
+            {
+                FIBITMAP* bitmap = FreeImage_Load(FreeImage_GetFileType(file.data()), file.data());
+
+                FreeImage_FlipVertical(bitmap);
+
+                if (FreeImage_GetBPP(bitmap) != 32)
+                {
+                    FIBITMAP* const previous = bitmap;
+
+                    bitmap = FreeImage_ConvertTo32Bits(bitmap);
+
+                    FreeImage_Unload(previous);
+                }
+
+                Animation::Descriptor descriptor = Animation::Descriptor();
+                {
+                    descriptor.Frame.cx = FreeImage_GetWidth(bitmap);
+                    descriptor.Frame.cy = FreeImage_GetHeight(bitmap);
+
+                    // Texture : 자르지 않은 전체 이미지를 저장
+                    Pipeline::Texture::Create(descriptor.Handle, descriptor.Frame, FreeImage_GetBits(bitmap));
+                }
+                {
+                    size_t const x = file.find_first_of('/') + sizeof(char);
+                    size_t const y = file.find_last_of('.');
+                    // size_t const z =
+
+                    descriptor.Frame.cx /= descriptor.Motion;
+                    Animation::Storage.try_emplace(file.substr(x, y - x), descriptor);
+                }
+                FreeImage_Unload(bitmap);
+            }
+        }
+
         void Component::Draw()
         {
             using namespace Pipeline;
             {
                 // Animation 같은 경우 이동, 회전을 할 수 있기 때문에 먼저 그에 대한 계산을 실행 
                 Matrix<4, 4> const world = Translation(Location) * Rotation(Angle) * Scale(Length);
+                Transform::Update<Transform::Type::Former>(reinterpret_cast<Transform::Matrix const&>(world));
+            }
 
-                Transform::Update<Transform::Type::Former>(reinterpret_cast<Transform::Matrix const&>)(world);
+            LONG const progress = 0;
+
+            {
+                Descriptor const& descriptor = Storage.at(Content);
+
+                // 0 / 256
+                LONG const progress = static_cast<LONG>((Playback / Duration) * descriptor.Motion);
+
+                RECT const area
+                {
+                    descriptor.Frame.cx * (progress + Flipped.x),  (descriptor.Frame.cy * Flipped.y),
+                    descriptor.Frame.cx & (progress + !Flipped.x), (descriptor.Frame.cy * !Flipped.y)
+                };
+
+                Texture::Render(descriptor.Handle, area);
+
+                float const delta = Time::Get::Delta();
+
+                Playback += delta;
+
+                if (Duration <= Playback)
+                {
+                    // fmod(x, y) : x(분자), y(분모)
+                    // x / y => 부동 소수점
+                    // fmod : 부동 소수점을 제외한 정수 부분만 0으로 만들어 에니메이션이 끊기지 않게 유지
+                    if (Repeatable) Playback = fmod(Playback, Duration);
+                    else Playback -= delta;
+                }
             }
         }
     }
