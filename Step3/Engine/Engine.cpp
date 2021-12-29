@@ -1,5 +1,5 @@
 #include <Windows.h>
-#include "Matrix.h"
+#include "Game.h"
 
 // namespace : 같은 프로젝트 내에서 자유롭게 접근 가능
 namespace Rendering
@@ -19,6 +19,8 @@ namespace Time
 namespace Engine
 {
 
+    namespace { Game* Portfolio; }
+
     LRESULT Procedure(HWND const hWindow, UINT const uMessage, WPARAM const wParameter, LPARAM const lParameter)
     {
         switch (uMessage)
@@ -26,10 +28,16 @@ namespace Engine
             case WM_CREATE:
             {
                 Rendering::Procedure(hWindow, uMessage, wParameter, lParameter);
+                
+                (Portfolio->Initialize())->Start();
+                
                 return 0;
             }
             case WM_APP:
             {
+                if (Portfolio->Update())
+                    CloseWindow(hWindow);
+
                 Input::Procedure(hWindow, uMessage, wParameter, lParameter);
                 Rendering::Procedure(hWindow, uMessage, wParameter, lParameter);
                 Time::Procedure(hWindow, uMessage, wParameter, lParameter);
@@ -37,6 +45,9 @@ namespace Engine
             }
             case WM_DESTROY:
             {
+                Portfolio->End();
+                delete Portfolio;
+
                 Rendering::Procedure(hWindow, uMessage, wParameter, lParameter);
                 PostQuitMessage(0);
                 return 0;
