@@ -17,7 +17,7 @@ namespace Input
                     State.Changed[code >> 0x4] ^= (0x8000 >> (code & 0xf));
                 }
             }
-
+              
             void Up(WPARAM const code)
             {
                 State.Pressed[code >> 0x4] = State.Pressed[code >> 0x4] ^ (0x8000 >> (code & 0xf));
