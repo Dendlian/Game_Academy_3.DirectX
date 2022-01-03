@@ -39,8 +39,8 @@ namespace Rendering
             {
                 +cos(radian), +sin(radian), 0, 0,
                 -sin(radian), +cos(radian), 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
+                0           , 0           , 1, 0,
+                0           , 0           , 0, 1
             };
         }
         
@@ -50,21 +50,20 @@ namespace Rendering
             {
                 1, 0, 0, location[0],
                 0, 1, 0, location[1],
-                0, 0, 1, 0,
-                0, 0, 0, 1
+                0, 0, 1,           0,
+                0, 0, 0,           1
             };
         }
     }
 
     // World, View(Camera), Projection
-
     void Camera::Set() const
     {
         using namespace Pipeline;
       
         Matrix<4, 4> const projection = Scale(Vector<2>(2 / Length[0], 2 / Length[1])); 
-        Matrix<4, 4> const view = Rotation(-Angle) * Translation(-Location);
-        Matrix<4, 4> const latter = projection * view;
+        Matrix<4, 4> const view       = Rotation(-Angle) * Translation(-Location);
+        Matrix<4, 4> const latter     = projection * view;
 
         Transform::Update<Transform::Type::Latter>(reinterpret_cast<Transform::Matrix const&>(latter));
     }
@@ -278,7 +277,7 @@ namespace Rendering
                     // x / y => 부동 소수점
                     // fmod : 부동 소수점을 제외한 정수 부분만 0으로 만들어 에니메이션이 끊기지 않게 유지
                     if (Repeatable) Playback = fmod(Playback, Duration);
-                    else Playback -= delta;
+                    else            Playback -= delta;
                 }
             }
         }
@@ -292,9 +291,12 @@ namespace Rendering
             {  
                 Pipeline::Procedure(hWindow, uMessage, wParameter, lParameter);
 
+                Resource::Import("Font", Text::Import);
+
                 FreeImage_Initialise();
                 {
                     Resource::Import("Image", Image::Import);
+                    Resource::Import("Animation", Animation::Import);
                 }
                 FreeImage_DeInitialise();
 
@@ -323,10 +325,12 @@ namespace Rendering
 #pragma endregion
 
                 using namespace std;
-                using namespace Image;
 
                 // pair(Key, Value) : map의 요소를 하나씩 검사하여 삭제
-                for (pair<string, Descriptor> const& pair : Storage)
+                for (pair<string, Image::Descriptor> const& pair : Image::Storage)
+                    Pipeline::Texture::Delete(pair.second.Handle);
+
+                for (pair<string, Animation::Descriptor> const& pair : Animation::Storage)
                     Pipeline::Texture::Delete(pair.second.Handle);
 
                 Pipeline::Procedure(hWindow, uMessage, wParameter, lParameter);

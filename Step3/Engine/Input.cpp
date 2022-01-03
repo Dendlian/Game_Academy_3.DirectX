@@ -10,17 +10,16 @@ namespace Input
         public :
             void Down(WPARAM const code)
             {   
-                // 이전에 눌리지 않았다면 수행
                 if (not Pressed(code))
                 {
-                    State.Pressed[code >> 0x4] = State.Pressed[code >> 0x4] | (0x8000 >> (code & 0xf));
+                    State.Pressed[code >> 0x4] ^= (0x8000 >> (code & 0xf));
                     State.Changed[code >> 0x4] ^= (0x8000 >> (code & 0xf));
                 }
             }
               
             void Up(WPARAM const code)
             {
-                State.Pressed[code >> 0x4] = State.Pressed[code >> 0x4] ^ (0x8000 >> (code & 0xf));
+                State.Pressed[code >> 0x4] ^= (0x8000 >> (code & 0xf));
                 State.Changed[code >> 0x4] ^= (0x8000 >> (code & 0xf));
             }
 
@@ -55,9 +54,9 @@ namespace Input
     {
         namespace Key
         {
-            bool Down(size_t const code) { return     Input::Key.Pressed(code) and Input::Key.Changed(code); }
-            bool Press(size_t const code) { return     Input::Key.Pressed(code); }
-            bool Up(size_t const code) { return not Input::Key.Pressed(code) and Input::Key.Changed(code); }
+            bool Down   (size_t const code) { return     Input::Key.Pressed(code) and Input::Key.Changed(code); }
+            bool Press  (size_t const code) { return     Input::Key.Pressed(code); }
+            bool Up     (size_t const code) { return not Input::Key.Pressed(code) and Input::Key.Changed(code); }
         }
 
         namespace Cursor

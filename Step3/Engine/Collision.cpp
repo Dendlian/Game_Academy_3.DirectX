@@ -1,25 +1,9 @@
 #define _USE_MATH_DEFINES
+
 #include "Collision.h"
 
 namespace Collision
 {
-    struct Point final
-    {
-        Vector<2> Location;
-    };
-
-    struct Circle final
-    { 
-        float Diameter; 
-        Vector<2> Location;
-    };
-
-    struct RectAngle final
-    {
-        Vector<2> Length;
-        float Angle;
-        Vector<2> Location;
-    };
 
     inline Matrix<2, 2> Rotation(float const& angle)
     {
@@ -88,7 +72,7 @@ namespace Collision
             Vector<2> const distance = LHS.Location - RHS.Location;
             if ((Length(LHS.Length) + Length(RHS.Length)) / 2 < Length(distance)) return false;
 
-            // 각 변의 기울기를 갖는 단위벡터 생성 (기준 축 생성)
+            // 기준 축 생성
             Vector<2> const axis[4]
             {   
                 Vector<2>(1, 0) * Rotation(LHS.Angle), 
@@ -97,7 +81,7 @@ namespace Collision
                 Vector<2>(0, 1) * Rotation(RHS.Angle),
             };
 
-            // 각 기울기를 갖는 단위벡터에 변의 길이를 곱하여 사각형의 모든 변을 벡터화
+            // 사각형 각 변의 벡터화
             Vector<2> const vector[4]
             {
                 axis[0] * (LHS.Length[0]) / 2,

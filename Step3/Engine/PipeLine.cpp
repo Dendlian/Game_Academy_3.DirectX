@@ -152,16 +152,14 @@ namespace Rendering::Pipeline
 		template void Update<Type::Latter>(Matrix const& matrix);
 	}
 
-	void CALLBACK Procedure(HWND const hWindow, UINT const uMessage, WPARAM const wParameter, LPARAM const lParameter)
+	void Procedure(HWND const hWindow, UINT const uMessage, WPARAM const wParameter, LPARAM const lParameter)
 	{
-
 		switch (uMessage)
 		{
 			case WM_CREATE :
 			{
 #pragma region Create SwapChain
 				{
-					// device에 대한 descriptor까지 담고 있는 Descriptor
 					DXGI_SWAP_CHAIN_DESC Descriptor = DXGI_SWAP_CHAIN_DESC();
 
 					Descriptor.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -172,6 +170,7 @@ namespace Rendering::Pipeline
 					// Hwnd의 Width와 Height 정보를 자동으로 가져와 설정
 					Descriptor.OutputWindow = hWindow;
 					Descriptor.Windowed = true;
+					Descriptor.Flags = DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE;
 
 					MUST(D3D11CreateDeviceAndSwapChain
 					(
@@ -195,7 +194,7 @@ namespace Rendering::Pipeline
 				{
 					#include "Shader/Bytecode/Vertex.h"
 					{
-						D3D11_INPUT_ELEMENT_DESC Descriptor[2] =
+						D3D11_INPUT_ELEMENT_DESC Descriptor[2]
 						{
 							{ "POSITION" , 0, DXGI_FORMAT_R32G32_FLOAT, 0 },
 							{ "TEXCOORD" , 0, DXGI_FORMAT_R32G32_FLOAT, 1 }
@@ -241,7 +240,6 @@ namespace Rendering::Pipeline
 				{
 					DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 				}
-
 				{
 					float const Coordinates[4][2]
 					{
@@ -319,7 +317,6 @@ namespace Rendering::Pipeline
 					Descriptor.RenderTarget->SrcBlend				= D3D11_BLEND_SRC_ALPHA;		
 					Descriptor.RenderTarget->DestBlend				= D3D11_BLEND_INV_SRC_ALPHA;	
 					Descriptor.RenderTarget->BlendOp				= D3D11_BLEND_OP_ADD;			
-					
 					Descriptor.RenderTarget->SrcBlendAlpha			= D3D11_BLEND_ZERO;				
 					Descriptor.RenderTarget->DestBlendAlpha			= D3D11_BLEND_ONE;				
 					Descriptor.RenderTarget->BlendOpAlpha			= D3D11_BLEND_OP_ADD;			
@@ -328,6 +325,7 @@ namespace Rendering::Pipeline
 					ID3D11BlendState* BlendState = nullptr;
 
 					MUST(Device->CreateBlendState(&Descriptor, &BlendState));
+
 					DeviceContext->OMSetBlendState(BlendState, nullptr, D3D11_DEFAULT_SAMPLE_MASK);
 
 					BlendState->Release();
@@ -371,7 +369,6 @@ namespace Rendering::Pipeline
 #pragma endregion
 			case WM_SIZE :
 			{
-				{
 #pragma region Viewport Setting
 					{
 						D3D11_VIEWPORT Viewport = D3D11_VIEWPORT();
@@ -382,53 +379,53 @@ namespace Rendering::Pipeline
 						DeviceContext->RSSetViewports(1, &Viewport);
 					}
 #pragma endregion
-
-#pragma region Swap Chain Setting
-					if (RenderTargetView)
 					{
-						RenderTargetView->Release();
+#pragma region Swap Chain Setting
+						if (RenderTargetView)
+						{
+							RenderTargetView->Release();
 
-						MUST(SwapChain->ResizeBuffers
-						(
-							1,
-							LOWORD(lParameter),
-							HIWORD(lParameter),
-							DXGI_FORMAT_B8G8R8A8_UNORM,
-							// HDC와 RenderTargetView를 연결
-							// Buffer를 통해 가져온 Texture2D는 Surface를 포함하는데 Surface가 가지고 있는 GetDC를 사용
-							// GetDC를 사용하여 Surface에 HDC를 연결하고 RenderTargetView와 결함
-							DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE
-						));
-					}
+							MUST(SwapChain->ResizeBuffers
+							(
+								1,
+								LOWORD(lParameter),
+								HIWORD(lParameter),
+								DXGI_FORMAT_B8G8R8A8_UNORM,
+								// HDC와 RenderTargetView를 연결
+								// Buffer를 통해 가져온 Texture2D는 Surface를 포함하는데 Surface가 가지고 있는 GetDC를 사용
+								// GetDC를 사용하여 Surface에 HDC를 연결하고 RenderTargetView와 결함
+								DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE
+							));
+						}
 #pragma endregion
 
 #pragma region Create RenderTargetView
-					{
-						ID3D11Texture2D* texture2D = nullptr;
-						MUST(SwapChain->GetBuffer(0, IID_PPV_ARGS(&texture2D)));
 						{
-							IDXGISurface1* Surface = nullptr;
-							MUST(texture2D->QueryInterface(IID_PPV_ARGS(&Surface)));
+							ID3D11Texture2D* texture2D = nullptr;
+							MUST(SwapChain->GetBuffer(0, IID_PPV_ARGS(&texture2D)));
 							{
-								HDC hdc = HDC();
-								MUST(Surface->GetDC(false, &hdc));
+								IDXGISurface1* Surface = nullptr;
+								MUST(texture2D->QueryInterface(IID_PPV_ARGS(&Surface)));
 								{
-									// TRANSPARENT : 원래 있던 배경을 그대로 적용
-									SetBkMode(hdc, TRANSPARENT);
+									HDC hdc = HDC();
+									MUST(Surface->GetDC(false, &hdc));
+									{
+										// TRANSPARENT : 원래 있던 배경을 그대로 적용
+										SetBkMode(hdc, TRANSPARENT);
+									}
+									MUST(Surface->ReleaseDC(nullptr));
 								}
-								MUST(Surface->ReleaseDC(nullptr));
+								Surface->Release();
 							}
-							Surface->Release();
+							{
+								MUST(Device->CreateRenderTargetView(texture2D, nullptr, &RenderTargetView));
+
+								DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
+							}
+							texture2D->Release();
 						}
-						{
-							MUST(Device->CreateRenderTargetView(texture2D, nullptr, &RenderTargetView));
-						
-							DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
-						}
-						texture2D->Release();
-					}
 #pragma endregion
-				}
+					}
 				return;
 			}
 		}

@@ -2,20 +2,10 @@
 #include "Game.h"
 
 // namespace : 같은 프로젝트 내에서 자유롭게 접근 가능
-namespace Rendering
-{
-    void Procedure(HWND const, UINT const, WPARAM const, LPARAM const);
-}
+namespace Rendering { void Procedure(HWND const, UINT const, WPARAM const, LPARAM const); }
+namespace Input     { void Procedure(HWND const, UINT const, WPARAM const, LPARAM const); }
+namespace Time      { void Procedure(HWND const, UINT const, WPARAM const, LPARAM const); }
 
-namespace Input
-{
-    void Procedure(HWND const, UINT const, WPARAM const, LPARAM const);
-}
-
-namespace Time
-{
-    void Procedure(HWND const, UINT const, WPARAM const, LPARAM const);
-}
 namespace Engine
 {
 
@@ -29,7 +19,7 @@ namespace Engine
             {
                 Rendering::Procedure(hWindow, uMessage, wParameter, lParameter);
                 
-                (Portfolio->Initialize())->Start();
+                (Portfolio = Initialize())->Start();
                 
                 return 0;
             }
@@ -82,9 +72,9 @@ WM_XBUTTONUP        : (마우스) 단축버튼 입력
 WM_XBUTTONDOWN      : (마우스) 단축버튼 제거
 */
 #pragma endregion 
-            
             {
                 Input::Procedure(hWindow, uMessage, wParameter, lParameter);
+                return 0;
             }
             case WM_SIZE:
             {
@@ -95,7 +85,6 @@ WM_XBUTTONDOWN      : (마우스) 단축버튼 제거
             {
                 return DefWindowProc(hWindow, uMessage, wParameter, lParameter);
             }
-            return 0;
         }
     }
 }
