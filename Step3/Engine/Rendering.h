@@ -70,25 +70,25 @@ namespace Rendering
      class Component final
      {
      public:
-         void Draw();
+         void Player_Draw();
+         void Zombie_Draw();
 
      public:
          char const* Content = nullptr;
 
          float Playback = 0;
          float Duration = 0;
+
+         int   Line = 1;
+         int   CurrentLine = 1;
+
          bool  Repeatable = false;
      
-         struct 
-         {
-             bool x = false;
-             bool y = false;
-         }Flipped;
-
      public:
          Vector<2> Length   = { 0,0 };
          float     Angle    = { 0 };
          Vector<2> Location = { 0,0 };
      };
  }
+
 }

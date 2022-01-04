@@ -5,6 +5,7 @@
 #include "PipeLine.h"
 #include "FreeImage.h"
 #include "Rendering.h"
+#include "Input.h"
 
 #include <map>
 #include <string>
@@ -200,7 +201,7 @@ namespace Rendering
 
         public:
             UINT Motion = UINT();
-            SIZE Frame  = SIZE();
+            SIZE Frame = SIZE();
         };
 
         std::map<std::string, Descriptor> Storage;
@@ -229,21 +230,23 @@ namespace Rendering
                     // Texture : 자르지 않은 전체 이미지를 저장
                     Pipeline::Texture::Create(descriptor.Handle, descriptor.Frame, FreeImage_GetBits(bitmap));
                 }
+
                 {
                     size_t const x = file.find_first_of('/') + sizeof(char);
                     size_t const y = file.find_last_of('[');
                     size_t const z = file.find_last_of(']');
-                  
+                   
                     descriptor.Motion = atoi(file.substr(y + sizeof(char), z - (y + sizeof(char))).data());
                     descriptor.Frame.cx /= descriptor.Motion;
-                    //descriptor.Frame.cy /= descriptor.Motion;
                     Animation::Storage.try_emplace(file.substr(x, y - x), descriptor);
                 }
                 FreeImage_Unload(bitmap);
             }
         }
 
-        void Component::Draw()
+
+#pragma region Contol_Draw()
+        void Component::Player_Draw()
         {
             using namespace Pipeline;
             {
@@ -255,17 +258,107 @@ namespace Rendering
             LONG const progress = 0;
 
             {
-                Descriptor const& descriptor = Storage.at(Content);
+                Descriptor & descriptor = Storage.at(Content);
 
                 // 0 / 256
                 LONG const progress = static_cast<LONG>((Playback / Duration) * descriptor.Motion);
 
-                RECT const area
-                {
-                    descriptor.Frame.cx * (progress + Flipped.x),  (descriptor.Frame.cy * Flipped.y),
-                    descriptor.Frame.cx & (progress + !Flipped.x), (descriptor.Frame.cy * !Flipped.y)
-                };
+                RECT area = RECT();
 
+                if (Line == 1)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                    };
+                }
+                else if (Line > 1)
+                {   
+                    using namespace Input::Get::Key;
+
+                    if (Press(VK_DOWN) & Press(VK_LEFT))
+                    {
+                        CurrentLine = 5;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (Press(VK_DOWN) & Press(VK_RIGHT))
+                    {
+                        CurrentLine = 6;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (Press(VK_UP) & Press(VK_LEFT))
+                    {
+                        CurrentLine = 7;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (Press(VK_UP) & Press(VK_RIGHT))
+                    {
+                        CurrentLine = 8;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (Press(VK_DOWN))
+                    {
+                        CurrentLine = 1;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (Press(VK_LEFT))
+                    {
+                        CurrentLine = 2;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (Press(VK_RIGHT))
+                    {
+                        CurrentLine = 3;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (Press(VK_UP))
+                    {
+                        CurrentLine = 4;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else
+                    {
+                        area =
+                        {
+                            0,  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx, descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                }
+                
                 Texture::Render(descriptor.Handle, area);
 
                 float const delta = Time::Get::Delta();
@@ -282,7 +375,9 @@ namespace Rendering
                 }
             }
         }
+        
     }
+#pragma endregion
 
     void Procedure(HWND const hWindow, UINT const uMessage, WPARAM const wParameter, LPARAM const lParameter)
     {
