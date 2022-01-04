@@ -236,6 +236,7 @@ namespace Rendering
                   
                     descriptor.Motion = atoi(file.substr(y + sizeof(char), z - (y + sizeof(char))).data());
                     descriptor.Frame.cx /= descriptor.Motion;
+                    //descriptor.Frame.cy /= descriptor.Motion;
                     Animation::Storage.try_emplace(file.substr(x, y - x), descriptor);
                 }
                 FreeImage_Unload(bitmap);
