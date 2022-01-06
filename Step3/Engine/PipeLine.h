@@ -17,7 +17,7 @@ namespace Rendering::Pipeline
     }
 
     namespace Transform
-    {
+    { 
         // Formor : 크기, 위치, 회전
         // Latter : 카메라 투영
         enum class Type
