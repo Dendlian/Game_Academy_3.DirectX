@@ -6,10 +6,13 @@ using namespace Rendering;
 void CollisionProcess::SetPlayer(Animation::Component player)
 {
 	Controler.Angle	= player.Angle;
-	Controler.Length	= player.Length;
+	Controler.Length[0] = player.Length[0] * 2 / 3;
+	Controler.Length[1] = player.Length[1] * 3 / 4;
+
 	Controler.Location = player.Location;
 }
 
+/*
 void CollisionProcess::SetBlock()
 {
 	BlockRect[0].Angle = 0;
@@ -32,39 +35,63 @@ void CollisionProcess::SetBlock()
 bool CollisionProcess::WallCollition()
 {
 	bool collision = false;
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		if (Collide(Controler, BlockRect[i]))
 			collision = true;
 	}
 	return collision;
 }
+*/
 
-/*
 void CollisionProcess::SetBlock()
 {
 	for (int i = 0; i < 4; i++)
-	{
-		BlockRect[0][i].Length = { 100, 100 };
-		BlockRect[1][i].Length = { 350, 50 };
-		BlockRect[2][i].Length = { 50, 350 };
-	}
+		for (int j = 0; j < 4; j++)
+			BlockRect[i][j].Angle = 0;
 	
+
+	BlockRect[0][0].Length = { 50, 50 };
 	BlockRect[0][0].Location = { 100, 100 };
+
+	BlockRect[0][1].Length = { 50, 50 };
 	BlockRect[0][1].Location = { -100, 100 };
+
+	BlockRect[0][2].Length = { 50, 50 };
 	BlockRect[0][2].Location = { 100, -100 };
+
+	BlockRect[0][3].Length = { 50, 50 };
 	BlockRect[0][3].Location = { -100, -100 };
 
-	BlockRect[1][0].Location = { 250, 400 };
-	BlockRect[1][0].Location = { -250, 400 };
-	BlockRect[1][0].Location = { 250, -400 };
-	BlockRect[1][0].Location = { -250, -400 };
 
+
+	BlockRect[1][0].Length = { 350, 50 };
+	BlockRect[1][0].Location = { 250, 400 };
+
+	BlockRect[1][1].Length = { 350, 50 };
+	BlockRect[1][1].Location = { -250, 400 };
+
+	BlockRect[1][2].Length = { 350, 50 };
+	BlockRect[1][2].Location = { 250, -400 };
+
+	BlockRect[1][3].Length = { 350, 50 };
+	BlockRect[1][3].Location = { -250, -400 };
+
+
+
+	BlockRect[2][0].Length = { 50, 350 };
 	BlockRect[2][0].Location = { 400, 250 };
-	BlockRect[2][0].Location = { -400, 250 };
-	BlockRect[2][0].Location = { 400, -250 };
-	BlockRect[2][0].Location = { -400, -250 };
-	
+
+	BlockRect[2][1].Length = { 50, 350 };
+	BlockRect[2][1].Location = { -400, 250 };
+
+	BlockRect[2][2].Length = { 50, 350 };
+	BlockRect[2][2].Location = { 400, -250 };
+
+	BlockRect[2][3].Length = { 50, 350 };
+	BlockRect[2][3].Location = { -400, -250 };
+
+
 
 	BlockRect[3][0].Length = { 50, 1200};
 	BlockRect[3][0].Location = { 600, 0};
@@ -90,5 +117,3 @@ bool CollisionProcess::WallCollition()
 	}
 	return collision;
 }
-
-*/

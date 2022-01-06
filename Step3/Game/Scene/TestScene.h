@@ -30,7 +30,7 @@ public:
 	FORCEINLINE void SetBlock(Image::Component & component)
 	{
 		component.Content = "Block";
-		component.Length = { 100, 100 };
+		component.Length = { 50, 50 };
 	}
 
 	FORCEINLINE void SetBlock(Image::Component component[4])
@@ -38,7 +38,7 @@ public:
 		for (int i = 0; i < 4; i++)
 		{
 			component[i].Content = "Block";
-			component[i].Length = { 100, 100 };
+			component[i].Length = { 50, 50 };
 		}
 	}
 

@@ -56,12 +56,6 @@ bool TestScene::Update()
 
 	Vector<2> direction;
 
-	if (Input::Get::Key::Press(VK_LEFT))	direction[0] -= 1;
-	if (Input::Get::Key::Press(VK_RIGHT))	direction[0] += 1;
-	if (Input::Get::Key::Press(VK_UP))		direction[1] += 1;
-	if (Input::Get::Key::Press(VK_DOWN))	direction[1] -= 1;
-
-	/*
 	if (Input::Get::Key::Press(VK_LEFT))
 	{
 		if (Wall.WallCollition())
@@ -101,7 +95,7 @@ bool TestScene::Update()
 		}
 		else direction[1] -= 1;
 	}	
-	*/
+	
 
 	if (Length(direction) != 0)
 	{
