@@ -6,43 +6,11 @@ using namespace Rendering;
 void CollisionProcess::SetPlayer(Animation::Component player)
 {
 	Controler.Angle	= player.Angle;
-	Controler.Length[0] = player.Length[0] * 2 / 3;
-	Controler.Length[1] = player.Length[1] * 3 / 4;
+	Controler.Length[0] = player.Length[0] * 2 / 3 + 3;
+	Controler.Length[1] = player.Length[1] * 3 / 4 + 3;
 
 	Controler.Location = player.Location;
 }
-
-/*
-void CollisionProcess::SetBlock()
-{
-	BlockRect[0].Angle = 0;
-	BlockRect[0].Location = { 100, 100 };
-	BlockRect[0].Length = { 50, 50 };
-
-	BlockRect[1].Angle = 0;
-	BlockRect[1].Location = { -100, 100 };
-	BlockRect[1].Length = { 50, 50 };
-
-	BlockRect[2].Angle = 0;
-	BlockRect[2].Location = { 100, -100 };
-	BlockRect[2].Length = { 50, 50 };
-
-	BlockRect[3].Angle = 0;
-	BlockRect[3].Location = { -100, -100 };
-	BlockRect[3].Length = { 50, 50 };
-}
-
-bool CollisionProcess::WallCollition()
-{
-	bool collision = false;
-	for (int i = 0; i < 4; i++)
-	{
-		if (Collide(Controler, BlockRect[i]))
-			collision = true;
-	}
-	return collision;
-}
-*/
 
 void CollisionProcess::SetBlock()
 {
@@ -107,7 +75,7 @@ void CollisionProcess::SetBlock()
 }
 
 
-bool CollisionProcess::WallCollition()
+bool CollisionProcess::WallCollision()
 {
 	bool collision = false;
 	for (int i = 0; i < 16; i++)

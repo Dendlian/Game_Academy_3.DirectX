@@ -1,8 +1,10 @@
 #pragma once
+
 #include "Manager/Scene.h"
+
+#include "Character/Player.h"
 #include "Physics/CollisionProcess.h"
 
-using namespace Rendering;
 
 class TestScene final : public Scene
 {
@@ -12,28 +14,31 @@ public:
 	void End()     override;
 
 private:
-	Rendering::Camera				Camera;
+	// Rendering::Camera				Camera;
 
 	Rendering::Image::Component		Background;
 
-	Rendering::Animation::Component Player;
+	// Rendering::Animation::Component Player;
+
+	Player Player;
 
 	Rendering::Image::Component		Map_Block1[4];
-	
 	Rendering::Image::Component		Map_Block2[13][4];
-	
 	Rendering::Image::Component		Map_Block3[25][4];
 
+	Rendering::Image::Component		Fireball[10];
 
 public:
 
-	FORCEINLINE void SetBlock(Image::Component & component)
+	// CollisionProcess Wall;
+
+	FORCEINLINE void SetBlock(Rendering::Image::Component & component)
 	{
 		component.Content = "Block";
 		component.Length = { 50, 50 };
 	}
 
-	FORCEINLINE void SetBlock(Image::Component component[4])
+	FORCEINLINE void SetBlock(Rendering::Image::Component component[4])
 	{
 		for (int i = 0; i < 4; i++)
 		{
@@ -41,6 +46,5 @@ public:
 			component[i].Length = { 50, 50 };
 		}
 	}
-
-	void PasteBlock(Image::Component component[4]);
+	void PasteBlock(Rendering::Image::Component component[4]);
 };

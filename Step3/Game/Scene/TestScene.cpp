@@ -6,13 +6,8 @@ void TestScene::Start()
 	Background.Content = "BackGround";
 	Background.Length  = { 960 * 6, 730 * 6 };
 
-	Player.Content		= "Player";
-	Player.Location		= { 0, 200 };
-	Player.Length		= { 70, 70 };
-	Player.Duration		= 1;
-	Player.Repeatable	= true;
-	Player.Line	= 8;
-
+#pragma region Block Setting
+	
 	// Map_Block1
 	Map_Block1[0].Location = { 100, 100 };
 	PasteBlock(Map_Block1);
@@ -43,73 +38,15 @@ void TestScene::Start()
 		PasteBlock(Map_Block3[i]);
 		SetBlock(Map_Block3[i]);
 	}
+#pragma endregion
 
-	
+	Player.SetCharacter();
 }
 
 bool TestScene::Update()
 {
-	CollisionProcess Wall;
-
-	Wall.SetBlock();
-	Wall.SetPlayer(Player);
-
-	Vector<2> direction;
-
-	if (Input::Get::Key::Press(VK_LEFT))
-	{
-		if (Wall.WallCollition())
-		{
-			Player.Location[0] += 3;
-			Camera.Location[0] += 3;
-		}
-		else direction[0] -= 1;
-	}
-
-	if (Input::Get::Key::Press(VK_RIGHT))
-	{
-		if (Wall.WallCollition())
-		{
-			Player.Location[0] -= 3;
-			Camera.Location[0] -= 3;
-		}
-		else direction[0] += 1;
-	}
-
-	if (Input::Get::Key::Press(VK_UP))
-	{
-		if (Wall.WallCollition())
-		{
-			Player.Location[1] -= 3;
-			Camera.Location[1] -= 3;
-		}
-		else direction[1] += 1;
-	}
-
-	if (Input::Get::Key::Press(VK_DOWN))
-	{
-		if (Wall.WallCollition())
-		{
-			Player.Location[1] += 3;
-			Camera.Location[1] += 3;
-		}
-		else direction[1] -= 1;
-	}	
-	
-
-	if (Length(direction) != 0)
-	{
-		// 500 : 이동 스피드
-		Camera.Location += Normalize(direction) * 600 * Time::Get::Delta();
-		Player.Location += Normalize(direction) * 600 * Time::Get::Delta();
-	}
-
-	Camera.Set();
-
 	Background.Draw();
-
-	Player.Player_Draw();
-
+	
 	for (int i = 0; i < 4; i++)
 	{
 		Map_Block1[i].Draw();
@@ -119,7 +56,11 @@ bool TestScene::Update()
 		for (int k = 0; k < 25; k++)
 			Map_Block3[k][i].Draw();
 	}
-	
+
+	Player.Move();
+	Player.PlayerAnim.Player_Draw();
+	Player.Camera.Set();
+
 	if (Input::Get::Key::Down(VK_ESCAPE)) { return true; }
 	else                                  { return false; }
 }
@@ -127,7 +68,7 @@ bool TestScene::Update()
 void TestScene::End() { }
 
 
-void TestScene::PasteBlock(Image::Component component[4])
+void TestScene::PasteBlock(Rendering::Image::Component component[4])
 {
 	component[1].Location[0] = -component[0].Location[0];
 	component[1].Location[1] =  component[0].Location[1];

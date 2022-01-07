@@ -1,10 +1,19 @@
 #include "stdafx.h"
 #include "PlayerScene.h"
 
-void PlayerScene::Start() { }
+#include <dsound.h>
+#pragma comment(lib, "dsound.lib")
+
+void PlayerScene::Start() 
+{
+	
+}
 
 bool PlayerScene::Update()
 {
+	// IDirectSoundBuffer;
+
+
 	return false;
 }
 

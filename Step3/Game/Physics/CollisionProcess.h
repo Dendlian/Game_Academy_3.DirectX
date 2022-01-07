@@ -7,8 +7,8 @@ class CollisionProcess
 {
 public:
 	RectAngle Controler;
+
 	RectAngle BlockRect[4][4];
-	// RectAngle BlockRect[4];
 
 public:
 
@@ -16,6 +16,6 @@ public:
 
 	void SetBlock();
 
-	bool WallCollition();
+	bool WallCollision();
 };
 
