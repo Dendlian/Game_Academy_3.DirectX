@@ -14,11 +14,9 @@ public:
 	void End()     override;
 
 private:
-	// Rendering::Camera				Camera;
-
+	
 	Rendering::Image::Component		Background;
-
-	// Rendering::Animation::Component Player;
+	Rendering::Image::Component		Background2;
 
 	Player Player;
 
@@ -29,8 +27,6 @@ private:
 	Rendering::Image::Component		Fireball[10];
 
 public:
-
-	// CollisionProcess Wall;
 
 	FORCEINLINE void SetBlock(Rendering::Image::Component & component)
 	{

@@ -3,13 +3,22 @@
 
 using namespace Rendering;
 
-void CollisionProcess::SetPlayer(Animation::Component player)
+void CollisionProcess::SetObject(Animation::Component character)
 {
-	Controler.Angle	= player.Angle;
-	Controler.Length[0] = player.Length[0] * 2 / 3 + 3;
-	Controler.Length[1] = player.Length[1] * 3 / 4 + 3;
+	Object.Angle	= character.Angle;
+	Object.Length[0] = character.Length[0] * 2 / 3 + 3;
+	Object.Length[1] = character.Length[1] * 3 / 4 + 3;
 
-	Controler.Location = player.Location;
+	Object.Location = character.Location;
+}
+
+void CollisionProcess::SetObject(Rendering::Image::Component Thing)
+{
+	Object.Angle =	Thing.Angle;
+	Object.Length[0] = Thing.Length[0];
+	Object.Length[1] = Thing.Length[1];
+
+	Object.Location = Thing.Location;
 }
 
 void CollisionProcess::SetBlock()
@@ -80,7 +89,7 @@ bool CollisionProcess::WallCollision()
 	bool collision = false;
 	for (int i = 0; i < 16; i++)
 	{
-		if (Collide(Controler, BlockRect[i / 4][i % 4]))
+		if (Collide(Object, BlockRect[i / 4][i % 4]))
 			collision = true;
 	}
 	return collision;

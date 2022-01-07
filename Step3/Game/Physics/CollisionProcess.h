@@ -6,13 +6,15 @@ using namespace Collision;
 class CollisionProcess
 {
 public:
-	RectAngle Controler;
+	RectAngle Object;
 
 	RectAngle BlockRect[4][4];
 
 public:
 
-	void SetPlayer(Rendering::Animation::Component Player);
+	void SetObject(Rendering::Animation::Component Character);
+
+	void SetObject(Rendering::Image::Component Thing);
 
 	void SetBlock();
 

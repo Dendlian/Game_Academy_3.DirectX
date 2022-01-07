@@ -4,7 +4,10 @@
 void TestScene::Start()
 {
 	Background.Content = "BackGround";
-	Background.Length  = { 960 * 6, 730 * 6 };
+	Background.Length  = { 1200, 1200 };
+
+	Background2.Content = "BackGround2";
+	Background2.Length = { 960 * 6, 730 * 6 };
 
 #pragma region Block Setting
 	
@@ -43,8 +46,10 @@ void TestScene::Start()
 	Player.SetCharacter();
 }
 
+
 bool TestScene::Update()
 {
+	Background2.Draw();
 	Background.Draw();
 	
 	for (int i = 0; i < 4; i++)
@@ -58,14 +63,17 @@ bool TestScene::Update()
 	}
 
 	Player.Move();
-	Player.PlayerAnim.Player_Draw();
-	Player.Camera.Set();
+	Player.Attack();
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) { return true; }
 	else                                  { return false; }
 }
 
+
 void TestScene::End() { }
+
+
+
 
 
 void TestScene::PasteBlock(Rendering::Image::Component component[4])
