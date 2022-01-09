@@ -244,7 +244,6 @@ namespace Rendering
             }
         }
 
-
 #pragma region Contol_Draw()
         void Component::Player_Draw()
         {

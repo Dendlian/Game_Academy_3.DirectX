@@ -10,6 +10,12 @@ void Player::SetCharacter()
 	PlayerAnim.Repeatable = true;
 	PlayerAnim.Line = 8;
 
+	for (int i = 0; i < 10; i++)
+	{
+		Fire[i].Set();
+		fire_ing[i] = false;
+	}
+
 	Wall.SetBlock();
 }
 
@@ -93,17 +99,28 @@ void Player::Attack()
 {
 	if (Input::Get::Key::Down(VK_SPACE))
 	{
-		attack = true;
+		for (int i = 0; i < 10; i++)
+		{
+			if (!fire_ing[i])
+			{
+				fire_turn = i;
+				Fire[fire_turn].F_Image.Location[0] = P_Location[0];
+				Fire[fire_turn].F_Image.Location[1] = P_Location[1] + 10;
+				Fire[fire_turn].F_Direction = PlayerAnim.CurrentLine;
+				fire_ing[i] = true;
+				break;
+			}
+		}
 	}
 	
-	if (attack)
+	for (int i = 0; i < 10; i++)
 	{
-		Magic* Fire = new Magic;
-		Fire->Set();
-		Fire->F_Image.Location[0] = P_Location[0];
-		Fire->F_Image.Location[1] = P_Location[1] + 10;
-		Fire->F_Direction = PlayerAnim.CurrentLine;
-		Fire->Move();
+		if(fire_ing[i]) Fire[i].Move();
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		if (Fire[i].Wall.WallCollision()) fire_ing[i] = false;
 	}
 
 

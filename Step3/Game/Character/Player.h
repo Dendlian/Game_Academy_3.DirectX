@@ -22,9 +22,11 @@ public:
 
 	CollisionProcess	Wall;
 
-	Rendering::Camera	Camera;
+	Magic	Fire[10];
+	int		fire_turn = 0;
+	bool	fire_ing[10];
 
-	bool attack = false;
+	Rendering::Camera	Camera;
 
 
 	FORCEINLINE void PlayerUpdate()

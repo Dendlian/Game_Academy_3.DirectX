@@ -63,6 +63,7 @@ bool TestScene::Update()
 	}
 
 	Player.Move();
+
 	Player.Attack();
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) { return true; }
@@ -71,7 +72,6 @@ bool TestScene::Update()
 
 
 void TestScene::End() { }
-
 
 
 

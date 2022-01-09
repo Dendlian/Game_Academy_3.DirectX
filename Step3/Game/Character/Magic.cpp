@@ -50,11 +50,8 @@ void Magic::Move()
 	
 	if (!Wall.WallCollision())
 	{
-		F_Image.Location += Normalize(direction) * 2000 * Time::Get::Delta();
+		F_Image.Location += Normalize(direction) * 1500 * Time::Get::Delta();
+
 		F_Image.Draw();
-	}
-	else
-	{
-		
 	}
 }
