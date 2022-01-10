@@ -44,6 +44,7 @@ void TestScene::Start()
 #pragma endregion
 
 	Player.SetCharacter();
+	Zombie.SetCharacter();
 }
 
 
@@ -64,7 +65,11 @@ bool TestScene::Update()
 
 	Player.Move();
 
-	Player.Attack();
+	Zombie.PlayerUpdate(Player);
+
+	Zombie.Move();
+
+	Player.Attack(); 
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) { return true; }
 	else                                  { return false; }

@@ -8,7 +8,8 @@ class Player : public Character
 public:
 	void SetCharacter() override;
 	void Move()			override;
-	void Attack()		override;
+
+	void Attack();
 
 public:
 	Vector<2>		P_Length = { 0,0 };

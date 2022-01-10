@@ -4,7 +4,7 @@
 void Player::SetCharacter()
 {
 	PlayerAnim.Content = "Player";
-	PlayerAnim.Location = { 0, 200 };
+	PlayerAnim.Location = { 0, 0 };
 	PlayerAnim.Length = { 70, 70 };
 	PlayerAnim.Duration = 1;
 	PlayerAnim.Repeatable = true;
@@ -87,6 +87,7 @@ void Player::Move()
 
 	if (Length(direction) != 0)
 	{
+		
 		Camera.Location		+= Normalize(direction) * 600 * Time::Get::Delta();
 		PlayerAnim.Location += Normalize(direction) * 600 * Time::Get::Delta();
 	}
@@ -122,6 +123,22 @@ void Player::Attack()
 	{
 		if (Fire[i].Wall.WallCollision()) fire_ing[i] = false;
 	}
-
-
 }
+
+
+/*
+
+	bool recycleable;
+
+	bool recycleable = true;
+	Fire(float Speed, direction)
+	{
+	
+	}
+
+	Fire.Move를 플레이어 어택에서 실행하지 말고 파이어의 업데이트 부분에서 실행
+
+	player : poolable
+
+	magic : Object pool 
+*/

@@ -26,10 +26,10 @@ namespace Rendering
         {
             return Matrix<4, 4>
             {
-                length[0], 0        , 0, 0,
-                0        , length[1], 0, 0,
-                0        , 0        , 1, 0,
-                0        , 0        , 0, 1
+                length[0], 0, 0, 0,
+                    0, length[1], 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
             };
         }
         inline Matrix<4, 4> Rotation(float const& angle)
@@ -39,20 +39,20 @@ namespace Rendering
             return Matrix<4, 4>
             {
                 +cos(radian), +sin(radian), 0, 0,
-                -sin(radian), +cos(radian), 0, 0,
-                0           , 0           , 1, 0,
-                0           , 0           , 0, 1
+                    -sin(radian), +cos(radian), 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
             };
         }
-        
+
         inline Matrix<4, 4> Translation(Vector<2> const& location)
         {
             return Matrix<4, 4>
             {
                 1, 0, 0, location[0],
-                0, 1, 0, location[1],
-                0, 0, 1,           0,
-                0, 0, 0,           1
+                    0, 1, 0, location[1],
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
             };
         }
     }
@@ -61,10 +61,10 @@ namespace Rendering
     void Camera::Set() const
     {
         using namespace Pipeline;
-      
-        Matrix<4, 4> const projection = Scale(Vector<2>(2 / Length[0], 2 / Length[1])); 
-        Matrix<4, 4> const view       = Rotation(-Angle) * Translation(-Location);
-        Matrix<4, 4> const latter     = projection * view;
+
+        Matrix<4, 4> const projection = Scale(Vector<2>(2 / Length[0], 2 / Length[1]));
+        Matrix<4, 4> const view = Rotation(-Angle) * Translation(-Location);
+        Matrix<4, 4> const latter = projection * view;
 
         Transform::Update<Transform::Type::Latter>(reinterpret_cast<Transform::Matrix const&>(latter));
     }
@@ -81,15 +81,15 @@ namespace Rendering
         {
             LOGFONT descriptor = LOGFONT();
 
-            descriptor.lfHeight     = Font.Size;
-            descriptor.lfWeight     = Font.Bold ? FW_BOLD : FW_NORMAL;
-            descriptor.lfItalic     = Font.Italic;
-            descriptor.lfUnderline  = Font.Underlined;
-            descriptor.lfStrikeOut  = Font.StrikeThrough;
+            descriptor.lfHeight = Font.Size;
+            descriptor.lfWeight = Font.Bold ? FW_BOLD : FW_NORMAL;
+            descriptor.lfItalic = Font.Italic;
+            descriptor.lfUnderline = Font.Underlined;
+            descriptor.lfStrikeOut = Font.StrikeThrough;
 
             // 폰트 구조체를 사용할 때 적용 가능한 언어 설정
             // DEFAULT_CHARSET : 기본적인 영어, 한국어 글꼴 제공
-            descriptor.lfCharSet    = DEFAULT_CHARSET;
+            descriptor.lfCharSet = DEFAULT_CHARSET;
 
             // LF_FACESIZE : 서체에 할당되어 있는 공간 크기 설정 (FaceName은 최대 32Byte)
             // lfFaceName에 Font.Name에 담긴 문자열을 복사하여 저장
@@ -99,7 +99,7 @@ namespace Rendering
             // descriptor를 바탕으로 font 생성
             HFONT const font = CreateFontIndirect(&descriptor);
 
-            SIZE const area    = { static_cast<LONG>(  Length[0]), static_cast<LONG>(  Length[1]) };
+            SIZE const area = { static_cast<LONG>(Length[0]), static_cast<LONG>(Length[1]) };
             POINT const center = { static_cast<LONG>(Location[0]), static_cast<LONG>(Location[1]) };
 
             Pipeline::String::Render(font, Content, RGB(Color.Red, Color.Green, Color.Blue), area, center);
@@ -107,7 +107,7 @@ namespace Rendering
             DeleteObject(font);
         }
     }
-    
+
 
     namespace Image
     {
@@ -124,21 +124,21 @@ namespace Rendering
         std::map<std::string, Descriptor> Storage;
 
 #pragma region Image::Import ***
-/*
-1. if문
-    - Bitmap으로 들어온 데이터가 32bit가 아니라면 다시 32bit로 전환
+        /*
+        1. if문
+            - Bitmap으로 들어온 데이터가 32bit가 아니라면 다시 32bit로 전환
 
-2. size_t const x = file.find_first_of('/') + sizeof(char);
-   size_t const y = file.find_last_of('.');
-    - x : 문자열의 첫번째 문자의 위치
-    - y : 문자열의 마지막 문자의 위치
+        2. size_t const x = file.find_first_of('/') + sizeof(char);
+           size_t const y = file.find_last_of('.');
+            - x : 문자열의 첫번째 문자의 위치
+            - y : 문자열의 마지막 문자의 위치
 
-3. Image::Storage.try_emplace(file.substr(x, y - x), descriptor);
-    - try_emplace(Image의 이름, Container) : Container(map)에 Image를 저장
-    - file.substr(size_type pos = 0, size_type count = npos) const;
-        - pos   : 첫번째 문자의 위치 (x)
-        - count : 부분 문자열의 길이 (y-x)
-*/
+        3. Image::Storage.try_emplace(file.substr(x, y - x), descriptor);
+            - try_emplace(Image의 이름, Container) : Container(map)에 Image를 저장
+            - file.substr(size_type pos = 0, size_type count = npos) const;
+                - pos   : 첫번째 문자의 위치 (x)
+                - count : 부분 문자열의 길이 (y-x)
+        */
 #pragma endregion
 
         void Import(std::string const& file)
@@ -235,7 +235,7 @@ namespace Rendering
                     size_t const x = file.find_first_of('/') + sizeof(char);
                     size_t const y = file.find_last_of('[');
                     size_t const z = file.find_last_of(']');
-                   
+
                     descriptor.Motion = atoi(file.substr(y + sizeof(char), z - (y + sizeof(char))).data());
                     descriptor.Frame.cx /= descriptor.Motion;
                     Animation::Storage.try_emplace(file.substr(x, y - x), descriptor);
@@ -257,7 +257,7 @@ namespace Rendering
             LONG const progress = 0;
 
             {
-                Descriptor & descriptor = Storage.at(Content);
+                Descriptor& descriptor = Storage.at(Content);
 
                 // 0 / 256
                 LONG const progress = static_cast<LONG>((Playback / Duration) * descriptor.Motion);
@@ -273,7 +273,7 @@ namespace Rendering
                     };
                 }
                 else if (Line > 1)
-                {   
+                {
                     using namespace Input::Get::Key;
 
                     if (Press(VK_DOWN) & Press(VK_LEFT))
@@ -357,7 +357,7 @@ namespace Rendering
                         };
                     }
                 }
-                
+
                 Texture::Render(descriptor.Handle, area);
 
                 float const delta = Time::Get::Delta();
@@ -374,16 +374,141 @@ namespace Rendering
                 }
             }
         }
-        
+
+        void Component::Zombie_Draw(Vector<2> PZ)
+        {
+            using namespace Pipeline;
+            {
+                Matrix<4, 4> const world = Translation(Location) * Rotation(Angle) * Scale(Length);
+                Transform::Update<Transform::Type::Former>(reinterpret_cast<Transform::Matrix const&>(world));
+            }
+
+            LONG const progress = 0;
+
+            {
+                Descriptor& descriptor = Storage.at(Content);
+
+                LONG const progress = static_cast<LONG>((Playback / Duration) * descriptor.Motion);
+
+                RECT area = RECT();
+
+                if (Line == 1)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                    };
+                }
+                else if (Line > 1)
+                {
+                    using namespace Input::Get::Key;
+
+                    if ((PZ[1] < -10) & (PZ[0] < -10))
+                    {
+                        CurrentLine = 6;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if ((PZ[1] < -10) & (PZ[0] > 10))
+                    {
+                        CurrentLine = 4;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if ((PZ[1] > 10) & (PZ[0] < -10))
+                    {
+                        CurrentLine = 8;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if ((PZ[1] > 10) & (PZ[0] > 10))
+                    {
+                        CurrentLine = 2;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if ((PZ[1] < 0) & ((PZ[0]<10) & (PZ[0]>-10)))
+                    {
+                        CurrentLine = 5;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (PZ[0] < 0 & ((PZ[1] < 10) & (PZ[1] > -10)))
+                    {
+                        CurrentLine = 7;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (PZ[0] > 0 & ((PZ[1] < 10) & (PZ[1] > -10)))
+                    {
+                        CurrentLine = 3;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else if (PZ[1] > 0 & ((PZ[0] < 10) & (PZ[0] > -10)))
+                    {
+                        CurrentLine = 1;
+                        area =
+                        {
+                            descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                    else
+                    {
+                        area =
+                        {
+                            0,  descriptor.Frame.cy * (CurrentLine - 1) / Line,
+                            descriptor.Frame.cx, descriptor.Frame.cy * (CurrentLine) / Line
+                        };
+                    }
+                }
+
+                Texture::Render(descriptor.Handle, area);
+
+                float const delta = Time::Get::Delta();
+
+                Playback += delta;
+
+                if (Duration <= Playback)
+                {
+                    if (Repeatable) Playback = fmod(Playback, Duration);
+                    else            Playback -= delta;
+                }
+            }
+
+        }
     }
 #pragma endregion
 
-    void Procedure(HWND const hWindow, UINT const uMessage, WPARAM const wParameter, LPARAM const lParameter)
-    {
-        switch (uMessage)
+        void Procedure(HWND const hWindow, UINT const uMessage, WPARAM const wParameter, LPARAM const lParameter)
         {
+            switch (uMessage)
+            {
             case WM_CREATE:
-            {  
+            {
                 Pipeline::Procedure(hWindow, uMessage, wParameter, lParameter);
 
                 Resource::Import("Font", Text::Import);
@@ -406,17 +531,17 @@ namespace Rendering
             case WM_DESTROY:
             {
 #pragma region 배열 기반 for문 ***
-/*
-    int Array[5] = {1, 2, 3, 4, 5};
-    for(int i = 0; i < 5, i++)
-    {
-        Array[i] = i;
-    }
-    for(int i : Array) // Array의 각 요소에 i를 순차적으로 삽입
-    {
-        i << Array[i];
-    }
-*/
+                /*
+                    int Array[5] = {1, 2, 3, 4, 5};
+                    for(int i = 0; i < 5, i++)
+                    {
+                        Array[i] = i;
+                    }
+                    for(int i : Array) // Array의 각 요소에 i를 순차적으로 삽입
+                    {
+                        i << Array[i];
+                    }
+                */
 #pragma endregion
 
                 using namespace std;
@@ -437,6 +562,6 @@ namespace Rendering
 
                 return;
             }
+            }
         }
     }
-}

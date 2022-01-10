@@ -11,7 +11,7 @@ namespace Rendering
     public:
         Vector<2> Length = { 1280, 720 };
         float     Angle = { 0 };
-        Vector<2> Location = { 0, 200 };
+        Vector<2> Location = { 0, 0 };
     };
 
     namespace Text
@@ -28,7 +28,7 @@ namespace Rendering
             {
                 char const* Name = nullptr;
                 unsigned    Size = 0;
-                bool        Bold = false;    
+                bool        Bold = false;   
                 bool        Italic = false;   
                 bool        Underlined = false;
                 bool        StrikeThrough = false;  
@@ -70,13 +70,14 @@ namespace Rendering
         {
         public:
             void Player_Draw();
-            void Zombie_Draw();
+            void Zombie_Draw(Vector<2> PZ);
 
         public:
             char const* Content = nullptr;
 
             float Playback = 0;
             float Duration = 0;
+
             int   Line = 1;
             int   CurrentLine = 1;
 
@@ -88,4 +89,5 @@ namespace Rendering
             Vector<2> Location = { 0,0 };
         };
     }
+
 }

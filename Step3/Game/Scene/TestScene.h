@@ -3,6 +3,8 @@
 #include "Manager/Scene.h"
 
 #include "Character/Player.h"
+#include "Character/Zombie.h"
+
 #include "Physics/CollisionProcess.h"
 
 
@@ -18,13 +20,14 @@ private:
 	Rendering::Image::Component		Background;
 	Rendering::Image::Component		Background2;
 
-	Player Player;
-
 	Rendering::Image::Component		Map_Block1[4];
 	Rendering::Image::Component		Map_Block2[13][4];
 	Rendering::Image::Component		Map_Block3[25][4];
 
 	Rendering::Image::Component		Fireball[10];
+
+	Player Player;
+	Zombie Zombie;
 
 public:
 
