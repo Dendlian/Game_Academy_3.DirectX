@@ -3,22 +3,31 @@
 
 using namespace Rendering;
 
-void CollisionProcess::SetObject(Animation::Component character)
+void CollisionProcess::SetPlayer(Animation::Component Character)
 {
-	Object.Angle	= character.Angle;
-	Object.Length[0] = character.Length[0] * 2 / 3 + 3;
-	Object.Length[1] = character.Length[1] * 3 / 4 + 3;
+	Player.Angle	= Character.Angle;
+	Player.Length[0] = Character.Length[0] * 2 / 3;
+	Player.Length[1] = Character.Length[1] * 3 / 4;
 
-	Object.Location = character.Location;
+	Player.Location[0] = Character.Location[0];
+	Player.Location[1] = Character.Location[1] - 5;
 }
 
-void CollisionProcess::SetObject(Rendering::Image::Component Thing)
+void CollisionProcess::SetMagic(Image::Component Thing)
 {
-	Object.Angle =	Thing.Angle;
-	Object.Length[0] = Thing.Length[0];
-	Object.Length[1] = Thing.Length[1];
+	Magic.Angle =	Thing.Angle;
+	Magic.Length[0] = Thing.Length[0];
+	Magic.Length[1] = Thing.Length[1];
 
-	Object.Location = Thing.Location;
+	Magic.Location = Thing.Location;
+}
+
+void CollisionProcess::SetZombie(Animation::Component Character)
+{
+	Zombie.Angle = Character.Angle;
+	Zombie.Length[0] = Character.Length[0] * 3 / 5;
+	Zombie.Length[1] = Character.Length[1] * 2 / 3;
+	Zombie.Location = Character.Location;
 }
 
 void CollisionProcess::SetBlock()
@@ -83,8 +92,7 @@ void CollisionProcess::SetBlock()
 	BlockRect[3][3].Location = { 0, -600 };
 }
 
-
-bool CollisionProcess::WallCollision()
+bool CollisionProcess::WallCollision(RectAngle Object)
 {
 	bool collision = false;
 	for (int i = 0; i < 16; i++)
@@ -93,4 +101,9 @@ bool CollisionProcess::WallCollision()
 			collision = true;
 	}
 	return collision;
+}
+
+bool CollisionProcess::ZombieCollition(RectAngle Object)
+{	
+	return Collide(Object, Zombie);
 }

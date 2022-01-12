@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 
-void Player::SetCharacter()
+void Player::Set()
 {
 	PlayerAnim.Content = "Player";
 	PlayerAnim.Location = { 0, 0 };
@@ -10,80 +10,81 @@ void Player::SetCharacter()
 	PlayerAnim.Repeatable = true;
 	PlayerAnim.Line = 8;
 
+	// Set Magic 
 	for (int i = 0; i < 10; i++)
 	{
-		Fire[i].Set();
-		fire_ing[i] = false;
+		Fireball[i].Set();
 	}
 
-	Wall.SetBlock();
+	// Set Wall
+	Coll.SetBlock();
 }
 
 void Player::Move()
 {
 	PlayerUpdate();
-	Wall.SetObject(PlayerAnim);
-
-	Vector<2> direction;
+	Coll.SetPlayer(PlayerAnim);
 	
 #pragma region Player Move 
+
+	Vector<2> direction;
+
 	if (Input::Get::Key::Press(VK_LEFT))
 	{
-		Wall.Object.Location[0] -= 3;
-		if (!Wall.WallCollision())
+		Coll.Player.Location[0] -= 3;
+		if (!Coll.WallCollision(Coll.Player))
 			direction[0] -= 1;
 		else if(Input::Get::Key::Press(VK_UP))
 		{
-			Wall.Object.Location[0] += 3;
-			Wall.Object.Location[1] += 3;
-			if (!Wall.WallCollision())
+			Coll.Player.Location[0] += 3;
+			Coll.Player.Location[1] += 3;
+			if (!Coll.WallCollision(Coll.Player))
 				direction[1] += 1;
 		}
 		else if (Input::Get::Key::Press(VK_DOWN))
 		{
-			Wall.Object.Location[0] += 3;
-			Wall.Object.Location[1] -= 3;
-			if (!Wall.WallCollision())
+			Coll.Player.Location[0] += 3;
+			Coll.Player.Location[1] -= 3;
+			if (!Coll.WallCollision(Coll.Player))
 				direction[1] -= 1;
 		}
 	}
 	
 	if (Input::Get::Key::Press(VK_RIGHT))
 	{
-		Wall.Object.Location[0] += 3;
-		if (!Wall.WallCollision())
+		Coll.Player.Location[0] += 3;
+		if (!Coll.WallCollision(Coll.Player))
 			direction[0] += 1;
 		else if (Input::Get::Key::Press(VK_UP))
 		{
-			Wall.Object.Location[0] -= 3;
-			Wall.Object.Location[1] += 3;
-			if (!Wall.WallCollision())
+			Coll.Player.Location[0] -= 3;
+			Coll.Player.Location[1] += 3;
+			if (!Coll.WallCollision(Coll.Player))
 				direction[1] += 1;
 		}
 		else if (Input::Get::Key::Press(VK_DOWN))
 		{
-			Wall.Object.Location[0] -= 3;
-			Wall.Object.Location[1] -= 3;
-			if (!Wall.WallCollision())
+			Coll.Player.Location[0] -= 3;
+			Coll.Player.Location[1] -= 3;
+			if (!Coll.WallCollision(Coll.Player))
 				direction[1] -= 1;
 		}
 	}
 	
 	if (Input::Get::Key::Press(VK_UP))
 	{
-		Wall.Object.Location[1] += 3;
-		if (!Wall.WallCollision())
+		Coll.Player.Location[1] += 3;
+		if (!Coll.WallCollision(Coll.Player))
 			direction[1] += 1;
 	}
 	
 	if (Input::Get::Key::Press(VK_DOWN))
 	{
-		Wall.Object.Location[1] -= 3;
-		if (!Wall.WallCollision())
+		Coll.Player.Location[1] -= 3;
+		if (!Coll.WallCollision(Coll.Player))
 			direction[1] -= 1;
 	}
 #pragma endregion
-
 
 	if (Length(direction) != 0)
 	{
@@ -94,51 +95,38 @@ void Player::Move()
 
 	Camera.Set();
 	PlayerAnim.Player_Draw();
+	
+	// Update Zombie
+	Coll.Zombie = Zombie;
+	for (int i = 0; i < 10; i++)
+	{
+		Fireball[i].Coll.Zombie = Zombie;
+	}
 }
 
 void Player::Attack()
 {
+	// ZombieAttack = false;
+
 	if (Input::Get::Key::Down(VK_SPACE))
 	{
 		for (int i = 0; i < 10; i++)
 		{
-			if (!fire_ing[i])
+			if (!Fireball[i].ING)
 			{
 				fire_turn = i;
-				Fire[fire_turn].F_Image.Location[0] = P_Location[0];
-				Fire[fire_turn].F_Image.Location[1] = P_Location[1] + 10;
-				Fire[fire_turn].F_Direction = PlayerAnim.CurrentLine;
-				fire_ing[i] = true;
+				Fireball[fire_turn].F_Image.Location[0] = P_Location[0];
+				Fireball[fire_turn].F_Image.Location[1] = P_Location[1] + 10;
+				Fireball[fire_turn].F_Direction = PlayerAnim.CurrentLine;
+				Fireball[i].ING = true;
 				break;
 			}
 		}
 	}
-	
-	for (int i = 0; i < 10; i++)
-	{
-		if(fire_ing[i]) Fire[i].Move();
-	}
 
 	for (int i = 0; i < 10; i++)
 	{
-		if (Fire[i].Wall.WallCollision()) fire_ing[i] = false;
+		if(Fireball[i].ING) Fireball[i].Move();
 	}
 }
 
-
-/*
-
-	bool recycleable;
-
-	bool recycleable = true;
-	Fire(float Speed, direction)
-	{
-	
-	}
-
-	Fire.Move를 플레이어 어택에서 실행하지 말고 파이어의 업데이트 부분에서 실행
-
-	player : poolable
-
-	magic : Object pool 
-*/

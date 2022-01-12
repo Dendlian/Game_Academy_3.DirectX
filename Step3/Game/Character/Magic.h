@@ -1,17 +1,24 @@
 #pragma once
+#include "Manager/Object.h"
 #include "Engine/Vector.h"
 #include "Physics/CollisionProcess.h"
 
-class Magic
+
+class Magic : public Object
 {
 public:
+
 	Rendering::Image::Component F_Image;
-	CollisionProcess	Wall;
 	unsigned int	F_Direction = 1;
+	bool ING = false;
+	
+	float Damage = 10;
+
+	CollisionProcess Coll;
 
 public:
-	float Damage = 10;
-	void Set();
-	void Move();
-};
+	void Set()	override;
+	void Move() override;
 
+	Vector<2> SetDirect(unsigned int f_direction);
+};

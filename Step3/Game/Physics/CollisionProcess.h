@@ -1,23 +1,30 @@
 #pragma once
-
 #include "Engine/Collision.h"
 using namespace Collision;
 
 class CollisionProcess
 {
 public:
-	RectAngle Object;
+	RectAngle Player;
+	RectAngle Zombie;
+	RectAngle Magic;
 
 	RectAngle BlockRect[4][4];
 
 public:
 
-	void SetObject(Rendering::Animation::Component Character);
+	void SetPlayer(Rendering::Animation::Component Character);
 
-	void SetObject(Rendering::Image::Component Thing);
+	void SetZombie(Rendering::Animation::Component Character);
+
+	void SetMagic(Rendering::Image::Component Thing);
 
 	void SetBlock();
 
-	bool WallCollision();
+	bool WallCollision(RectAngle Object);
+
+	bool ZombieCollition(RectAngle Object);
+
+	
 };
 

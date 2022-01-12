@@ -6,14 +6,27 @@ void Magic::Set()
 	F_Image.Content = "Fireball";
 	F_Image.Angle = 0;
 	F_Image.Length = { 10, 10 };
-	
-	Wall.SetBlock();
+
+	Coll.SetBlock();
 }
 
 void Magic::Move()
 {
-	Wall.SetObject(F_Image);
+	Coll.SetMagic(F_Image);
 
+	if ((!Coll.WallCollision(Coll.Magic)) && (!Coll.ZombieCollition(Coll.Magic)))
+	{
+		F_Image.Location += Normalize(SetDirect(F_Direction)) * 1500 * Time::Get::Delta();
+		F_Image.Draw();
+	}
+	else
+	{
+		ING = false;
+	}
+}
+
+Vector<2> Magic::SetDirect(unsigned int f_direction)
+{
 	Vector<2> direction;
 
 	switch (F_Direction)
@@ -47,11 +60,6 @@ void Magic::Move()
 		direction[1] += 1;
 		break;
 	}
-	
-	if (!Wall.WallCollision())
-	{
-		F_Image.Location += Normalize(direction) * 1500 * Time::Get::Delta();
 
-		F_Image.Draw();
-	}
+	return direction;
 }

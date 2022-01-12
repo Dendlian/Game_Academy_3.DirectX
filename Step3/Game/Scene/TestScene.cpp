@@ -43,13 +43,14 @@ void TestScene::Start()
 	}
 #pragma endregion
 
-	Player.SetCharacter();
-	Zombie.SetCharacter();
+	Player.Set();
+	Zombie.Set();
 }
 
 
 bool TestScene::Update()
 {
+#pragma region Draw Map
 	Background2.Draw();
 	Background.Draw();
 	
@@ -62,14 +63,19 @@ bool TestScene::Update()
 		for (int k = 0; k < 25; k++)
 			Map_Block3[k][i].Draw();
 	}
+#pragma endregion
 
+
+	Player.GetZombie(Zombie.Coll.Zombie);
 	Player.Move();
+	Player.Attack();
 
-	Zombie.PlayerUpdate(Player);
-
+	Zombie.GetPlayer(Player);
 	Zombie.Move();
 
-	Player.Attack(); 
+	//if (Player.ZombieAttack)
+	//	Zombie.GetDamage(Player.ZombieDirect);
+
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) { return true; }
 	else                                  { return false; }
@@ -77,8 +83,6 @@ bool TestScene::Update()
 
 
 void TestScene::End() { }
-
-
 
 
 void TestScene::PasteBlock(Rendering::Image::Component component[4])
