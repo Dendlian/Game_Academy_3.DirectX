@@ -19,19 +19,21 @@ public:
 	float			P_Angle = { 0 };
 	unsigned int	P_Direction = 1;
 
-	unsigned int Hp = 1000;
+	float Hp = 1000;
+	int invincibility = 0;
 
 	Rendering::Animation::Component PlayerAnim;
+	Rendering::Image::Component Hp_Bar;
+	Rendering::Image::Component Black;
+
+	Vector<2> ZombieDirect = { 0, 0 };
 
 public:
-	
-	RectAngle Zombie;
 
 	Magic	Fireball[10];
-	int		fire_turn = 0;
+	bool AttackZombie = false;
 
-	// bool ZombieAttack = false;
-	// Vector<2> ZombieDirect = {0, 0};
+	int invalidity = 0;
 
 	Rendering::Camera	Camera;
 
@@ -43,7 +45,11 @@ public:
 
 	FORCEINLINE void GetZombie(RectAngle zombie)
 	{
-		Zombie = zombie;
+		Coll.Zombie = zombie;
 	}
+
+	void GetDamage();
+
+	void SetHP_Bar();
 };
 

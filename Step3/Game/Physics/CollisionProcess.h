@@ -23,7 +23,7 @@ public:
 
 	bool WallCollision(RectAngle Object);
 
-	bool ZombieCollition(RectAngle Object);
+	bool ZombieCollision(RectAngle Object);
 
 	
 };

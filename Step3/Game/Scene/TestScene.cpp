@@ -65,25 +65,30 @@ bool TestScene::Update()
 	}
 #pragma endregion
 
+	Zombie.GetPlayer(Player.Coll.Player);
+	Zombie.Move();
 
 	Player.GetZombie(Zombie.Coll.Zombie);
 	Player.Move();
 	Player.Attack();
 
-	Zombie.GetPlayer(Player);
-	Zombie.Move();
+	if (Zombie.AttackPlayer)
+		Player.GetDamage();
 
-	//if (Player.ZombieAttack)
-	//	Zombie.GetDamage(Player.ZombieDirect);
+	if (Player.AttackZombie)
+		Zombie.GetDamage(Player.ZombieDirect);
 
+	if (Input::Get::Key::Down(VK_ESCAPE)) 
+	{
+		Player.Camera.Location = { 0, 0 };
+		return true; 
+	}
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) { return true; }
-	else                                  { return false; }
+	else { return false; }
 }
 
-
 void TestScene::End() { }
-
 
 void TestScene::PasteBlock(Rendering::Image::Component component[4])
 {

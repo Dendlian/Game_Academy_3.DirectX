@@ -9,7 +9,6 @@ class Zombie : public Object
 public:
 	void Set()			override;
 	void Move()			override;
-
 public:
 	Vector<2>		Z_Length = { 0,0 };
 	Vector<2>		Z_Location = { 0,-400 };
@@ -17,14 +16,15 @@ public:
 	unsigned int	Z_Direction = 1;
 
 	unsigned int Hp = 100;
+	float Damage = 10;
+	bool dead = false;
+
+	bool AttackPlayer = false;
 
 	CollisionProcess Coll;
-
 	Rendering::Animation::Component ZombieAnim;
 
 public:
-
-	Vector<2>	P_Location = { 0,0 };
 
 
 	FORCEINLINE void ZombieUpdate()
@@ -33,9 +33,9 @@ public:
 		Z_Direction = ZombieAnim.CurrentLine;
 	}
 
-	FORCEINLINE void GetPlayer(Player player)
+	FORCEINLINE void GetPlayer(RectAngle player)
 	{
-		P_Location = player.P_Location;
+		Coll.Player = player;
 	}
 	
 	void GetDamage(Vector<2> zombiedirect);

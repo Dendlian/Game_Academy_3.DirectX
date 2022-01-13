@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "Scene/TestScene.h"
-#include "Scene/PlayerScene.h"
+#include "Scene/EndScene.h"
+#include "Scene/StartScene.h"
+
 
 void Game::Start()
 {
+	Scenes.push_back(new StartScene);
 	Scenes.push_back(new TestScene);
-	Scenes.push_back(new PlayerScene);
 
 	Scenes.at(Now)->Start();
 }
