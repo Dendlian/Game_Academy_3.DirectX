@@ -9,6 +9,5 @@ class Object abstract
 public:
 	virtual void Set()			abstract;
 	virtual void Move()			abstract;
-
 };
 

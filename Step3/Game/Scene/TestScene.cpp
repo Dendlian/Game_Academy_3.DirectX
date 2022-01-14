@@ -43,10 +43,10 @@ void TestScene::Start()
 	}
 #pragma endregion
 
+	Portion.Set();
 	Player.Set();
 	Zombie.Set();
 }
-
 
 bool TestScene::Update()
 {
@@ -64,6 +64,8 @@ bool TestScene::Update()
 			Map_Block3[k][i].Draw();
 	}
 #pragma endregion
+
+	Portion.Move();
 
 	Zombie.GetPlayer(Player.Coll.Player);
 	Zombie.Move();
@@ -84,7 +86,7 @@ bool TestScene::Update()
 		return true; 
 	}
 
-	if (Input::Get::Key::Down(VK_ESCAPE)) { return true; }
+	if (Player.Hp <= 0) { return true; }
 	else { return false; }
 }
 

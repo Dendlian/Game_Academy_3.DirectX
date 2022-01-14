@@ -169,7 +169,6 @@ void Player::GetDamage()
 	}
 }
 
-
 void Player::SetHP_Bar()
 {
 	Black.Location[0] = P_Location[0];

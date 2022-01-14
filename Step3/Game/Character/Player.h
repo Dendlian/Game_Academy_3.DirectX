@@ -49,7 +49,7 @@ public:
 	}
 
 	void GetDamage();
-
+	
 	void SetHP_Bar();
 };
 

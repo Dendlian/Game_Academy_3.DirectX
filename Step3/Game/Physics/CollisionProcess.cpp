@@ -102,8 +102,3 @@ bool CollisionProcess::WallCollision(RectAngle Object)
 	}
 	return collision;
 }
-
-bool CollisionProcess::ZombieCollision(RectAngle Object)
-{	
-	return Collide(Object, Zombie);
-}

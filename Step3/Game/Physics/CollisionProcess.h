@@ -23,8 +23,15 @@ public:
 
 	bool WallCollision(RectAngle Object);
 
-	bool ZombieCollision(RectAngle Object);
+	FORCEINLINE bool ZombieCollision(RectAngle Object)
+	{
+		return Collide(Object, Zombie);
+	}
 
+	FORCEINLINE bool PlayerCollision(RectAngle Object)
+	{
+		return Collide(Object, Player);
+	}
 	
 };
 

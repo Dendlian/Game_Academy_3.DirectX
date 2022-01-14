@@ -9,6 +9,7 @@ void Game::Start()
 {
 	Scenes.push_back(new StartScene);
 	Scenes.push_back(new TestScene);
+	Scenes.push_back(new EndScene);
 
 	Scenes.at(Now)->Start();
 }

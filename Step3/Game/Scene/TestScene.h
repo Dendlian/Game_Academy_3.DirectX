@@ -4,6 +4,7 @@
 
 #include "Character/Player.h"
 #include "Character/Zombie.h"
+#include "Item/Portion.h"
 
 #include "Physics/CollisionProcess.h"
 
@@ -24,10 +25,9 @@ private:
 	Rendering::Image::Component		Map_Block2[13][4];
 	Rendering::Image::Component		Map_Block3[25][4];
 
-	Rendering::Image::Component		Fireball[10];
-
-	Player Player;
-	Zombie Zombie;
+	Player	Player;
+	Zombie	Zombie;
+	Portion Portion;
 
 public:
 
