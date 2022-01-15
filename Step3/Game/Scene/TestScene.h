@@ -26,11 +26,9 @@ private:
 	Rendering::Image::Component		Map_Block3[25][4];
 
 	Player	Player;
-
-	Zombie	Zombie[2];
-	
-	
+	Zombie	Zombie[10];
 	Portion Portion;
+
 
 public:
 

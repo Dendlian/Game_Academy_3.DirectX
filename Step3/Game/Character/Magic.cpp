@@ -14,7 +14,17 @@ void Magic::Move()
 {
 	Coll.SetMagic(F_Image);
 
-	if ((!Coll.WallCollision(Coll.Magic)) && (!Coll.ZombieCollision(Coll.Magic)))
+	for (int i = 0; i < Z_Location.size(); i++)
+	{
+		if (Collide(Coll.Magic, Z_Location[i]))
+		{
+			AttackZombie = true;
+			Select_Zombie = i;
+			break;
+		}
+	}
+
+	if ((!Coll.WallCollision(Coll.Magic)) && (!AttackZombie))
 	{
 		F_Image.Location += Normalize(SetDirect(F_Direction)) * 1500 * Time::Get::Delta();
 		F_Image.Draw();
@@ -22,17 +32,18 @@ void Magic::Move()
 	else if(Coll.WallCollision(Coll.Magic))
 	{
 		ING = false;
-
 		F_Image.Location = { 100, 100 };
 	}
-	else if (Coll.ZombieCollision(Coll.Magic))
+	else if (AttackZombie)
 	{
-		AttackZombie = true;
 		ING = false;
-
 		ZombieDirect = SetDirect(F_Direction);
-
 		F_Image.Location = { 100, 100 };
+	}
+
+	while (!Z_Location.empty())
+	{
+		Z_Location.pop_back();
 	}
 }
 

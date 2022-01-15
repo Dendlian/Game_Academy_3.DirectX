@@ -33,61 +33,59 @@ void Zombie::Move()
 
 		Vector<2> direction = { 0, 0 };
 
-		if (!Coll.WallCollision(Coll.Player))
+		if (PZ[0] < 0)
 		{
-			if (PZ[0] < 0)
-			{
-				Coll.Zombie.Location[0] -= 3;
-				if (!Coll.WallCollision(Coll.Zombie))
-					direction[0] -= 1;
-				else if (PZ[1] > 0)
-				{
-					Coll.Zombie.Location[0] += 3;
-					Coll.Zombie.Location[1] += 3;
-					if (!Coll.WallCollision(Coll.Zombie))
-						direction[1] += 1;
-				}
-				else if (PZ[1] < 0)
-				{
-					Coll.Zombie.Location[0] += 3;
-					Coll.Zombie.Location[1] -= 3;
-					if (!Coll.WallCollision(Coll.Zombie))
-						direction[1] -= 1;
-				}
-			}
-			if (PZ[0] > 0)
+			Coll.Zombie.Location[0] -= 3;
+			if (!Coll.WallCollision(Coll.Zombie))
+				direction[0] -= 1;
+			else if (PZ[1] > 0)
 			{
 				Coll.Zombie.Location[0] += 3;
-				if (!Coll.WallCollision(Coll.Zombie))
-					direction[0] += 1;
-				else if (PZ[1] > 0)
-				{
-					Coll.Zombie.Location[0] -= 3;
-					Coll.Zombie.Location[1] += 3;
-					if (!Coll.WallCollision(Coll.Zombie))
-						direction[1] += 1;
-				}
-				else if (PZ[1] < 0)
-				{
-					Coll.Zombie.Location[0] -= 3;
-					Coll.Zombie.Location[1] -= 3;
-					if (!Coll.WallCollision(Coll.Zombie))
-						direction[1] -= 1;
-				}
-			}
-			if (PZ[1] < 0)
-			{
-				Coll.Zombie.Location[1] -= 3;
-				if (!Coll.WallCollision(Coll.Zombie))
-					direction[1] -= 1;
-			}
-			if (PZ[1] > 0)
-			{
 				Coll.Zombie.Location[1] += 3;
 				if (!Coll.WallCollision(Coll.Zombie))
 					direction[1] += 1;
 			}
+			else if (PZ[1] < 0)
+			{
+				Coll.Zombie.Location[0] += 3;
+				Coll.Zombie.Location[1] -= 3;
+				if (!Coll.WallCollision(Coll.Zombie))
+					direction[1] -= 1;
+			}
 		}
+		if (PZ[0] > 0)
+		{
+			Coll.Zombie.Location[0] += 3;
+			if (!Coll.WallCollision(Coll.Zombie))
+				direction[0] += 1;
+			else if (PZ[1] > 0)
+			{
+				Coll.Zombie.Location[0] -= 3;
+				Coll.Zombie.Location[1] += 3;
+				if (!Coll.WallCollision(Coll.Zombie))
+					direction[1] += 1;
+			}
+			else if (PZ[1] < 0)
+			{
+				Coll.Zombie.Location[0] -= 3;
+				Coll.Zombie.Location[1] -= 3;
+				if (!Coll.WallCollision(Coll.Zombie))
+					direction[1] -= 1;
+			}
+		}
+		if (PZ[1] < 0)
+		{
+			Coll.Zombie.Location[1] -= 3;
+			if (!Coll.WallCollision(Coll.Zombie))
+				direction[1] -= 1;
+		}
+		if (PZ[1] > 0)
+		{
+			Coll.Zombie.Location[1] += 3;
+			if (!Coll.WallCollision(Coll.Zombie))
+				direction[1] += 1;
+		}
+		
 #pragma endregion
 
 		if (Length(direction) != 0)

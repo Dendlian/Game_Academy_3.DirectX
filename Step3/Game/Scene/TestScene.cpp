@@ -45,9 +45,11 @@ void TestScene::Start()
 
 	Player.Set();
 
-	Zombie[0].Set();
-	Zombie[1].Set();
-	Zombie[1].ZombieAnim.Location = { 400,0 };
+	for (int i = 0; i < 10; i++)
+	{
+		Zombie[i].Set();
+		Zombie[i].ZombieAnim.Location = { -450 + (i * 100), 500 };
+	}
 	
 	Portion.Set();
 }
@@ -71,29 +73,22 @@ bool TestScene::Update()
 
 	Portion.Move(Player);
 
-	Zombie[0].GetPlayer(Player.Coll.Player);
-	Zombie[1].GetPlayer(Player.Coll.Player);
-	Zombie[0].Move();
-	Zombie[1].Move();
+	for (int i = 0; i < 5; i++)
+	{
+		Zombie[i].GetPlayer(Player.Coll.Player);
+		Zombie[i].Move();
+		Player.GetZombie(Zombie[i].Coll.Zombie);
 
-	Player.GetZombie(Zombie[0].Coll.Zombie);
-	Player.GetZombie(Zombie[1].Coll.Zombie);
-
+		if (Zombie[i].AttackPlayer)
+			Player.GetDamage(Zombie[i].Damage);
+	}
 	Player.Move();
 
 	Player.Attack();
 
-	if (Zombie[0].AttackPlayer)
-		Player.GetDamage(Zombie[0].Damage);
+	if (Player.AttackZombie)
+		Zombie[Player.Select_Zombie].GetDamage(Player.ZombieDirect);
 
-	//if (Player.AttackZombie)
-	//	Zombie[0].GetDamage(Player.ZombieDirect);
-
-	if (Zombie[1].AttackPlayer)
-		Player.GetDamage(Zombie[1].Damage);
-
-	//if (Player.AttackZombie)
-	//	Zombie[1].GetDamage(Player.ZombieDirect);
 
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) 

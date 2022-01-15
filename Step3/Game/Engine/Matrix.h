@@ -20,7 +20,7 @@ public:
     }
 
     auto operator +(Matrix<m, n> const& M) const
-    {
+    {s
         Matrix<m, n> product = *this;
 
         for (size_t u = 0; u < m; ++u)

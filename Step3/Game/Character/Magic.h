@@ -14,16 +14,20 @@ public:
 	unsigned int	F_Direction = 1;
 	
 	bool ING = false;
-	bool AttackZombie = false;
-	
+
 	float Damage = 10;
 	CollisionProcess Coll;
-
-	Vector<2> ZombieDirect = { 0, 0 };
 
 public:
 	void Set()	override;
 	void Move() override;
 
 	Vector<2> SetDirect(unsigned int f_direction);
+
+
+	bool AttackZombie = false;
+	int Select_Zombie = 0;
+	Vector<2> ZombieDirect = { 0, 0 };
+
+	vector<RectAngle> Z_Location;
 };

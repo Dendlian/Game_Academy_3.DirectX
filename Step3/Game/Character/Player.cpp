@@ -120,12 +120,6 @@ void Player::Move()
 		}
 		else invalidity = 0;
 	}
-
-	// Update Zombie
-	for (int i = 0; i < 10; i++)
-	{
-		Fireball[i].Coll.Zombie = Coll.Zombie;
-	}
 }
 
 void Player::Attack()
@@ -146,15 +140,19 @@ void Player::Attack()
 			}
 		}
 	}
-
 	for (int i = 0; i < 10; i++)
-	{
-		if(Fireball[i].ING) Fireball[i].Move();
-		if (Fireball[i].AttackZombie)
+	{ 
+		if (Fireball[i].ING)
 		{
-			ZombieDirect = Fireball[i].ZombieDirect;
-			AttackZombie = true;
-			Fireball[i].AttackZombie = false;
+			Fireball[i].Move();
+			if (Fireball[i].AttackZombie)
+			{
+				AttackZombie = true;
+				Select_Zombie = Fireball[i].Select_Zombie;
+				ZombieDirect = Fireball[i].ZombieDirect;
+				Fireball[i].AttackZombie = false;
+				break;
+			}
 		}
 	}
 }
@@ -182,4 +180,5 @@ void Player::SetHP_Bar()
 	Hp_Bar.Location[1] = P_Location[1] + 30;
 	Hp_Bar.Draw();
 }
+
 

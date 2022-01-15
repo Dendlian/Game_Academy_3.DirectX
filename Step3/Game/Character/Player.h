@@ -26,14 +26,14 @@ public:
 	Rendering::Image::Component Hp_Bar;
 	Rendering::Image::Component Black;
 
+
+	bool AttackZombie = false;
+	int Select_Zombie = 0;
 	Vector<2> ZombieDirect = { 0, 0 };
-	vector <RectAngle> ZombieLocation;
 
 public:
 
 	Magic	Fireball[10];
-	
-	bool AttackZombie = false;
 
 	int invalidity = 0;
 
@@ -45,14 +45,16 @@ public:
 		P_Direction = PlayerAnim.CurrentLine;
 	}
 
-	FORCEINLINE void GetZombie(RectAngle zombie)
+	FORCEINLINE void GetZombie(RectAngle zombie) 
 	{
-		Coll.Zombie = zombie;
+		for (int i = 0; i < 10; i++)
+			Fireball[i].Z_Location.push_back(zombie);
 	}
 
 	void GetDamage(float damage);
 	
 	void SetHP_Bar();
+
 
 };
 
