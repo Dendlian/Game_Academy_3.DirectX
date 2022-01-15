@@ -3,6 +3,8 @@
 #include "Engine/Vector.h"
 #include "Physics/CollisionProcess.h"
 
+#include <vector>
+using namespace std;
 
 class Magic : public Object
 {
@@ -15,7 +17,6 @@ public:
 	bool AttackZombie = false;
 	
 	float Damage = 10;
-
 	CollisionProcess Coll;
 
 	Vector<2> ZombieDirect = { 0, 0 };

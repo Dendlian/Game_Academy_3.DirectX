@@ -100,12 +100,12 @@ void Player::Move()
 
 	if (Length(direction) != 0)
 	{
-		
 		Camera.Location		+= Normalize(direction) * 600 * Time::Get::Delta();
 		PlayerAnim.Location += Normalize(direction) * 600 * Time::Get::Delta();
 	}
 
 	Camera.Set();
+
 	SetHP_Bar();
 
 	if(invalidity == 0)
@@ -159,22 +159,25 @@ void Player::Attack()
 	}
 }
 
-void Player::GetDamage()
+void Player::GetDamage(float damage)
 {
 	if (invalidity == 0) 
 	{
-		Hp -= 100;
-		Hp_Bar.Length = { 30 * (Hp / 1000),5 };
+		Hp -= damage;
 		invalidity += 1;
 	}
 }
 
 void Player::SetHP_Bar()
 {
+	if (Hp > 1000) Hp = 1000;
+
 	Black.Location[0] = P_Location[0];
 	Black.Location[1] = P_Location[1] + 30;
 	Black.Draw();
-	
+
+	Hp_Bar.Length = { 30 * (Hp / 1000),5 };
+
 	Hp_Bar.Location[0] = P_Location[0] + (((Hp/2 - 500) * 30) / 1000);
 	Hp_Bar.Location[1] = P_Location[1] + 30;
 	Hp_Bar.Draw();

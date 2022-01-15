@@ -2,7 +2,7 @@
 #include "Manager/Object.h"
 #include "Physics/CollisionProcess.h"
 #include "Magic.h"
-
+#include <vector>
 
 class Player : public Object
 {
@@ -27,10 +27,12 @@ public:
 	Rendering::Image::Component Black;
 
 	Vector<2> ZombieDirect = { 0, 0 };
+	vector <RectAngle> ZombieLocation;
 
 public:
 
 	Magic	Fireball[10];
+	
 	bool AttackZombie = false;
 
 	int invalidity = 0;
@@ -48,8 +50,9 @@ public:
 		Coll.Zombie = zombie;
 	}
 
-	void GetDamage();
+	void GetDamage(float damage);
 	
 	void SetHP_Bar();
+
 };
 

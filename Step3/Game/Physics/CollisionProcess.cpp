@@ -5,7 +5,6 @@ using namespace Rendering;
 
 void CollisionProcess::SetPlayer(Animation::Component Character)
 {
-	Player.Angle	= Character.Angle;
 	Player.Length[0] = Character.Length[0] * 2 / 3;
 	Player.Length[1] = Character.Length[1] * 3 / 4;
 
@@ -24,7 +23,6 @@ void CollisionProcess::SetMagic(Image::Component Thing)
 
 void CollisionProcess::SetZombie(Animation::Component Character)
 {
-	Zombie.Angle = Character.Angle;
 	Zombie.Length[0] = Character.Length[0] * 3 / 5;
 	Zombie.Length[1] = Character.Length[1] * 2 / 3;
 	Zombie.Location = Character.Location;

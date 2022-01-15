@@ -16,7 +16,7 @@ public:
 	unsigned int	Z_Direction = 1;
 
 	unsigned int Hp = 100;
-	float Damage = 10;
+	float Damage = 100;
 	bool dead = false;
 
 	bool AttackPlayer = false;

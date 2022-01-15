@@ -43,9 +43,13 @@ void TestScene::Start()
 	}
 #pragma endregion
 
-	Portion.Set();
 	Player.Set();
-	Zombie.Set();
+
+	Zombie[0].Set();
+	Zombie[1].Set();
+	Zombie[1].ZombieAnim.Location = { 400,0 };
+	
+	Portion.Set();
 }
 
 bool TestScene::Update()
@@ -65,20 +69,32 @@ bool TestScene::Update()
 	}
 #pragma endregion
 
-	Portion.Move();
+	Portion.Move(Player);
 
-	Zombie.GetPlayer(Player.Coll.Player);
-	Zombie.Move();
+	Zombie[0].GetPlayer(Player.Coll.Player);
+	Zombie[1].GetPlayer(Player.Coll.Player);
+	Zombie[0].Move();
+	Zombie[1].Move();
 
-	Player.GetZombie(Zombie.Coll.Zombie);
+	Player.GetZombie(Zombie[0].Coll.Zombie);
+	Player.GetZombie(Zombie[1].Coll.Zombie);
+
 	Player.Move();
+
 	Player.Attack();
 
-	if (Zombie.AttackPlayer)
-		Player.GetDamage();
+	if (Zombie[0].AttackPlayer)
+		Player.GetDamage(Zombie[0].Damage);
 
-	if (Player.AttackZombie)
-		Zombie.GetDamage(Player.ZombieDirect);
+	//if (Player.AttackZombie)
+	//	Zombie[0].GetDamage(Player.ZombieDirect);
+
+	if (Zombie[1].AttackPlayer)
+		Player.GetDamage(Zombie[1].Damage);
+
+	//if (Player.AttackZombie)
+	//	Zombie[1].GetDamage(Player.ZombieDirect);
+
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) 
 	{
