@@ -5,6 +5,7 @@
 namespace Rendering { void Procedure(HWND const, UINT const, WPARAM const, LPARAM const); }
 namespace Input     { void Procedure(HWND const, UINT const, WPARAM const, LPARAM const); }
 namespace Time      { void Procedure(HWND const, UINT const, WPARAM const, LPARAM const); }
+namespace Sound     { void Procedure(HWND const, UINT const, WPARAM const, LPARAM const); }
 
 namespace Engine
 {
@@ -17,8 +18,9 @@ namespace Engine
         {
             case WM_CREATE:
             {
-                Rendering::Procedure(hWindow, uMessage, wParameter, lParameter);
                 
+                Sound::Procedure(hWindow, uMessage, wParameter, lParameter);
+                Rendering::Procedure(hWindow, uMessage, wParameter, lParameter);
                 (Portfolio = Initialize())->Start();
                 
                 return 0;

@@ -50,9 +50,9 @@ namespace Rendering
             return Matrix<4, 4>
             {
                 1, 0, 0, location[0],
-                    0, 1, 0, location[1],
-                    0, 0, 1, 0,
-                    0, 0, 0, 1
+                0, 1, 0, location[1],
+                0, 0, 1, 0,
+                0, 0, 0, 1
             };
         }
     }
@@ -449,7 +449,7 @@ namespace Rendering
                             descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
                         };
                     }
-                    else if (PZ[0] < 0 & ((PZ[1] < 10) & (PZ[1] > -10)))
+                    else if ((PZ[0] < 0) & ((PZ[1] < 10) & (PZ[1] > -10)))
                     {
                         CurrentLine = 7;
                         area =
@@ -458,7 +458,7 @@ namespace Rendering
                             descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
                         };
                     }
-                    else if (PZ[0] > 0 & ((PZ[1] < 10) & (PZ[1] > -10)))
+                    else if ((PZ[0] > 0) & ((PZ[1] < 10) & (PZ[1] > -10)))
                     {
                         CurrentLine = 3;
                         area =
@@ -467,7 +467,7 @@ namespace Rendering
                             descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (CurrentLine) / Line
                         };
                     }
-                    else if (PZ[1] > 0 & ((PZ[0] < 10) & (PZ[0] > -10)))
+                    else if ((PZ[1] > 0) & ((PZ[0] < 10) & (PZ[0] > -10)))
                     {
                         CurrentLine = 1;
                         area =
@@ -498,7 +498,41 @@ namespace Rendering
                     else            Playback -= delta;
                 }
             }
+        }
 
+        void Component::Door_Draw()
+        {
+            using namespace Pipeline;
+            {
+                Matrix<4, 4> const world = Translation(Location) * Rotation(Angle) * Scale(Length);
+                Transform::Update<Transform::Type::Former>(reinterpret_cast<Transform::Matrix const&>(world));
+            }
+
+            LONG const progrss = 0;
+
+            {
+                Descriptor const& descriptor = Storage.at(Content);
+
+                LONG const progress = static_cast<LONG>((Playback / Duration) * descriptor.Motion);
+
+                RECT const area
+                {
+                    descriptor.Frame.cx * (progress), 0,
+                    descriptor.Frame.cx * (progress + 1), (descriptor.Frame.cy)
+                };
+
+                Texture::Render(descriptor.Handle, area);
+
+                float const delta = Time::Get::Delta();
+
+                Playback += delta;
+
+                if (Duration <= Playback)
+                {
+                    if (Repeatable) Playback = fmod(Playback, Duration);
+                    else			Playback -= delta;
+                }
+            }
         }
     }
 #pragma endregion

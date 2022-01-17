@@ -4,9 +4,10 @@
 
 #include "Character/Player.h"
 #include "Character/Zombie.h"
-#include "Item/Portion.h"
 
+#include "Item/Portion.h"
 #include "Physics/CollisionProcess.h"
+
 
 
 class TestScene final : public Scene
@@ -17,6 +18,7 @@ public:
 	void End()     override;
 
 private:
+
 	
 	Rendering::Image::Component		Background;
 	Rendering::Image::Component		Background2;
@@ -25,10 +27,19 @@ private:
 	Rendering::Image::Component		Map_Block2[13][4];
 	Rendering::Image::Component		Map_Block3[25][4];
 
-	Player	Player;
-	Zombie	Zombie[10];
-	Portion Portion;
+	Rendering::Text::Component		Text;
 
+	Sound::Sound	BGM;
+
+	Player	Player;
+	Portion Portion;
+	
+	vector <class Zombie*>Zombie;
+	int zombies = 0;
+	int create_stack = 0;
+
+	Rendering::Animation::Component Door;
+	bool dooropen = true;
 
 public:
 

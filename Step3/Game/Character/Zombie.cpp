@@ -4,7 +4,7 @@
 void Zombie::Set()
 {
 	ZombieAnim.Content = "Zombie";
-	ZombieAnim.Location = { 0, -400 };
+	ZombieAnim.Location = { 0, 500 };
 	ZombieAnim.Length = { 70, 70 };
 	ZombieAnim.Duration = 1;
 	ZombieAnim.Repeatable = true;
@@ -27,10 +27,21 @@ void Zombie::Move()
 
 	if (!dead)
 	{
+		if (stunperiod == 0)
+		{
+			randnum = rand() % 1000 + 1000;
+			if (stun) stun = false;
+			else stun = true;
+		}
+
+		stunperiod += 1;
+		if (stunperiod == randnum) stunperiod = 0;
+		
+
 #pragma region Zombie Move
+
 		Vector<2> PZ;
 		PZ = Coll.Player.Location - Z_Location;
-
 		Vector<2> direction = { 0, 0 };
 
 		if (PZ[0] < 0)
@@ -85,13 +96,11 @@ void Zombie::Move()
 			if (!Coll.WallCollision(Coll.Zombie))
 				direction[1] += 1;
 		}
-		
 #pragma endregion
-
-		if (Length(direction) != 0)
-			ZombieAnim.Location += Normalize(direction) * 100 * Time::Get::Delta();
-
+		if(!stun) ZombieAnim.Location += Normalize(direction) * 100 * Time::Get::Delta();
+		
 		ZombieAnim.Zombie_Draw(PZ);
+
 	}
 	else { ZombieAnim.Location = { 100, 100 }; }
 }

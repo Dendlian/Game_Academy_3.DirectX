@@ -9,6 +9,19 @@ void TestScene::Start()
 	Background2.Content = "BackGround2";
 	Background2.Length = { 960 * 6, 730 * 6 };
 
+	Door.Content = "Door";
+	Door.Location = { 0, 500 };
+	Door.Length = { 70, 70 };
+	Door.Duration = 1;
+	Door.Repeatable = true;
+
+	Text.Content = "CountingStar";
+	Text.Length = { 1200, 200 };
+	Text.Location = { 0, 0 };
+	Text.Font.Name = "Hello";
+	Text.Font.Size = 200;
+	Text.Color = { 0,0,0 };
+
 #pragma region Block Setting
 	
 	// Map_Block1
@@ -44,13 +57,6 @@ void TestScene::Start()
 #pragma endregion
 
 	Player.Set();
-
-	for (int i = 0; i < 10; i++)
-	{
-		Zombie[i].Set();
-		Zombie[i].ZombieAnim.Location = { -450 + (i * 100), 500 };
-	}
-	
 	Portion.Set();
 }
 
@@ -63,33 +69,59 @@ bool TestScene::Update()
 	for (int i = 0; i < 4; i++)
 	{
 		Map_Block1[i].Draw();
-
+	
 		for (int j = 0; j < 13; j++)
 			Map_Block2[j][i].Draw();
 		for (int k = 0; k < 25; k++)
 			Map_Block3[k][i].Draw();
 	}
+
+	if(dooropen) Door.Door_Draw();
+	if (zombies == 10)dooropen = false;
+
 #pragma endregion
+
+	create_stack += 1;
+	if ((create_stack == 4000) && (zombies < 10))
+	{
+		Zombie.push_back(new class Zombie);
+		create_stack = 0;
+		Zombie[zombies]->Set();
+		zombies += 1;
+	}
 
 	Portion.Move(Player);
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < zombies; i++) 
 	{
-		Zombie[i].GetPlayer(Player.Coll.Player);
-		Zombie[i].Move();
-		Player.GetZombie(Zombie[i].Coll.Zombie);
-
-		if (Zombie[i].AttackPlayer)
-			Player.GetDamage(Zombie[i].Damage);
+		Zombie[i]->GetPlayer(Player.Coll.Player);
+		Zombie[i]->Move();
 	}
+
+	for (int i = 0; i < zombies; i++) 
+	{
+		Player.GetZombie(Zombie[i]->Coll.Zombie);
+		if (Zombie[i]->AttackPlayer)
+			Player.GetDamage(Zombie[i]->Damage);
+	}
+
 	Player.Move();
 
 	Player.Attack();
 
 	if (Player.AttackZombie)
-		Zombie[Player.Select_Zombie].GetDamage(Player.ZombieDirect);
+		Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect);
 
+	for (int i = 0; i < zombies; i++)
+	{
+		if (Zombie[i]->dead)
+		{
+			Zombie.erase(Zombie.begin() + i);
+			zombies -= 1;
+		}
+	}
 
+	Text.Draw();
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) 
 	{

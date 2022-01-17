@@ -70,6 +70,7 @@ namespace Rendering
      class Component final
      {
      public:
+         void Door_Draw();
          void Player_Draw();
          void Zombie_Draw(Vector<2> PZ);
 

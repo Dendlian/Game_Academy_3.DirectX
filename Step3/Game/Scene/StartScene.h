@@ -14,7 +14,7 @@ private:
 
 	Rendering::Camera	Camera;
 
-	Rendering::Text::Component Text1;
+	Rendering::Text::Component		Text;
 
 };
 

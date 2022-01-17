@@ -45,11 +45,7 @@ public:
 		P_Direction = PlayerAnim.CurrentLine;
 	}
 
-	FORCEINLINE void GetZombie(RectAngle zombie) 
-	{
-		for (int i = 0; i < 10; i++)
-			Fireball[i].Z_Location.push_back(zombie);
-	}
+	void GetZombie(RectAngle zombie);
 
 	void GetDamage(float damage);
 	

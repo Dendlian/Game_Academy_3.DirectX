@@ -157,6 +157,14 @@ void Player::Attack()
 	}
 }
 
+void Player::GetZombie(RectAngle zombie)
+{
+	for (int i = 0; i < 10; i++)
+	{
+		if (Fireball[i].ING) Fireball[i].Z_Location.push_back(zombie);
+	}
+}
+
 void Player::GetDamage(float damage)
 {
 	if (invalidity == 0) 

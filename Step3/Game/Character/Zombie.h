@@ -4,6 +4,9 @@
 #include "Player.h"
 #include "Magic.h"
 
+#include <stdlib.h>
+#include <time.h>
+
 class Zombie : public Object
 {
 public:
@@ -11,13 +14,18 @@ public:
 	void Move()			override;
 public:
 	Vector<2>		Z_Length = { 0,0 };
-	Vector<2>		Z_Location = { 0,-400 };
+	Vector<2>		Z_Location = { 0, 500 };
 	float			Z_Angle = { 0 };
 	unsigned int	Z_Direction = 1;
 
 	unsigned int Hp = 100;
 	float Damage = 100;
 	bool dead = false;
+
+	int randnum;
+	bool stun = false;
+	int stunperiod = 0;
+
 
 	bool AttackPlayer = false;
 

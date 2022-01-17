@@ -71,6 +71,7 @@ namespace Rendering
         public:
             void Player_Draw();
             void Zombie_Draw(Vector<2> PZ);
+            void Door_Draw();
 
         public:
             char const* Content = nullptr;
