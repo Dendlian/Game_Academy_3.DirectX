@@ -99,7 +99,7 @@ namespace Rendering
             // descriptor를 바탕으로 font 생성
             HFONT const font = CreateFontIndirect(&descriptor);
 
-            SIZE const area = { static_cast<LONG>(Length[0]), static_cast<LONG>(Length[1]) };
+            SIZE  const area   = { static_cast<LONG>(  Length[0]), static_cast<LONG>(  Length[1]) };
             POINT const center = { static_cast<LONG>(Location[0]), static_cast<LONG>(Location[1]) };
 
             Pipeline::String::Render(font, Content, RGB(Color.Red, Color.Green, Color.Blue), area, center);

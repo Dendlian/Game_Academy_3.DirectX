@@ -27,7 +27,7 @@ private:
 	Rendering::Image::Component		Map_Block2[13][4];
 	Rendering::Image::Component		Map_Block3[25][4];
 
-	Rendering::Text::Component		Text;
+	Rendering::Text::Component		Text1;
 
 	Sound::Sound	BGM;
 

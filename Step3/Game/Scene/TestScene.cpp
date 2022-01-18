@@ -15,12 +15,6 @@ void TestScene::Start()
 	Door.Duration = 1;
 	Door.Repeatable = true;
 
-	Text.Content = "CountingStar";
-	Text.Length = { 1200, 200 };
-	Text.Location = { 0, 0 };
-	Text.Font.Name = "Hello";
-	Text.Font.Size = 200;
-	Text.Color = { 0,0,0 };
 
 #pragma region Block Setting
 	
@@ -120,8 +114,6 @@ bool TestScene::Update()
 			zombies -= 1;
 		}
 	}
-
-	Text.Draw();
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) 
 	{

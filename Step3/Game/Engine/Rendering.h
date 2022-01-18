@@ -26,19 +26,19 @@ namespace Rendering
 
             struct
             {
-                char const* Name = nullptr;
-                unsigned    Size = 0;
-                bool        Bold = false;   
-                bool        Italic = false;   
-                bool        Underlined = false;
-                bool        StrikeThrough = false;  
+                char const* Name            = nullptr;
+                unsigned    Size            = 0;
+                bool        Bold            = false;   
+                bool        Italic          = false;   
+                bool        Underlined      = false;
+                bool        StrikeThrough   = false;  
             }Font;
 
             struct
             {
-                unsigned char Red = 0;
+                unsigned char Red   = 0;
                 unsigned char Green = 0;
-                unsigned char Blue = 0;
+                unsigned char Blue  = 0;
             }Color;
 
         public:

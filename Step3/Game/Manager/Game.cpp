@@ -18,6 +18,8 @@ bool Game::Update()
 {
 	if (Scenes.at(Now)->Update())
 	{
+		Scenes.at(Now)->End();
+
 		if (++Now < Scenes.size())
 		{
 			Scenes.at(Now)->Start();

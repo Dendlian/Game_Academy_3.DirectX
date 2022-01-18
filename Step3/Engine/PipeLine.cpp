@@ -1,5 +1,5 @@
-#include <d3d11.h>
 #include <cassert>
+#include <d3d11.h>
 #include "PipeLine.h"
 
 #pragma region Console
@@ -19,7 +19,6 @@ namespace Rendering::Pipeline
 		ID3D11Device		   * Device;			
 		ID3D11DeviceContext	   * DeviceContext;		
 		IDXGISwapChain         * SwapChain;			
-		ID3D11RenderTargetView * RenderTargetView;	
 
 		namespace Buffer
 		{
@@ -27,7 +26,7 @@ namespace Rendering::Pipeline
 			ID3D11Buffer* Constant[2];
 
 			template<typename Data>
-			void Update(ID3D11Buffer * const buffer, Data const & data)
+			void Update(ID3D11Buffer* const buffer, Data const& data)
 			{
 				D3D11_MAPPED_SUBRESOURCE Subresource = D3D11_MAPPED_SUBRESOURCE();
 
@@ -36,8 +35,9 @@ namespace Rendering::Pipeline
 					memcpy_s(Subresource.pData, Subresource.RowPitch, data, sizeof(data));
 				}
 				DeviceContext->Unmap(buffer, 0);
-			}
+			};
 		}
+		ID3D11RenderTargetView* RenderTargetView;
 	}
 
 	namespace String
@@ -61,12 +61,12 @@ namespace Rendering::Pipeline
 					{
 						center.x - size.cx / 2,
 						center.y - size.cy / 2,
-						center.x - size.cx / 2,
-						center.y - size.cy / 2
+						center.x + size.cx / 2,
+						center.y + size.cy / 2
 					};
 
 					// ~'\0' : -1을 의미하며 문자열이 들어올때 길이를 계산
-					DrawText(hdc, string, ~'\0', &area, DT_TOP);
+					DrawText(hdc, string, ~'\0', &area, 0);
 				}
 				MUST(Surface->ReleaseDC(nullptr));
 			}
@@ -192,7 +192,7 @@ namespace Rendering::Pipeline
 
 #pragma region Vertex Shader Setting
 				{
-					#include "Shader/Bytecode/Vertex.h"
+#include "Shader/Bytecode/Vertex.h"
 					{
 						D3D11_INPUT_ELEMENT_DESC Descriptor[2]
 						{
@@ -223,7 +223,7 @@ namespace Rendering::Pipeline
 
 #pragma region Pixel Shader Setting
 				{
-					#include "Shader/Bytecode/Pixel.h"
+#include "Shader/Bytecode/Pixel.h"
 					{
 						ID3D11PixelShader* PixelShader = nullptr;
 
@@ -335,15 +335,13 @@ namespace Rendering::Pipeline
 			}
 			case WM_APP :
 			{
-
 #pragma region SwapChain Event
-				{
-					MUST(SwapChain->Present(0, 0));
+			
+				MUST(SwapChain->Present(0, 0));
 
-					float const Color[4] = { 1.0f , 1.0f , 1.0f , 1.0f };
+				float const Color[4] = { 1.0f , 1.0f , 1.0f , 1.0f };
 
-					DeviceContext->ClearRenderTargetView(RenderTargetView, Color);
-				}
+				DeviceContext->ClearRenderTargetView(RenderTargetView, Color);
 #pragma endregion
 				return;
 			}
@@ -355,10 +353,10 @@ namespace Rendering::Pipeline
 
 				RenderTargetView->Release();
 
-				Buffer::Vertex->Release();
-
 				for (UINT u = 0; u < 2; ++u)
 					Buffer::Constant[u]->Release();
+
+				Buffer::Vertex->Release();
 
 				SwapChain->Release();
 				DeviceContext->Release();
@@ -381,7 +379,7 @@ namespace Rendering::Pipeline
 #pragma endregion
 					{
 #pragma region Swap Chain Setting
-						if (RenderTargetView)
+						if (RenderTargetView != nullptr)
 						{
 							RenderTargetView->Release();
 
