@@ -7,11 +7,12 @@ void StartScene::Start()
 	Background.Length = { 1500, 800 };
 	Camera.Location = { 0, 0 };
 
-	Text1.Content = "Hello";
-	Text1.Length = { 500, 200 };
-	Text1.Location = { 1280 / 2 , 720 / 2 };
-	Text1.Font.Name = "Cafe24";
-	Text1.Font.Size = 200;
+	Text1.Content = "Press Space To Start";
+	Text1.Length = { 250, 100 };
+	Text1.Location = { 1280 / 2 , 600 };
+	Text1.Font.Name = "Hello";
+	Text1.Font.Size = 25;
+	Text1.Color = { 255, 255, 255 };
 }
 
 bool StartScene::Update()
@@ -20,9 +21,13 @@ bool StartScene::Update()
 	
 	Background.Draw();
 
-	Text1.Draw();
+	turn += 1;
+	if (((turn / 2000) % 2) == 0)
+		Text1.Draw();
 
-	if (Input::Get::Key::Down(VK_ESCAPE)) { return true; }
+	if (turn == 4000) turn = 0;
+
+	if (Input::Get::Key::Down(VK_SPACE)) { return true; }
 	else { return false; }
 }
 

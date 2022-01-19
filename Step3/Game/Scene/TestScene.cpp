@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "TestScene.h"
+#include <stdlib.h>
+#include <time.h>
 
 void TestScene::Start()
 {
@@ -9,12 +11,40 @@ void TestScene::Start()
 	Background2.Content = "BackGround2";
 	Background2.Length = { 960 * 6, 730 * 6 };
 
-	Door.Content = "Door";
-	Door.Location = { 0, 500 };
-	Door.Length = { 70, 70 };
-	Door.Duration = 1;
-	Door.Repeatable = true;
+	for (int i = 0; i < 4; i++)
+	{
+		Door[i].Content = "Door";
+		Door[i].Length = { 70, 70 };
+		Door[i].Duration = 1;
+		Door[i].Repeatable = true;
+	}
+	
+	Door[0].Location = { 0, 500 };
+	Door[1].Location = { 0, -500 };
+	Door[2].Location = { 500, 0};
+	Door[3].Location = { -500, 0 };
+	
+	BGM.Content = "BGM";
+	BGM.volume = 0;
+	BGM.Play();
 
+#pragma region Text Setting
+	Round.Content = "Round : 1";
+	Round.Length = { 100, 100 };
+	Round.Location = { 70 , 70 };
+	Round.Font.Name = "Hello";
+	Round.Font.Size = 20;
+	Round.Color = { 255, 0, 0 };
+	Round.Font.Bold = true;
+
+	Score.Content = "Score  : ";
+	Score.Length = { 100, 100 };
+	Score.Location = { 70 , 100 };
+	Score.Font.Name = "Hello";
+	Score.Font.Size = 20;
+	Score.Color = { 0, 0, 0 };
+	Score.Font.Bold = true;
+#pragma endregion
 
 #pragma region Block Setting
 	
@@ -51,12 +81,12 @@ void TestScene::Start()
 #pragma endregion
 
 	Player.Set();
-	Portion.Set();
 }
 
 bool TestScene::Update()
 {
 #pragma region Draw Map
+
 	Background2.Draw();
 	Background.Draw();
 	
@@ -70,29 +100,41 @@ bool TestScene::Update()
 			Map_Block3[k][i].Draw();
 	}
 
-	if(dooropen) Door.Door_Draw();
-	if (zombies == 10)dooropen = false;
+	if (next_round)
+	{
+		next_round = false;
+		dooropen = true;
+		currentRound += 1;
+		create_stack = 0;
+		created_Zombies = 0;
+	}
+
+	if (created_Zombies == (currentRound * 10)) dooropen = false;
+	
+	if (dooropen)
+		for (int i = 0; i < 4; i++) Door[i].Door_Draw();
 
 #pragma endregion
 
-	create_stack += 1;
-	if ((create_stack == 4000) && (zombies < 10))
+	if (create_stack < 5000)
+		create_stack += 1;
+
+	if ((create_stack == 4000) && (created_Zombies < (currentRound * 10)))
 	{
 		Zombie.push_back(new class Zombie);
 		create_stack = 0;
-		Zombie[zombies]->Set();
-		zombies += 1;
+		Zombie[current_Zombies]->Set();
+		created_Zombies += 1;
+		current_Zombies += 1;
 	}
 
-	Portion.Move(Player);
-
-	for (int i = 0; i < zombies; i++) 
+	for (int i = 0; i < current_Zombies; i++)
 	{
 		Zombie[i]->GetPlayer(Player.Coll.Player);
 		Zombie[i]->Move();
 	}
 
-	for (int i = 0; i < zombies; i++) 
+	for (int i = 0; i < current_Zombies; i++)
 	{
 		Player.GetZombie(Zombie[i]->Coll.Zombie);
 		if (Zombie[i]->AttackPlayer)
@@ -100,20 +142,24 @@ bool TestScene::Update()
 	}
 
 	Player.Move();
-
 	Player.Attack();
 
 	if (Player.AttackZombie)
 		Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect);
 
-	for (int i = 0; i < zombies; i++)
+	for (int i = 0; i < current_Zombies; i++)
 	{
 		if (Zombie[i]->dead)
 		{
 			Zombie.erase(Zombie.begin() + i);
-			zombies -= 1;
+			current_Zombies -= 1;
 		}
 	}
+
+	if ((created_Zombies != 0) && Zombie.empty()) next_round = true;
+	
+	// Round.Draw();
+	// Score.Draw();
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) 
 	{

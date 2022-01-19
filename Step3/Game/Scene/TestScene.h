@@ -19,7 +19,6 @@ public:
 
 private:
 
-	
 	Rendering::Image::Component		Background;
 	Rendering::Image::Component		Background2;
 
@@ -27,18 +26,25 @@ private:
 	Rendering::Image::Component		Map_Block2[13][4];
 	Rendering::Image::Component		Map_Block3[25][4];
 
-	Rendering::Text::Component		Text1;
+	Rendering::Text::Component		Round;
+	int currentRound = 1;
+	bool next_round = false;
+	
+	Rendering::Text::Component		Score;
+	int currentScore = 0;
 
-	Sound::Sound	BGM;
+	Sound::Sound BGM;
 
 	Player	Player;
-	Portion Portion;
-	
+
 	vector <class Zombie*>Zombie;
-	int zombies = 0;
+	int created_Zombies = 0;
+	int current_Zombies = 0;
 	int create_stack = 0;
 
-	Rendering::Animation::Component Door;
+	vector <class Portion*>Portion;
+
+	Rendering::Animation::Component Door[4];
 	bool dooropen = true;
 
 public:
@@ -58,4 +64,5 @@ public:
 		}
 	}
 	void PasteBlock(Rendering::Image::Component component[4]);
+
 };

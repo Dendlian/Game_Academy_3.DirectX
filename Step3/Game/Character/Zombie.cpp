@@ -1,10 +1,21 @@
 #include "stdafx.h"
 #include "Zombie.h"
+#include <random>
+using namespace std;
 
 void Zombie::Set()
 {
+	random_device rd;
+	mt19937_64 gen(rd());
+	uniform_int_distribution<int> Rand(1, 4);
+	int val = Rand(gen);
+
+	if (val == 1) ZombieAnim.Location = { 500, 0 };
+	else if (val == 2) ZombieAnim.Location = { -500, 0 };
+	else if (val == 3) ZombieAnim.Location = { 0, 500 };
+	else if (val == 4) ZombieAnim.Location = { 0, -500 };
+
 	ZombieAnim.Content = "Zombie";
-	ZombieAnim.Location = { 0, 500 };
 	ZombieAnim.Length = { 70, 70 };
 	ZombieAnim.Duration = 1;
 	ZombieAnim.Repeatable = true;

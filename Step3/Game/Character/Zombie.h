@@ -4,9 +4,6 @@
 #include "Player.h"
 #include "Magic.h"
 
-#include <stdlib.h>
-#include <time.h>
-
 class Zombie : public Object
 {
 public:
@@ -25,7 +22,6 @@ public:
 	int randnum;
 	bool stun = false;
 	int stunperiod = 0;
-
 
 	bool AttackPlayer = false;
 

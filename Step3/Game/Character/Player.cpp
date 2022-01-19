@@ -116,7 +116,18 @@ void Player::Move()
 		{
 			invalidity += 1;
 			int num = static_cast<int>(invalidity);
-			if((num/1000) % 2 == 1) PlayerAnim.Player_Draw();
+			if ((num / 1000) % 2 == 1) PlayerAnim.Player_Draw();
+			else
+			{
+				if (Input::Get::Key::Press(VK_DOWN))
+					PlayerAnim.CurrentLine = 1;
+				if (Input::Get::Key::Press(VK_LEFT))
+					PlayerAnim.CurrentLine = 2;
+				if (Input::Get::Key::Press(VK_RIGHT))
+					PlayerAnim.CurrentLine = 3;
+				if (Input::Get::Key::Press(VK_UP))
+					PlayerAnim.CurrentLine = 4;
+			}
 		}
 		else invalidity = 0;
 	}
