@@ -25,7 +25,7 @@ void TestScene::Start()
 	Door[3].Location = { -500, 0 };
 	
 	BGM.Content = "BGM";
-	BGM.volume = 0;
+	BGM.volume = 0.5f;
 	BGM.Play();
 
 #pragma region Text Setting
@@ -87,6 +87,9 @@ bool TestScene::Update()
 {
 #pragma region Draw Map
 
+	if (rand_num != 100) rand_num += 1;
+	else rand_num = 0;
+
 	Background2.Draw();
 	Background.Draw();
 	
@@ -146,18 +149,38 @@ bool TestScene::Update()
 
 	if (Player.AttackZombie)
 		Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect);
+	
+#pragma region Create Zombie / Portion
 
 	for (int i = 0; i < current_Zombies; i++)
 	{
 		if (Zombie[i]->dead)
 		{
+			if ((rand_num % 10) == 0)
+			{
+				Portion.push_back(new class Portion);
+				Portion[Portions]->Set();
+				Portion[Portions]->P_Image.Location = Zombie[i]->Z_Location;
+				Portion[Portions]->Portion.Location = Zombie[i]->Z_Location;
+				Portions += 1;
+			}
 			Zombie.erase(Zombie.begin() + i);
 			current_Zombies -= 1;
 		}
 	}
-
-	if ((created_Zombies != 0) && Zombie.empty()) next_round = true;
+	if ((created_Zombies != 0) && (Zombie.empty())) next_round = true;
 	
+	for (int i = 0; i < Portions; i++)
+	{
+		Portion[i]->Move(Player);
+		if (Portion[i]->empty)
+		{
+			Portion.erase(Portion.begin() + i);
+			Portions -= 1;
+		}
+	}
+#pragma endregion
+
 	// Round.Draw();
 	// Score.Draw();
 

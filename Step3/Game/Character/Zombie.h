@@ -11,7 +11,7 @@ public:
 	void Move()			override;
 public:
 	Vector<2>		Z_Length = { 0,0 };
-	Vector<2>		Z_Location = { 0, 500 };
+	Vector<2>		Z_Location = { 0, 0 };
 	float			Z_Angle = { 0 };
 	unsigned int	Z_Direction = 1;
 

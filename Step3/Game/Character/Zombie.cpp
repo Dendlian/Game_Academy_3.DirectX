@@ -113,7 +113,6 @@ void Zombie::Move()
 		ZombieAnim.Zombie_Draw(PZ);
 
 	}
-	else { ZombieAnim.Location = { 100, 100 }; }
 }
 
 void Zombie::GetDamage(Vector<2> zombiedirect)

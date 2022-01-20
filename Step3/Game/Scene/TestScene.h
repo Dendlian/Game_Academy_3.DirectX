@@ -43,9 +43,12 @@ private:
 	int create_stack = 0;
 
 	vector <class Portion*>Portion;
+	int Portions = 0;
 
 	Rendering::Animation::Component Door[4];
 	bool dooropen = true;
+
+	int rand_num = 0;
 
 public:
 
