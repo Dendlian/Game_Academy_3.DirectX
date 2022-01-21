@@ -25,7 +25,7 @@ void TestScene::Start()
 	Door[3].Location = { -500, 0 };
 	
 	BGM.Content = "BGM";
-	BGM.volume = 0.5f;
+	BGM.volume = 0.1f;
 	BGM.Play();
 
 #pragma region Text Setting
@@ -181,8 +181,8 @@ bool TestScene::Update()
 	}
 #pragma endregion
 
-	// Round.Draw();
-	// Score.Draw();
+	Round.Draw();
+	Score.Draw();
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) 
 	{
@@ -209,3 +209,5 @@ void TestScene::PasteBlock(Rendering::Image::Component component[4])
 }
 
 
+// string str = "dsfsdafdsafd"
+// str.c_str();

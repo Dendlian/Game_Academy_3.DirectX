@@ -31,7 +31,6 @@ void Zombie::Move()
 	ZombieUpdate();
 
 	Coll.SetZombie(ZombieAnim);
-	
 
 	if (Coll.ZombieCollision(Coll.Player))
 		AttackPlayer = true;
@@ -95,12 +94,14 @@ void Zombie::Move()
 					direction[1] -= 1;
 			}
 		}
+
 		if (PZ[1] < 0)
 		{
 			Coll.Zombie.Location[1] -= 3;
 			if (!Coll.WallCollision(Coll.Zombie))
 				direction[1] -= 1;
 		}
+
 		if (PZ[1] > 0)
 		{
 			Coll.Zombie.Location[1] += 3;
@@ -108,10 +109,10 @@ void Zombie::Move()
 				direction[1] += 1;
 		}
 #pragma endregion
-		if(!stun) ZombieAnim.Location += Normalize(direction) * 100 * Time::Get::Delta();
+		if((!stun) && (Length(direction) != 0))
+			ZombieAnim.Location += Normalize(direction) * 100 * Time::Get::Delta();
 		
 		ZombieAnim.Zombie_Draw(PZ);
-
 	}
 }
 
