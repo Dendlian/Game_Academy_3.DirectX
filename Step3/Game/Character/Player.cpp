@@ -112,11 +112,11 @@ void Player::Move()
 	PlayerAnim.Player_Draw();
 	else
 	{
-		if (invalidity < 5000)
+		if (invalidity < 800)
 		{
 			invalidity += 1;
 			int num = static_cast<int>(invalidity);
-			if ((num / 1000) % 2 == 1) PlayerAnim.Player_Draw();
+			if ((num / 120) % 2 == 1) PlayerAnim.Player_Draw();
 			else
 			{
 				if (Input::Get::Key::Press(VK_DOWN))

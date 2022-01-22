@@ -8,6 +8,7 @@
 #include "Item/Portion.h"
 #include "Physics/CollisionProcess.h"
 
+#include <string>
 
 
 class TestScene final : public Scene
@@ -27,11 +28,18 @@ private:
 	Rendering::Image::Component		Map_Block3[25][4];
 
 	Rendering::Text::Component		Round;
+	Rendering::Text::Component		intRound;
 	int currentRound = 1;
+	string stringRound;
 	bool next_round = false;
-	
+
 	Rendering::Text::Component		Score;
+	Rendering::Text::Component		intScore;
 	int currentScore = 0;
+	string stringScore;
+
+	Rendering::Text::Component		using_Magic;
+	
 
 	Sound::Sound BGM;
 

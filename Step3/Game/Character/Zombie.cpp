@@ -39,7 +39,7 @@ void Zombie::Move()
 	{
 		if (stunperiod == 0)
 		{
-			randnum = rand() % 1000 + 1000;
+			randnum = rand() % 200 + 200;
 			if (stun) stun = false;
 			else stun = true;
 		}

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 void TestScene::Start()
 {
 	Background.Content = "BackGround";
@@ -29,7 +30,7 @@ void TestScene::Start()
 	BGM.Play();
 
 #pragma region Text Setting
-	Round.Content = "Round : 1";
+	Round.Content = "Round : ";
 	Round.Length = { 100, 100 };
 	Round.Location = { 70 , 70 };
 	Round.Font.Name = "Hello";
@@ -42,8 +43,39 @@ void TestScene::Start()
 	Score.Location = { 70 , 100 };
 	Score.Font.Name = "Hello";
 	Score.Font.Size = 20;
-	Score.Color = { 0, 0, 0 };
+	Score.Color = { 0, 0, 255 };
 	Score.Font.Bold = true;
+	
+	stringRound = to_string(currentRound);
+	char const* round_char = stringRound.c_str();
+
+	intRound.Content = round_char;
+	intRound.Length = { 100, 100 };
+	intRound.Location = { 150 , 70 };
+	intRound.Font.Name = "Hello";
+	intRound.Font.Size = 20;
+	intRound.Color = { 255, 0, 0 };
+	intRound.Font.Bold = true;
+
+	stringScore = to_string(currentScore);
+	char const* score_char = stringScore.c_str();
+
+	intScore.Content = score_char;
+	intScore.Length = { 100, 100 };
+	intScore.Location = { 150 , 100 };
+	intScore.Font.Name = "Hello";
+	intScore.Font.Size = 20;
+	intScore.Color = { 0, 0, 255 };
+	intScore.Font.Bold = true;
+
+	using_Magic.Content = "fireball";
+	using_Magic.Length = { 35, 20};
+	using_Magic.Location = { 640 , 320};
+	using_Magic.Font.Name = "Hello";
+	using_Magic.Font.Size = 12;
+	using_Magic.Color = { 0, 0, 0 };
+	using_Magic.Font.Bold = true;
+
 #pragma endregion
 
 #pragma region Block Setting
@@ -103,14 +135,6 @@ bool TestScene::Update()
 			Map_Block3[k][i].Draw();
 	}
 
-	if (next_round)
-	{
-		next_round = false;
-		dooropen = true;
-		currentRound += 1;
-		create_stack = 0;
-		created_Zombies = 0;
-	}
 
 	if (created_Zombies == (currentRound * 10)) dooropen = false;
 	
@@ -119,10 +143,10 @@ bool TestScene::Update()
 
 #pragma endregion
 
-	if (create_stack < 5000)
+	if (create_stack < 2000)
 		create_stack += 1;
 
-	if ((create_stack == 4000) && (created_Zombies < (currentRound * 10)))
+	if ((create_stack == 1000) && (created_Zombies < (currentRound * 10)))
 	{
 		Zombie.push_back(new class Zombie);
 		create_stack = 0;
@@ -166,9 +190,24 @@ bool TestScene::Update()
 			}
 			Zombie.erase(Zombie.begin() + i);
 			current_Zombies -= 1;
+
+			currentScore += 100;
+			stringScore = to_string(currentScore);
+			char const* score_char = stringScore.c_str();
+			intScore.Content = score_char;
 		}
 	}
-	if ((created_Zombies != 0) && (Zombie.empty())) next_round = true;
+	if ((created_Zombies != 0) && (Zombie.empty())) 
+	{	
+		dooropen = true;
+		currentRound += 1;
+		create_stack = 0;
+		created_Zombies = 0;
+	
+		stringRound = to_string(currentRound);
+		char const* round_char = stringRound.c_str();
+		intRound.Content = round_char;
+	}
 	
 	for (int i = 0; i < Portions; i++)
 	{
@@ -183,6 +222,9 @@ bool TestScene::Update()
 
 	Round.Draw();
 	Score.Draw();
+	intRound.Draw();
+	intScore.Draw();
+	using_Magic.Draw();
 
 	if (Input::Get::Key::Down(VK_ESCAPE)) 
 	{
