@@ -4,6 +4,7 @@
 
 #include "Character/Player.h"
 #include "Character/Zombie.h"
+#include "Character/ZombieBoss.h"
 
 #include "Item/Portion.h"
 #include "Physics/CollisionProcess.h"
@@ -22,6 +23,8 @@ private:
 
 	Rendering::Image::Component		Background;
 	Rendering::Image::Component		Background2;
+	Rendering::Image::Component		Background3;
+	Rendering::Image::Component		Background4[4];
 
 	Rendering::Image::Component		Map_Block1[4];
 	Rendering::Image::Component		Map_Block2[13][4];
@@ -40,15 +43,18 @@ private:
 
 	Rendering::Text::Component		using_Magic;
 	
-
 	Sound::Sound BGM;
 
 	Player	Player;
 
-	vector <class Zombie*>Zombie;
+	vector <class Zombie*> Zombie;
 	int created_Zombies = 0;
 	int current_Zombies = 0;
-	int create_stack = 0;
+	int create_stack	= 0;
+
+	vector <class ZombieBoss*> Boss;
+	int created_Boss = 0;
+	int current_Boss = 0;
 
 	vector <class Portion*>Portion;
 	int Portions = 0;

@@ -6,11 +6,25 @@
 
 void TestScene::Start()
 {
+#pragma region Map Setting
 	Background.Content = "BackGround";
-	Background.Length  = { 1200, 1200 };
+	Background.Length = { 1200, 1200 };
 
 	Background2.Content = "BackGround2";
 	Background2.Length = { 960 * 6, 730 * 6 };
+
+	Background3.Content = "BackGround3";
+	Background3.Length = { 250, 250 };
+
+	for (int i = 0; i < 4; i++)
+	{
+		Background4[i].Content = "BackGround4";
+		Background4[i].Length = { 250, 250 };
+	}
+	Background4[0].Location = { 200, 200 };
+	Background4[1].Location = { -200, 200 };
+	Background4[2].Location = { 200, -200 };
+	Background4[3].Location = { -200, -200 };
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -19,15 +33,16 @@ void TestScene::Start()
 		Door[i].Duration = 1;
 		Door[i].Repeatable = true;
 	}
-	
+
 	Door[0].Location = { 0, 500 };
 	Door[1].Location = { 0, -500 };
-	Door[2].Location = { 500, 0};
+	Door[2].Location = { 500, 0 };
 	Door[3].Location = { -500, 0 };
-	
+
 	BGM.Content = "BGM";
-	BGM.volume = 0.1f;
+	BGM.volume = 0;
 	BGM.Play();
+#pragma endregion
 
 #pragma region Text Setting
 	Round.Content = "Round : ";
@@ -45,7 +60,7 @@ void TestScene::Start()
 	Score.Font.Size = 20;
 	Score.Color = { 0, 0, 255 };
 	Score.Font.Bold = true;
-	
+
 	stringRound = to_string(currentRound);
 	char const* round_char = stringRound.c_str();
 
@@ -69,8 +84,8 @@ void TestScene::Start()
 	intScore.Font.Bold = true;
 
 	using_Magic.Content = "fireball";
-	using_Magic.Length = { 35, 20};
-	using_Magic.Location = { 640 , 320};
+	using_Magic.Length = { 35, 20 };
+	using_Magic.Location = { 640 , 320 };
 	using_Magic.Font.Name = "Hello";
 	using_Magic.Font.Size = 12;
 	using_Magic.Color = { 0, 0, 0 };
@@ -79,12 +94,12 @@ void TestScene::Start()
 #pragma endregion
 
 #pragma region Block Setting
-	
+
 	// Map_Block1
 	Map_Block1[0].Location = { 100, 100 };
 	PasteBlock(Map_Block1);
 	SetBlock(Map_Block1);
-	
+
 	// Map_Block2
 	Map_Block2[0][0].Location = { 400, 400 };
 	for (int i = 1; i <= 6; i++)
@@ -124,9 +139,11 @@ bool TestScene::Update()
 
 	Background2.Draw();
 	Background.Draw();
+	Background3.Draw();
 	
 	for (int i = 0; i < 4; i++)
 	{
+		Background4[i].Draw();
 		Map_Block1[i].Draw();
 	
 		for (int j = 0; j < 13; j++)
@@ -143,6 +160,8 @@ bool TestScene::Update()
 
 #pragma endregion
 
+#pragma region Draw Zombie
+
 	if (create_stack < 2000)
 		create_stack += 1;
 
@@ -153,28 +172,46 @@ bool TestScene::Update()
 		Zombie[current_Zombies]->Set();
 		created_Zombies += 1;
 		current_Zombies += 1;
+
+		if ((currentRound % 1 == 0) && (created_Boss < (currentRound / 1)))
+		{
+			Boss.push_back(new class ZombieBoss);
+			Boss[current_Boss]->Set();
+			created_Boss += 1;
+			current_Boss += 1;
+		}
 	}
 
 	for (int i = 0; i < current_Zombies; i++)
 	{
 		Zombie[i]->GetPlayer(Player.Coll.Player);
 		Zombie[i]->Move();
-	}
-
-	for (int i = 0; i < current_Zombies; i++)
-	{
 		Player.GetZombie(Zombie[i]->Coll.Zombie);
 		if (Zombie[i]->AttackPlayer)
 			Player.GetDamage(Zombie[i]->Damage);
 	}
 
+	for (int i = 0; i < current_Boss; i++)
+	{
+		Boss[i]->GetPlayer(Player.Coll.Player);
+		Boss[i]->Move();
+		Player.GetZombie(Boss[i]->Coll.Zombie);
+		if (Boss[i]->AttackPlayer)
+			Player.GetDamage(Boss[i]->Damage);
+	}
+
+#pragma endregion
+
+#pragma region Draw Player
 	Player.Move();
 	Player.Attack();
-
 	if (Player.AttackZombie)
 		Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect);
-	
-#pragma region Create Zombie / Portion
+
+
+#pragma endregion
+
+#pragma region Draw Protion
 
 	for (int i = 0; i < current_Zombies; i++)
 	{
@@ -197,17 +234,6 @@ bool TestScene::Update()
 			intScore.Content = score_char;
 		}
 	}
-	if ((created_Zombies != 0) && (Zombie.empty())) 
-	{	
-		dooropen = true;
-		currentRound += 1;
-		create_stack = 0;
-		created_Zombies = 0;
-	
-		stringRound = to_string(currentRound);
-		char const* round_char = stringRound.c_str();
-		intRound.Content = round_char;
-	}
 	
 	for (int i = 0; i < Portions; i++)
 	{
@@ -220,12 +246,30 @@ bool TestScene::Update()
 	}
 #pragma endregion
 
+#pragma region Draw Text
 	Round.Draw();
 	Score.Draw();
 	intRound.Draw();
 	intScore.Draw();
 	using_Magic.Draw();
 
+#pragma endregion
+
+#pragma region Next Round Setting
+	if ((created_Zombies != 0) && (Zombie.empty()))
+	{
+		dooropen = true;
+		currentRound += 1;
+		create_stack = 0;
+		created_Zombies = 0;
+
+		stringRound = to_string(currentRound);
+		char const* round_char = stringRound.c_str();
+		intRound.Content = round_char;
+	}
+#pragma endregion
+
+#pragma region Game Over
 	if (Input::Get::Key::Down(VK_ESCAPE)) 
 	{
 		Player.Camera.Location = { 0, 0 };
@@ -234,6 +278,7 @@ bool TestScene::Update()
 
 	if (Player.Hp <= 0) { return true; }
 	else { return false; }
+#pragma endregion
 }
 
 void TestScene::End() { }
@@ -249,7 +294,3 @@ void TestScene::PasteBlock(Rendering::Image::Component component[4])
 	component[3].Location[0] = -component[0].Location[0];
 	component[3].Location[1] = -component[0].Location[1];
 }
-
-
-// string str = "dsfsdafdsafd"
-// str.c_str();

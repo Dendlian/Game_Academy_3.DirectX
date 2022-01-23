@@ -172,7 +172,8 @@ void Player::GetZombie(RectAngle zombie)
 {
 	for (int i = 0; i < 10; i++)
 	{
-		if (Fireball[i].ING) Fireball[i].Z_Location.push_back(zombie);
+		if (Fireball[i].ING) 
+			Fireball[i].Z_Location.push_back(zombie);
 	}
 }
 
