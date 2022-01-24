@@ -13,12 +13,12 @@ void Portion::Set()
 
 void Portion::Move(Player & player)
 {
-	if (((timer / 1000) % 2) == 0)
+	if (((timer / 250) % 2) == 0)
 		P_Image.Location[1] += 0.005f;
 	else
 		P_Image.Location[1] -= 0.005f;
 	
-	if (timer == 2000) timer = 0;
+	if (timer == 500) timer = 0;
 	else timer += 1;
 
 	if (player.Coll.PlayerCollision(Portion))

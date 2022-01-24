@@ -24,12 +24,18 @@ public:
 
 	Rendering::Animation::Component PlayerAnim;
 	Rendering::Image::Component Hp_Bar;
+	Rendering::Image::Component SM_Bar;
 	Rendering::Image::Component Black;
-
 
 	bool AttackZombie = false;
 	int Select_Zombie = 0;
 	Vector<2> ZombieDirect = { 0, 0 };
+
+	bool AttackBoss = false;
+	int Select_Boss = 0;
+
+	int Frameball = 0;
+
 
 public:
 
@@ -46,10 +52,12 @@ public:
 	}
 
 	void GetZombie(RectAngle zombie);
+	void GetBoss(RectAngle boss);
 
 	void GetDamage(float damage);
 	
 	void SetHP_Bar();
+	void SetSM_Bar();
 
 
 };

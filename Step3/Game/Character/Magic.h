@@ -28,6 +28,9 @@ public:
 	bool AttackZombie = false;
 	int Select_Zombie = 0;
 	Vector<2> ZombieDirect = { 0, 0 };
-
 	vector<RectAngle> Z_Location;
+
+	bool AttackBoss = false;
+	int Select_Boss = 0;
+	vector<RectAngle> B_Location;
 };

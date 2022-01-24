@@ -22,6 +22,13 @@ void Player::Set()
 	Black.Length = { 32, 7 };
 	Black.Angle = 0;
 
+	// Set SM_bar
+	SM_Bar.Content = "HP";
+	SM_Bar.Location = { 0, 0 };
+	SM_Bar.Length = { 30, 3 };
+	SM_Bar.Angle = 0;
+
+
 	// Set Magic 
 	for (int i = 0; i < 10; i++)
 	{
@@ -107,6 +114,7 @@ void Player::Move()
 	Camera.Set();
 
 	SetHP_Bar();
+	SetSM_Bar();
 
 	if(invalidity == 0)
 	PlayerAnim.Player_Draw();
@@ -136,8 +144,15 @@ void Player::Move()
 void Player::Attack()
 {
 	AttackZombie = false;
+	AttackBoss = false;
 
-	if (Input::Get::Key::Down(VK_SPACE))
+	if (Input::Get::Key::Press(VK_SPACE))
+	{
+		Frameball += 1;
+	}
+
+
+	if (Input::Get::Key::Up(VK_SPACE) && (Frameball < 100))
 	{
 		for (int i = 0; i < 10; i++)
 		{
@@ -151,6 +166,12 @@ void Player::Attack()
 			}
 		}
 	}
+
+	if (Input::Get::Key::Up(VK_SPACE))
+	{
+		Frameball = 0;
+	}
+
 	for (int i = 0; i < 10; i++)
 	{ 
 		if (Fireball[i].ING)
@@ -164,6 +185,14 @@ void Player::Attack()
 				Fireball[i].AttackZombie = false;
 				break;
 			}
+			if (Fireball[i].AttackBoss)
+			{
+				AttackBoss = true;
+				Select_Boss = Fireball[i].Select_Boss;
+				Fireball[i].AttackBoss = false;
+				break;
+			}
+
 		}
 	}
 }
@@ -176,6 +205,18 @@ void Player::GetZombie(RectAngle zombie)
 			Fireball[i].Z_Location.push_back(zombie);
 	}
 }
+
+void Player::GetBoss(RectAngle boss)
+{
+	for (int i = 0; i < 10; i++)
+	{
+		if (Fireball[i].ING)
+			Fireball[i].B_Location.push_back(boss);
+	}
+}
+
+
+
 
 void Player::GetDamage(float damage)
 {
@@ -199,6 +240,16 @@ void Player::SetHP_Bar()
 	Hp_Bar.Location[0] = P_Location[0] + (((Hp/2 - 500) * 30) / 1000);
 	Hp_Bar.Location[1] = P_Location[1] + 30;
 	Hp_Bar.Draw();
+}
+
+void Player::SetSM_Bar()
+{
+	if((Frameball < 100) && (Frameball > 30))
+		SM_Bar.Length = { Frameball / 3 , 3 };
+
+	SM_Bar.Location[0] = P_Location[0];
+	SM_Bar.Location[1] = P_Location[1] - 35;
+	SM_Bar.Draw();
 }
 
 

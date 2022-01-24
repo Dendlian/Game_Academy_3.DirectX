@@ -19,7 +19,7 @@ void TestScene::Start()
 	for (int i = 0; i < 4; i++)
 	{
 		Background4[i].Content = "BackGround4";
-		Background4[i].Length = { 250, 250 };
+		Background4[i].Length = { 100, 100 };
 	}
 	Background4[0].Location = { 200, 200 };
 	Background4[1].Location = { -200, 200 };
@@ -139,7 +139,7 @@ bool TestScene::Update()
 
 	Background2.Draw();
 	Background.Draw();
-	Background3.Draw();
+	// Background3.Draw();
 	
 	for (int i = 0; i < 4; i++)
 	{
@@ -173,11 +173,10 @@ bool TestScene::Update()
 		created_Zombies += 1;
 		current_Zombies += 1;
 
-		if ((currentRound % 1 == 0) && (created_Boss < (currentRound / 1)))
+		if ((currentRound % 2 == 0) && (created_Boss < (currentRound / 2)))
 		{
 			Boss.push_back(new class ZombieBoss);
 			Boss[current_Boss]->Set();
-			created_Boss += 1;
 			current_Boss += 1;
 		}
 	}
@@ -195,23 +194,10 @@ bool TestScene::Update()
 	{
 		Boss[i]->GetPlayer(Player.Coll.Player);
 		Boss[i]->Move();
-		Player.GetZombie(Boss[i]->Coll.Zombie);
+		Player.GetBoss(Boss[i]->Coll.Zombie);
 		if (Boss[i]->AttackPlayer)
 			Player.GetDamage(Boss[i]->Damage);
 	}
-
-#pragma endregion
-
-#pragma region Draw Player
-	Player.Move();
-	Player.Attack();
-	if (Player.AttackZombie)
-		Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect);
-
-
-#pragma endregion
-
-#pragma region Draw Protion
 
 	for (int i = 0; i < current_Zombies; i++)
 	{
@@ -234,6 +220,35 @@ bool TestScene::Update()
 			intScore.Content = score_char;
 		}
 	}
+
+	for (int i = 0; i < current_Boss; i++)
+	{
+		if (Boss[i]->dead)
+		{
+			Boss.erase(Boss.begin() + i);
+			current_Boss -= 1;
+
+			currentScore += 300;
+			stringScore = to_string(currentScore);
+			char const* score_char = stringScore.c_str();
+			intScore.Content = score_char;
+		}
+	}
+
+#pragma endregion
+
+#pragma region Draw Player
+	Player.Move();
+	Player.Attack();
+
+	if (Player.AttackZombie)
+		Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect);
+
+	if (Player.AttackBoss)
+		Boss[Player.Select_Boss]->GetDamage();
+#pragma endregion
+
+#pragma region Draw Protion
 	
 	for (int i = 0; i < Portions; i++)
 	{
@@ -244,6 +259,8 @@ bool TestScene::Update()
 			Portions -= 1;
 		}
 	}
+
+
 #pragma endregion
 
 #pragma region Draw Text
