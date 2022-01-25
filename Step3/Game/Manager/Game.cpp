@@ -11,9 +11,9 @@ void Game::Start()
 	Scenes.push_back(new TestScene);
 	Scenes.push_back(new EndScene);
 
-	Scenes.at(Now)->Start();
+	Scenes.at(Now)->Start();  
 }
-
+ 
 bool Game::Update()
 {
 	if (Scenes.at(Now)->Update())
