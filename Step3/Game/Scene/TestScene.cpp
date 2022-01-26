@@ -178,6 +178,7 @@ bool TestScene::Update()
 			Boss.push_back(new class ZombieBoss);
 			Boss[current_Boss]->Set();
 			current_Boss += 1;
+			created_Boss += 1;
 		}
 	}
 
@@ -242,7 +243,7 @@ bool TestScene::Update()
 	Player.Attack();
 
 	if (Player.AttackZombie)
-		Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect);
+		Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect, Player.Fireball->Damage);
 
 	if (Player.AttackBoss)
 		Boss[Player.Select_Boss]->GetDamage();
@@ -259,8 +260,6 @@ bool TestScene::Update()
 			Portions -= 1;
 		}
 	}
-
-
 #pragma endregion
 
 #pragma region Draw Text
@@ -273,7 +272,7 @@ bool TestScene::Update()
 #pragma endregion
 
 #pragma region Next Round Setting
-	if ((created_Zombies != 0) && (Zombie.empty()))
+	if ((created_Zombies == (currentRound * 10)) && (Zombie.empty()))
 	{
 		dooropen = true;
 		currentRound += 1;
@@ -283,6 +282,9 @@ bool TestScene::Update()
 		stringRound = to_string(currentRound);
 		char const* round_char = stringRound.c_str();
 		intRound.Content = round_char;
+
+		if (currentRound % 2 == 1)
+			created_Boss = 0;
 	}
 #pragma endregion
 

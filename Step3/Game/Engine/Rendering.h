@@ -71,6 +71,7 @@ namespace Rendering
         public:
             void Player_Draw();
             void Zombie_Draw(Vector<2> PZ);
+            void Magic_Draw(int currentline);
             void Door_Draw();
 
         public:

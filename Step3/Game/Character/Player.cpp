@@ -17,13 +17,18 @@ void Player::Set()
 	Hp_Bar.Length = { 30, 5 };
 	Hp_Bar.Angle = 0;
 
-	Black.Content = "Black";
-	Black.Location = { 0, 0 };
-	Black.Length = { 32, 7 };
-	Black.Angle = 0;
+	Black[0].Content = "Black";
+	Black[0].Location = { 0, 0 };
+	Black[0].Length = { 32, 7 };
+	Black[0].Angle = 0;
+
+	Black[1].Content = "Black";
+	Black[1].Location = { 0, 0 };
+	Black[1].Length = { 32, 4 };
+	Black[1].Angle = 0;
 
 	// Set SM_bar
-	SM_Bar.Content = "HP";
+	SM_Bar.Content = "White";
 	SM_Bar.Location = { 0, 0 };
 	SM_Bar.Length = { 30, 3 };
 	SM_Bar.Angle = 0;
@@ -33,6 +38,12 @@ void Player::Set()
 	for (int i = 0; i < 10; i++)
 	{
 		Fireball[i].Set();
+	}
+
+	// Set SuperMagic
+	for (int i = 0; i < 3; i++)
+	{
+		Frameball[i].Set();
 	}
 
 	// Set Wall
@@ -148,12 +159,14 @@ void Player::Attack()
 
 	if (Input::Get::Key::Press(VK_SPACE))
 	{
-		Frameball += 1;
+		if(FrameStack < 400)
+			FrameStack += 1;
 	}
 
 
-	if (Input::Get::Key::Up(VK_SPACE) && (Frameball < 100))
+	if (Input::Get::Key::Up(VK_SPACE) && (FrameStack < 100))
 	{
+		frameball = false;
 		for (int i = 0; i < 10; i++)
 		{
 			if (!Fireball[i].ING)
@@ -169,7 +182,21 @@ void Player::Attack()
 
 	if (Input::Get::Key::Up(VK_SPACE))
 	{
-		Frameball = 0;
+		if (FrameStack == 400) 
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (!Frameball[i].ING)
+				{
+					Frameball[i].F_Anim.Location[0] = P_Location[0];
+					Frameball[i].F_Anim.Location[1] = P_Location[1] + 10;
+					Frameball[i].F_Direction = PlayerAnim.CurrentLine;
+					Frameball[i].ING = true;
+					break;
+				}
+			}
+		}
+		FrameStack = 0;
 	}
 
 	for (int i = 0; i < 10; i++)
@@ -192,7 +219,29 @@ void Player::Attack()
 				Fireball[i].AttackBoss = false;
 				break;
 			}
+		}
+	}
 
+	for (int i = 0; i < 3; i++)
+	{
+		if (Frameball[i].ING)
+		{
+			Frameball[i].Move();
+			if (Frameball[i].AttackZombie)
+			{
+				AttackZombie = true;
+				Select_Zombie = Frameball[i].Select_Zombie;
+				ZombieDirect = Frameball[i].ZombieDirect;
+				Frameball[i].AttackZombie = false;
+				break;
+			}
+			if (Frameball[i].AttackBoss)
+			{
+				AttackBoss = true;
+				Select_Boss = Frameball[i].Select_Boss;
+				Frameball[i].AttackBoss = false;
+				break;
+			}
 		}
 	}
 }
@@ -204,6 +253,11 @@ void Player::GetZombie(RectAngle zombie)
 		if (Fireball[i].ING) 
 			Fireball[i].Z_Location.push_back(zombie);
 	}
+	for (int i = 0; i < 3; i++)
+	{
+		if (Frameball[i].ING)
+			Frameball[i].Z_Location.push_back(zombie);
+	}
 }
 
 void Player::GetBoss(RectAngle boss)
@@ -213,9 +267,12 @@ void Player::GetBoss(RectAngle boss)
 		if (Fireball[i].ING)
 			Fireball[i].B_Location.push_back(boss);
 	}
+	for (int i = 0; i < 3; i++)
+	{
+		if (Frameball[i].ING)
+			Frameball[i].Z_Location.push_back(boss);
+	}
 }
-
-
 
 
 void Player::GetDamage(float damage)
@@ -231,24 +288,36 @@ void Player::SetHP_Bar()
 {
 	if (Hp > 1000) Hp = 1000;
 
-	Black.Location[0] = P_Location[0];
-	Black.Location[1] = P_Location[1] + 30;
-	Black.Draw();
+	Black[0].Location[0] = P_Location[0];
+	Black[0].Location[1] = P_Location[1] + 35;
+	Black[0].Draw();
 
 	Hp_Bar.Length = { 30 * (Hp / 1000),5 };
 
 	Hp_Bar.Location[0] = P_Location[0] + (((Hp/2 - 500) * 30) / 1000);
-	Hp_Bar.Location[1] = P_Location[1] + 30;
+	Hp_Bar.Location[1] = P_Location[1] + 35;
 	Hp_Bar.Draw();
 }
 
 void Player::SetSM_Bar()
 {
-	if((Frameball < 100) && (Frameball > 30))
-		SM_Bar.Length = { Frameball / 3 , 3 };
+	Black[1].Location[0] = P_Location[0];
+	Black[1].Location[1] = P_Location[1] + 30;
+	Black[1].Draw();
 
-	SM_Bar.Location[0] = P_Location[0];
-	SM_Bar.Location[1] = P_Location[1] - 35;
+
+	if ((FrameStack > 100) && (FrameStack < 400) && (frameball))
+		SM_Bar.Length = { (FrameStack - 100) / 10 , 3 };
+	else if(FrameStack == 400)
+		SM_Bar.Length = { (FrameStack - 100) / 10 , 3 };
+	else
+	{
+		SM_Bar.Length = { 0, 0 };
+		frameball = true;
+	}
+
+	SM_Bar.Location[0] = P_Location[0] - 15 + ((FrameStack - 100) / 20);
+	SM_Bar.Location[1] = P_Location[1] + 30;
 	SM_Bar.Draw();
 }
 

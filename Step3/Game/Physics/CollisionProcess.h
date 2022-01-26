@@ -19,6 +19,8 @@ public:
 
 	void SetMagic(Rendering::Image::Component Thing);
 
+	void SetSuperMagic(Rendering::Animation::Component Thing);
+
 	void SetBlock();
 
 	bool WallCollision(RectAngle Object);

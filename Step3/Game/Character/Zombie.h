@@ -15,7 +15,7 @@ public:
 	float			Z_Angle = { 0 };
 	unsigned int	Z_Direction = 1;
 
-	unsigned int Hp = 100;
+	float Hp = 100;
 	float Damage = 100;
 	bool dead = false;
 
@@ -42,7 +42,7 @@ public:
 		Coll.Player = player;
 	}
 	
-	void GetDamage(Vector<2> zombiedirect);
+	void GetDamage(Vector<2> zombiedirect, float damage);
 
 };
 

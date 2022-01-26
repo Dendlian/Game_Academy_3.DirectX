@@ -21,6 +21,16 @@ void CollisionProcess::SetMagic(Image::Component Thing)
 	Magic.Location = Thing.Location;
 }
 
+void CollisionProcess::SetSuperMagic(Rendering::Animation::Component Thing)
+{
+	Magic.Angle = Thing.Angle;
+	Magic.Length[0] = Thing.Length[0];
+	Magic.Length[1] = Thing.Length[1];
+
+	Magic.Location = Thing.Location;
+}
+
+
 void CollisionProcess::SetZombie(Animation::Component Character)
 {
 	Zombie.Length[0] = Character.Length[0] * 3 / 5;

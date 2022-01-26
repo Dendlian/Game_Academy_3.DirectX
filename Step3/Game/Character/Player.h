@@ -2,6 +2,7 @@
 #include "Manager/Object.h"
 #include "Physics/CollisionProcess.h"
 #include "Magic.h"
+#include "SperMagic.h"
 #include <vector>
 
 class Player : public Object
@@ -25,7 +26,7 @@ public:
 	Rendering::Animation::Component PlayerAnim;
 	Rendering::Image::Component Hp_Bar;
 	Rendering::Image::Component SM_Bar;
-	Rendering::Image::Component Black;
+	Rendering::Image::Component Black[2];
 
 	bool AttackZombie = false;
 	int Select_Zombie = 0;
@@ -34,12 +35,14 @@ public:
 	bool AttackBoss = false;
 	int Select_Boss = 0;
 
-	int Frameball = 0;
+	int FrameStack = 0;
+	bool frameball = false;
 
 
 public:
 
 	Magic	Fireball[10];
+	SuperMagic Frameball[3];
 
 	int invalidity = 0;
 

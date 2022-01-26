@@ -375,6 +375,106 @@ namespace Rendering
             }
         }
 
+        void Component::Magic_Draw(int currentline)
+        {
+            CurrentLine = currentline;
+            using namespace Pipeline;
+            {
+                Matrix<4, 4> const world = Translation(Location) * Rotation(Angle) * Scale(Length);
+                Transform::Update<Transform::Type::Former>(reinterpret_cast<Transform::Matrix const&>(world));
+            }
+
+            LONG const progress = 0;
+
+            {
+                Descriptor& descriptor = Storage.at(Content);
+
+                LONG const progress = static_cast<LONG>((Playback / Duration) * descriptor.Motion);
+
+                RECT area = RECT();
+
+                using namespace Input::Get::Key;
+
+                if (CurrentLine == 1)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (6) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (7) / Line
+                    };
+                }
+                else if (CurrentLine == 2)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (0) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (1) / Line
+                    };
+                }
+                else if (CurrentLine == 3)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (4) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (5) / Line
+                    };
+                }
+                else if (CurrentLine == 4)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (2) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (3) / Line
+                    };
+                }
+                else if (CurrentLine == 5)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (7) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (8) / Line
+                    };
+                }
+                else if (CurrentLine == 6)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (5) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (6) / Line
+                    };
+                }
+                else if (CurrentLine == 7)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (1) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (2) / Line
+                    };
+                }
+                else if (CurrentLine == 8)
+                {
+                    area =
+                    {
+                        descriptor.Frame.cx * (progress),  descriptor.Frame.cy * (3) / Line,
+                        descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (4) / Line
+                    };
+                }
+
+
+                Texture::Render(descriptor.Handle, area);
+
+                float const delta = Time::Get::Delta();
+
+                Playback += delta;
+
+                if (Duration <= Playback)
+                {
+                    if (Repeatable) Playback = fmod(Playback, Duration);
+                    else            Playback -= delta;
+                }
+            }
+        }
+
         void Component::Zombie_Draw(Vector<2> PZ)
         {
             using namespace Pipeline;
