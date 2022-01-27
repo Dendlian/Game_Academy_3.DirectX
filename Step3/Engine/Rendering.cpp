@@ -377,7 +377,7 @@ namespace Rendering
 
         void Component::Magic_Draw(int currentline)
         {
-            CurrentLine = currentline;
+            currentline;
             using namespace Pipeline;
             {
                 Matrix<4, 4> const world = Translation(Location) * Rotation(Angle) * Scale(Length);
@@ -395,7 +395,7 @@ namespace Rendering
 
                 using namespace Input::Get::Key;
 
-                if (CurrentLine == 1)
+                if (currentline == 1)
                 {
                     area =
                     {
@@ -403,7 +403,7 @@ namespace Rendering
                         descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (7) / Line
                     };
                 }
-                else if (CurrentLine == 2)
+                else if (currentline == 2)
                 {
                     area =
                     {
@@ -411,7 +411,7 @@ namespace Rendering
                         descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (1) / Line
                     };
                 }
-                else if (CurrentLine == 3)
+                else if (currentline == 3)
                 {
                     area =
                     {
@@ -419,7 +419,7 @@ namespace Rendering
                         descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (5) / Line
                     };
                 }
-                else if (CurrentLine == 4)
+                else if (currentline == 4)
                 {
                     area =
                     {
@@ -427,7 +427,7 @@ namespace Rendering
                         descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (3) / Line
                     };
                 }
-                else if (CurrentLine == 5)
+                else if (currentline == 5)
                 {
                     area =
                     {
@@ -435,7 +435,7 @@ namespace Rendering
                         descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (8) / Line
                     };
                 }
-                else if (CurrentLine == 6)
+                else if (currentline == 6)
                 {
                     area =
                     {
@@ -443,7 +443,7 @@ namespace Rendering
                         descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (6) / Line
                     };
                 }
-                else if (CurrentLine == 7)
+                else if (currentline == 7)
                 {
                     area =
                     {
@@ -451,7 +451,7 @@ namespace Rendering
                         descriptor.Frame.cx * (progress + 1), descriptor.Frame.cy * (2) / Line
                     };
                 }
-                else if (CurrentLine == 8)
+                else if (currentline == 8)
                 {
                     area =
                     {

@@ -8,13 +8,13 @@ void TestScene::Start()
 {
 #pragma region Map Setting
 	Background.Content = "BackGround";
-	Background.Length = { 1200, 1200 };
+	Background.Length = { 1000, 1000 };
 
 	Background2.Content = "BackGround2";
 	Background2.Length = { 960 * 6, 730 * 6 };
 
 	Background3.Content = "BackGround3";
-	Background3.Length = { 250, 250 };
+	Background3.Length = { 1200, 1200 };
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -138,8 +138,8 @@ bool TestScene::Update()
 	else rand_num = 0;
 
 	Background2.Draw();
+	Background3.Draw();
 	Background.Draw();
-	// Background3.Draw();
 	
 	for (int i = 0; i < 4; i++)
 	{
@@ -242,11 +242,12 @@ bool TestScene::Update()
 	Player.Move();
 	Player.Attack();
 
-	if (Player.AttackZombie)
-		Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect, Player.Fireball->Damage);
+	if (Player.AttackZombie)	Zombie[Player.Select_Zombie] ->GetDamage(Player.ZombieDirect, Player.Fireball	->Damage);
+	if (Player.S_AttackZombie)	Zombie[Player.Select_Zombie] ->GetDamage(Player.ZombieDirect, Player.Frameball	->Damage);
+	
+	if (Player.AttackBoss)		Boss[Player.Select_Boss]	 ->GetDamage(Player.Fireball	->Damage);
+	if (Player.S_AttackBoss)	Boss[Player.Select_Boss]	 ->GetDamage(Player.Frameball	->Damage);
 
-	if (Player.AttackBoss)
-		Boss[Player.Select_Boss]->GetDamage();
 #pragma endregion
 
 #pragma region Draw Protion
@@ -267,6 +268,9 @@ bool TestScene::Update()
 	Score.Draw();
 	intRound.Draw();
 	intScore.Draw();
+	
+	if (Player.using_Magic == 1) using_Magic.Content = "fireball";
+	else if (Player.using_Magic == 2) using_Magic.Content = "iceball ";
 	using_Magic.Draw();
 
 #pragma endregion

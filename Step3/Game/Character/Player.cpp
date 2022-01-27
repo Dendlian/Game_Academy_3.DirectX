@@ -33,18 +33,19 @@ void Player::Set()
 	SM_Bar.Length = { 30, 3 };
 	SM_Bar.Angle = 0;
 
+	Green.Content = "Green";
+	Green.Location = { 0,0 };
+	Green.Length = { 30, 3 };
+	Green.Angle = 0;
+		
 
 	// Set Magic 
 	for (int i = 0; i < 10; i++)
-	{
 		Fireball[i].Set();
-	}
 
 	// Set SuperMagic
 	for (int i = 0; i < 3; i++)
-	{
 		Frameball[i].Set();
-	}
 
 	// Set Wall
 	Coll.SetBlock();
@@ -52,9 +53,12 @@ void Player::Set()
 
 void Player::Move()
 {
+
 	PlayerUpdate();
 	Coll.SetPlayer(PlayerAnim);
 	
+	TransMagic();
+
 #pragma region Player Move 
 
 	Vector<2> direction;
@@ -128,7 +132,7 @@ void Player::Move()
 	SetSM_Bar();
 
 	if(invalidity == 0)
-	PlayerAnim.Player_Draw();
+		PlayerAnim.Player_Draw();
 	else
 	{
 		if (invalidity < 800)
@@ -154,8 +158,10 @@ void Player::Move()
 
 void Player::Attack()
 {
-	AttackZombie = false;
-	AttackBoss = false;
+	AttackZombie	= false;
+	AttackBoss		= false;
+	S_AttackZombie	= false;
+	S_AttackBoss	= false;
 
 	if (Input::Get::Key::Press(VK_SPACE))
 	{
@@ -182,7 +188,9 @@ void Player::Attack()
 
 	if (Input::Get::Key::Up(VK_SPACE))
 	{
-		if (FrameStack == 400) 
+		Green.Length = { 0,0 };
+
+		if (FrameStack == 400 && (using_Magic == 1)) 
 		{
 			for (int i = 0; i < 3; i++)
 			{
@@ -229,7 +237,7 @@ void Player::Attack()
 			Frameball[i].Move();
 			if (Frameball[i].AttackZombie)
 			{
-				AttackZombie = true;
+				S_AttackZombie = true;
 				Select_Zombie = Frameball[i].Select_Zombie;
 				ZombieDirect = Frameball[i].ZombieDirect;
 				Frameball[i].AttackZombie = false;
@@ -237,7 +245,7 @@ void Player::Attack()
 			}
 			if (Frameball[i].AttackBoss)
 			{
-				AttackBoss = true;
+				S_AttackBoss = true;
 				Select_Boss = Frameball[i].Select_Boss;
 				Frameball[i].AttackBoss = false;
 				break;
@@ -270,10 +278,9 @@ void Player::GetBoss(RectAngle boss)
 	for (int i = 0; i < 3; i++)
 	{
 		if (Frameball[i].ING)
-			Frameball[i].Z_Location.push_back(boss);
+			Frameball[i].B_Location.push_back(boss);
 	}
 }
-
 
 void Player::GetDamage(float damage)
 {
@@ -303,12 +310,15 @@ void Player::SetSM_Bar()
 {
 	Black[1].Location[0] = P_Location[0];
 	Black[1].Location[1] = P_Location[1] + 30;
-	Black[1].Draw();
 
+	Green.Location[0] = P_Location[0];
+	Green.Location[1] = P_Location[1] + 30;
+	
+	Black[1].Draw();
+	
+	Green.Draw();
 
 	if ((FrameStack > 100) && (FrameStack < 400) && (frameball))
-		SM_Bar.Length = { (FrameStack - 100) / 10 , 3 };
-	else if(FrameStack == 400)
 		SM_Bar.Length = { (FrameStack - 100) / 10 , 3 };
 	else
 	{
@@ -316,9 +326,38 @@ void Player::SetSM_Bar()
 		frameball = true;
 	}
 
+	if (FrameStack == 400)
+	{
+		Green.Length = { 30, 3 };
+	}
+
 	SM_Bar.Location[0] = P_Location[0] - 15 + ((FrameStack - 100) / 20);
 	SM_Bar.Location[1] = P_Location[1] + 30;
 	SM_Bar.Draw();
+}
+
+void Player::TransMagic()
+{
+	if (Input::Get::Key::Down(VK_SHIFT))
+	{
+		if (using_Magic < 2)
+			using_Magic += 1;
+		else using_Magic = 1;
+	}
+
+	switch (using_Magic)
+	{
+	case 1:
+		for (int i = 0; i < 10; i++)
+			if(!Fireball[i].ING)
+				Fireball[i].F_Image.Content = "Fireball";
+		break;
+	case 2:
+		for (int i = 0; i < 10; i++)
+			if (!Fireball[i].ING)
+				Fireball[i].F_Image.Content = "Iceball";
+		break;
+	}
 }
 
 

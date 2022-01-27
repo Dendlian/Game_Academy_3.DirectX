@@ -120,7 +120,7 @@ void Zombie::GetDamage(Vector<2> zombiedirect, float damage)
 {
 	ZombieAnim.Location += Normalize(zombiedirect) * 10;
 	Hp -= damage;
-	if (Hp == 0) dead = true;
+	if (Hp <= 0) dead = true;
 }
 
 

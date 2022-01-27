@@ -22,18 +22,23 @@ public:
 
 	float Hp = 1000;
 	int invincibility = 0;
+	unsigned int using_Magic = 1;
 
 	Rendering::Animation::Component PlayerAnim;
 	Rendering::Image::Component Hp_Bar;
 	Rendering::Image::Component SM_Bar;
 	Rendering::Image::Component Black[2];
+	Rendering::Image::Component Green;
 
 	bool AttackZombie = false;
+	bool S_AttackZombie = false;
 	int Select_Zombie = 0;
-	Vector<2> ZombieDirect = { 0, 0 };
 
 	bool AttackBoss = false;
+	bool S_AttackBoss = false;
 	int Select_Boss = 0;
+	
+	Vector<2> ZombieDirect = { 0, 0 };
 
 	int FrameStack = 0;
 	bool frameball = false;
@@ -41,8 +46,8 @@ public:
 
 public:
 
-	Magic	Fireball[10];
-	SuperMagic Frameball[3];
+	Magic		Fireball[10];
+	SuperMagic  Frameball[3];
 
 	int invalidity = 0;
 
@@ -61,7 +66,7 @@ public:
 	
 	void SetHP_Bar();
 	void SetSM_Bar();
-
+	void TransMagic();
 
 };
 
