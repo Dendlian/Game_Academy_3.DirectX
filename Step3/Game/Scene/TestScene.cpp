@@ -19,7 +19,7 @@ void TestScene::Start()
 	for (int i = 0; i < 4; i++)
 	{
 		Background4[i].Content = "BackGround4";
-		Background4[i].Length = { 100, 100 };
+		Background4[i].Length = { 60, 60 };
 	}
 	Background4[0].Location = { 200, 200 };
 	Background4[1].Location = { -200, 200 };
@@ -161,6 +161,8 @@ bool TestScene::Update()
 #pragma endregion
 
 #pragma region Draw Zombie
+	
+	Player.Attack();
 
 	if (create_stack < 2000)
 		create_stack += 1;
@@ -240,10 +242,9 @@ bool TestScene::Update()
 
 #pragma region Draw Player
 	Player.Move();
-	Player.Attack();
 
-	if (Player.AttackZombie)	Zombie[Player.Select_Zombie] ->GetDamage(Player.ZombieDirect, Player.Fireball	->Damage);
-	if (Player.S_AttackZombie)	Zombie[Player.Select_Zombie] ->GetDamage(Player.ZombieDirect, Player.Frameball	->Damage);
+	if (Player.AttackZombie)	Zombie[Player.Select_Zombie] ->GetDamage(Player.ZombieDirect, Player.Fireball->Damage, Player.MagicAttack);
+	if (Player.S_AttackZombie)	Zombie[Player.Select_Zombie] ->GetDamage(Player.ZombieDirect, Player.Frameball->Damage, Player.SuperAttack);
 	
 	if (Player.AttackBoss)		Boss[Player.Select_Boss]	 ->GetDamage(Player.Fireball	->Damage);
 	if (Player.S_AttackBoss)	Boss[Player.Select_Boss]	 ->GetDamage(Player.Frameball	->Damage);

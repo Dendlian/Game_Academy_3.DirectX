@@ -204,6 +204,21 @@ void Player::Attack()
 				}
 			}
 		}
+
+		if (FrameStack == 400 && (using_Magic == 2))
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (!Frameball[i].ING)
+				{
+					Frameball[i].I_Image.Location[0] = P_Location[0];
+					Frameball[i].I_Image.Location[1] = P_Location[1];
+					Frameball[i].ING = true;
+					break;
+				}
+			}
+		}
+
 		FrameStack = 0;
 	}
 
@@ -217,6 +232,7 @@ void Player::Attack()
 				AttackZombie = true;
 				Select_Zombie = Fireball[i].Select_Zombie;
 				ZombieDirect = Fireball[i].ZombieDirect;
+				MagicAttack = Fireball[i].using_Magic;
 				Fireball[i].AttackZombie = false;
 				break;
 			}
@@ -240,6 +256,7 @@ void Player::Attack()
 				S_AttackZombie = true;
 				Select_Zombie = Frameball[i].Select_Zombie;
 				ZombieDirect = Frameball[i].ZombieDirect;
+				SuperAttack = Frameball[i].using_Magic;
 				Frameball[i].AttackZombie = false;
 				break;
 			}
@@ -349,12 +366,24 @@ void Player::TransMagic()
 	case 1:
 		for (int i = 0; i < 10; i++)
 			if(!Fireball[i].ING)
+			{ 
+				Fireball[i].using_Magic = 1;
 				Fireball[i].F_Image.Content = "Fireball";
+			}
+		for (int i = 0; i<3; i++)
+			if (!Frameball[i].ING)
+				Frameball[i].using_Magic = 11;
 		break;
 	case 2:
 		for (int i = 0; i < 10; i++)
 			if (!Fireball[i].ING)
+			{
+				Fireball[i].using_Magic = 2;
 				Fireball[i].F_Image.Content = "Iceball";
+			}
+		for (int i = 0; i < 3; i++)
+			if (!Frameball[i].ING)
+				Frameball[i].using_Magic = 12;
 		break;
 	}
 }

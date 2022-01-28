@@ -20,8 +20,13 @@ public:
 	bool dead = false;
 
 	int randnum;
+
 	bool stun = false;
+	bool frozen = false;
+	bool superfrozen = false;
+
 	int stunperiod = 0;
+	int frozenperiod = 0;
 
 	bool AttackPlayer = false;
 
@@ -42,7 +47,7 @@ public:
 		Coll.Player = player;
 	}
 	
-	void GetDamage(Vector<2> zombiedirect, float damage);
+	void GetDamage(Vector<2> zombiedirect, float damage, unsigned using_magic);
 
 };
 

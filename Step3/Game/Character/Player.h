@@ -30,13 +30,18 @@ public:
 	Rendering::Image::Component Black[2];
 	Rendering::Image::Component Green;
 
-	bool AttackZombie = false;
-	bool S_AttackZombie = false;
-	int Select_Zombie = 0;
+	// MagicÀÇ Á¾·ù
+	unsigned MagicAttack = 1;
+	unsigned SuperAttack = 11;
 
+	bool AttackZombie = false;
+	int Select_Zombie = 0;
+	
 	bool AttackBoss = false;
-	bool S_AttackBoss = false;
 	int Select_Boss = 0;
+	
+	bool S_AttackZombie = false;
+	bool S_AttackBoss = false;
 	
 	Vector<2> ZombieDirect = { 0, 0 };
 

@@ -10,6 +10,8 @@ class Magic : public Object
 {
 public:
 
+	unsigned int using_Magic = 1;
+
 	Rendering::Image::Component F_Image;
 	unsigned int	F_Direction = 1;
 	
