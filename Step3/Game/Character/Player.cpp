@@ -335,7 +335,6 @@ void Player::SetSM_Bar()
 	SM_Bar.Location[1] = P_Location[1] + 30;
 	SM_Bar.Draw();
 }
-
 void Player::TransMagic()
 {
 	if (Input::Get::Key::Down(VK_SHIFT))
