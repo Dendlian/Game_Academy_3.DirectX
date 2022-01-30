@@ -160,7 +160,7 @@ void Player::Attack()
 {
 	AttackZombie	= false;
 	AttackBoss		= false;
-	S_AttackZombie	= false;
+	// S_AttackZombie	= false;
 	S_AttackBoss	= false;
 
 	if (Input::Get::Key::Press(VK_SPACE))
@@ -168,7 +168,6 @@ void Player::Attack()
 		if(FrameStack < 400)
 			FrameStack += 1;
 	}
-
 
 	if (Input::Get::Key::Up(VK_SPACE) && (FrameStack < 100))
 	{
@@ -207,23 +206,56 @@ void Player::Attack()
 
 		if (FrameStack == 400 && (using_Magic == 2))
 		{
-			for (int i = 0; i < 3; i++)
+			if (!Frameball[0].ING)
 			{
-				if (!Frameball[i].ING)
-				{
-					Frameball[i].I_Image.Location[0] = P_Location[0];
-					Frameball[i].I_Image.Location[1] = P_Location[1];
-					Frameball[i].ING = true;
-					break;
-				}
+				Frameball[0].I_Image.Location[0] = P_Location[0];
+				Frameball[0].I_Image.Location[1] = P_Location[1];
+				Frameball[0].ING = true;
 			}
 		}
 
 		FrameStack = 0;
 	}
 
+	// frameball.move
+	for (int i = 0; i < 3; i++)
+	{
+		if (Frameball[i].ING)
+		{
+			Frameball[i].Move();
+			if (Frameball[i].AttackZombie)
+			{
+				// S_AttackZombie = Frameball[i].AttackZombie;
+				
+				//for (int j = 0; j < Frameball[i].Select_Zombie.size(); j++)
+				//{
+				//	S_Select_Zombie.push_back(Frameball[i].Select_Zombie[j]);
+				//}
+
+				//while (!Frameball[i].Select_Zombie.empty())
+				//{
+				//	Frameball[i].Select_Zombie.pop_back();
+				//}
+
+				ZombieDirect = Frameball[i].ZombieDirect;
+				SuperAttack = Frameball[i].using_Magic;
+				// Frameball[i].AttackZombie = false;
+				break;
+			}
+
+			if (Frameball[i].AttackBoss)
+			{
+				S_AttackBoss = true;
+				Select_Boss = Frameball[i].Select_Boss;
+				Frameball[i].AttackBoss = false;
+				break;
+			}
+		}
+	}
+
+	// fireball.move
 	for (int i = 0; i < 10; i++)
-	{ 
+	{
 		if (Fireball[i].ING)
 		{
 			Fireball[i].Move();
@@ -241,30 +273,6 @@ void Player::Attack()
 				AttackBoss = true;
 				Select_Boss = Fireball[i].Select_Boss;
 				Fireball[i].AttackBoss = false;
-				break;
-			}
-		}
-	}
-
-	for (int i = 0; i < 3; i++)
-	{
-		if (Frameball[i].ING)
-		{
-			Frameball[i].Move();
-			if (Frameball[i].AttackZombie)
-			{
-				S_AttackZombie = true;
-				Select_Zombie = Frameball[i].Select_Zombie;
-				ZombieDirect = Frameball[i].ZombieDirect;
-				SuperAttack = Frameball[i].using_Magic;
-				Frameball[i].AttackZombie = false;
-				break;
-			}
-			if (Frameball[i].AttackBoss)
-			{
-				S_AttackBoss = true;
-				Select_Boss = Frameball[i].Select_Boss;
-				Frameball[i].AttackBoss = false;
 				break;
 			}
 		}

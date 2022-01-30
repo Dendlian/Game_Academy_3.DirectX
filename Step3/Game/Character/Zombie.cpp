@@ -111,9 +111,13 @@ void Zombie::Move()
 #pragma endregion
 		if ((!stun) && (Length(direction) != 0))
 		{
-			if(!frozen)
+			if((!frozen) && (!superfrozen))
 				ZombieAnim.Location += Normalize(direction) * 100 * Time::Get::Delta();
-			else
+			else if (frozen && superfrozen)
+			{
+				ZombieAnim.Location += Normalize(direction) * 20 * Time::Get::Delta();
+			}
+			else if (frozen)
 			{
 				ZombieAnim.Location += Normalize(direction) * 50 * Time::Get::Delta();
 				if (frozenperiod <= 100)
@@ -124,6 +128,10 @@ void Zombie::Move()
 					frozenperiod = 0;
 				}
 			}
+			else if (superfrozen)
+			{
+				ZombieAnim.Location += Normalize(direction) * 20 * Time::Get::Delta();
+			}
 		}
 		
 		ZombieAnim.Zombie_Draw(PZ);
@@ -131,20 +139,33 @@ void Zombie::Move()
 }
 
 void Zombie::GetDamage(Vector<2> zombiedirect, float damage, unsigned using_magic)
-{
-	if(using_magic == 1)
+{ 
+	if (using_magic == 1)
+	{
 		ZombieAnim.Location += Normalize(zombiedirect) * 10;
+		Hp -= damage;
+	}
 	
-	if (using_magic == 2)
-		frozen = true;
+	if ((using_magic == 2))
+	{
+		if(!superfrozen)frozen = true;
+		Hp -= damage;
+	}
+
+	if (using_magic == 11)
+	{
+		if (supersplash)
+		{
+			Hp -= damage / 2;
+			supersplash = false;
+		}
+		else Hp -= damage;
+	}
 
 	if (using_magic == 12)
 		superfrozen = true;
-	else
-	{
-		Hp -= damage;
-		superfrozen = false;
-	}
+	else superfrozen = false;
+
 	
 	if (Hp <= 0) dead = true;
 }

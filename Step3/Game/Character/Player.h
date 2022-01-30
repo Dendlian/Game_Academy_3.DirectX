@@ -35,14 +35,15 @@ public:
 	unsigned SuperAttack = 11;
 
 	bool AttackZombie = false;
-	int Select_Zombie = 0;
-	
 	bool AttackBoss = false;
+	int Select_Zombie = 0;
 	int Select_Boss = 0;
 	
-	bool S_AttackZombie = false;
-	bool S_AttackBoss = false;
-	
+	// bool S_AttackZombie = false;
+	bool S_AttackBoss	= false;
+	// vector<int> S_Select_Zombie;
+	vector<int> S_Select_Boss;
+
 	Vector<2> ZombieDirect = { 0, 0 };
 
 	int FrameStack = 0;

@@ -20,13 +20,15 @@ public:
 	bool dead = false;
 
 	int randnum;
-
 	bool stun = false;
+
 	bool frozen = false;
+	int frozenperiod = 0;
+	
 	bool superfrozen = false;
+	bool supersplash = false;
 
 	int stunperiod = 0;
-	int frozenperiod = 0;
 
 	bool AttackPlayer = false;
 

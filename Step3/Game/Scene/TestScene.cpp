@@ -40,7 +40,7 @@ void TestScene::Start()
 	Door[3].Location = { -500, 0 };
 
 	BGM.Content = "BGM";
-	BGM.volume = 0;
+	BGM.volume = 0.1f;
 	BGM.Play();
 #pragma endregion
 
@@ -164,6 +164,37 @@ bool TestScene::Update()
 	
 	Player.Attack();
 
+	if (Player.AttackZombie)	Zombie[Player.Select_Zombie]->GetDamage(Player.ZombieDirect, Player.Fireball->Damage, Player.MagicAttack);
+
+
+	if (Player.Frameball[0].AttackZombie)
+	{
+		for (int i = 0; i < Player.Frameball[0].Select_Zombie.size(); i++)
+		{
+			if (Player.SuperAttack == 11 && i != 0)
+				Zombie[Player.Frameball[0].Select_Zombie[i]]->supersplash = true;
+				
+			Zombie[Player.Frameball[0].Select_Zombie[i]]->GetDamage(Player.ZombieDirect, Player.Frameball->Damage, Player.SuperAttack);
+		}
+
+		while (!Player.Frameball[0].Select_Zombie.empty())
+		{
+			Player.Frameball[0].Select_Zombie.pop_back();
+		}
+		Player.Frameball[0].AttackZombie = false;
+	}
+	else
+	{
+		for (int i = 0; i < Zombie.size(); i++)
+		{
+			Zombie[i]->superfrozen = false;
+		}
+	}
+
+	if (Player.AttackBoss)		Boss[Player.Select_Boss]->GetDamage(Player.Fireball->Damage);
+	if (Player.S_AttackBoss)	Boss[Player.Select_Boss]->GetDamage(Player.Frameball->Damage);
+
+
 	if (create_stack < 2000)
 		create_stack += 1;
 
@@ -182,24 +213,6 @@ bool TestScene::Update()
 			current_Boss += 1;
 			created_Boss += 1;
 		}
-	}
-
-	for (int i = 0; i < current_Zombies; i++)
-	{
-		Zombie[i]->GetPlayer(Player.Coll.Player);
-		Zombie[i]->Move();
-		Player.GetZombie(Zombie[i]->Coll.Zombie);
-		if (Zombie[i]->AttackPlayer)
-			Player.GetDamage(Zombie[i]->Damage);
-	}
-
-	for (int i = 0; i < current_Boss; i++)
-	{
-		Boss[i]->GetPlayer(Player.Coll.Player);
-		Boss[i]->Move();
-		Player.GetBoss(Boss[i]->Coll.Zombie);
-		if (Boss[i]->AttackPlayer)
-			Player.GetDamage(Boss[i]->Damage);
 	}
 
 	for (int i = 0; i < current_Zombies; i++)
@@ -238,18 +251,27 @@ bool TestScene::Update()
 		}
 	}
 
+	for (int i = 0; i < current_Zombies; i++)
+	{
+		Zombie[i]->GetPlayer(Player.Coll.Player);
+		Zombie[i]->Move();
+		Player.GetZombie(Zombie[i]->Coll.Zombie);
+		if (Zombie[i]->AttackPlayer)
+			Player.GetDamage(Zombie[i]->Damage);
+	}
+
+	for (int i = 0; i < current_Boss; i++)
+	{
+		Boss[i]->GetPlayer(Player.Coll.Player);
+		Boss[i]->Move();
+		Player.GetBoss(Boss[i]->Coll.Zombie);
+		if (Boss[i]->AttackPlayer)
+			Player.GetDamage(Boss[i]->Damage);
+	}
+
 #pragma endregion
 
-#pragma region Draw Player
 	Player.Move();
-
-	if (Player.AttackZombie)	Zombie[Player.Select_Zombie] ->GetDamage(Player.ZombieDirect, Player.Fireball->Damage, Player.MagicAttack);
-	if (Player.S_AttackZombie)	Zombie[Player.Select_Zombie] ->GetDamage(Player.ZombieDirect, Player.Frameball->Damage, Player.SuperAttack);
-	
-	if (Player.AttackBoss)		Boss[Player.Select_Boss]	 ->GetDamage(Player.Fireball	->Damage);
-	if (Player.S_AttackBoss)	Boss[Player.Select_Boss]	 ->GetDamage(Player.Frameball	->Damage);
-
-#pragma endregion
 
 #pragma region Draw Protion
 	
