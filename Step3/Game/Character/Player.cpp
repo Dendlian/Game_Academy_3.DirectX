@@ -163,12 +163,14 @@ void Player::Attack()
 	// S_AttackZombie	= false;
 	S_AttackBoss	= false;
 
+	// 스킬 준비
 	if (Input::Get::Key::Press(VK_SPACE))
 	{
 		if(FrameStack < 400)
 			FrameStack += 1;
 	}
 
+	// 일반 공격
 	if (Input::Get::Key::Up(VK_SPACE) && (FrameStack < 100))
 	{
 		frameball = false;
@@ -185,6 +187,7 @@ void Player::Attack()
 		}
 	}
 
+	// 스킬 공격
 	if (Input::Get::Key::Up(VK_SPACE))
 	{
 		Green.Length = { 0,0 };
@@ -360,6 +363,7 @@ void Player::SetSM_Bar()
 	SM_Bar.Location[1] = P_Location[1] + 30;
 	SM_Bar.Draw();
 }
+
 void Player::TransMagic()
 {
 	if (Input::Get::Key::Down(VK_SHIFT))
