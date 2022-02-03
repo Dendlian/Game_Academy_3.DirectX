@@ -185,7 +185,7 @@ bool TestScene::Update()
 	}
 	else
 	{
-		for (int i = 0; i < Zombie.size(); i++)
+		for (int i = 0; i < Zombie.size(); i++) 
 		{
 			Zombie[i]->superfrozen = false;
 		}
