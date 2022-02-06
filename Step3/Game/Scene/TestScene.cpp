@@ -181,7 +181,7 @@ bool TestScene::Update()
 		{
 			Player.Frameball[0].Select_Zombie.pop_back();
 		}
-		Player.Frameball[0].AttackZombie = false;
+		Player.Frameball[0].AttackZombie = false; 
 	}
 	else
 	{
