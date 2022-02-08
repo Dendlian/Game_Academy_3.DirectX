@@ -17,7 +17,7 @@ public:
 	
 	bool ING = false;
 
-	float Damage = 10;
+	float Damage = 10; 
 	CollisionProcess Coll;
 
 public:
