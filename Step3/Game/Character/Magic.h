@@ -26,7 +26,6 @@ public:
 
 	Vector<2> SetDirect(unsigned int f_direction);
 
-
 	bool AttackZombie = false;
 	int Select_Zombie = 0;
 	Vector<2> ZombieDirect = { 0, 0 };
