@@ -25,7 +25,7 @@ void Magic::Move()
 	}
 
 	for (int i = 0; i < B_Location.size(); i++)
-	{ 
+	{  
 		if (Collide(Coll.Magic, B_Location[i]))
 		{
 			AttackBoss = true;
