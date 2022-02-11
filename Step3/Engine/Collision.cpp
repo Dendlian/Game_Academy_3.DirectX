@@ -17,7 +17,7 @@ namespace Collision
     }
 
 #pragma region Point vs Point
-    bool Collide(Point const& LHS, Point const& RHS)
+    bool Collide(Point const& LHS, Point const& RHS) 
     {
         return Length(LHS.Location - RHS.Location) == 0;
     }
