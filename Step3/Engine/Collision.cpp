@@ -11,7 +11,7 @@ namespace Collision
         
         return Matrix<2, 2>
         {
-            +cos(angle * radian), +sin(angle * radian), 
+            +cos(angle * radian), +sin(angle * radian),
             -sin(angle * radian), +cos(angle * radian)
         };
     }
