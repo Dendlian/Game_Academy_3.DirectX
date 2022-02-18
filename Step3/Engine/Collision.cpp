@@ -21,7 +21,7 @@ namespace Collision
     {
         return Length(LHS.Location - RHS.Location) == 0;
     }
-#pragma endregion
+#pragma endregion 
 
 #pragma region Circle vs Circle
     bool Collide(Circle const& LHS, Circle const& RHS)
