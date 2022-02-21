@@ -14,8 +14,8 @@ namespace Collision
             +cos(angle * radian), +sin(angle * radian),  
             -sin(angle * radian), +cos(angle * radian)
         };
-    } 
-
+    }
+     
 #pragma region Point vs Point
     bool Collide(Point const& LHS, Point const& RHS) 
     {
